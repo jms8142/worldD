@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>World Denomination</title>
+<link rel="stylesheet" href="/css/styles.css" type="text/css"/>
+<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+<script type='text/javascript' src='/js/lib/prototype.js'></script>
+<script type="text/javascript" src="/js/Behavior.js"></script>
+
+<script>
+jQuery(function(){
+	
+	//var _game = new Game();
+	//_game.PrintGameBoardtoConsole();
+	/*
+	var oneCent = new Behavior(1);
+	oneCent.addReactors([1]);
+
+	var testVal = 1;
+	var numBlocks = 3;
+	for(x = 0; x < numBlocks; x++){
+		if(oneCent.hasReaction(testVal)){
+			oneCent.addCombo(testVal);
+		}
+	}
+	*/
+	/*
+	var fiveCent = new Behavior(5);
+	fiveCent.addReactors([5,10]);
+
+	var testVal = 5;
+	var numBlocks = 3;
+	for(x = 0; x < numBlocks; x++){
+		if(fiveCent.hasReaction(testVal)){
+			fiveCent.addCombo(testVal);
+		}
+	}
+	*/
+	/*
+	var twentyFiveCent = new Behavior(25);
+	twentyFiveCent.addReactors([25]);
+
+	var testVal = 25;
+	var numBlocks = 3;
+	for(x = 0; x < numBlocks; x++){
+		if(twentyFiveCent.hasReaction(testVal)){
+			twentyFiveCent.addCombo(testVal);
+		}
+	}
+	*/
+	var roundOne = [10,10,5];
+	var roundTwo = [5,10,10];
+	var roundThree = [10,5,10];
+
+	var inFocus = roundOne;
+
+	var fiveCent = new Behavior(5);
+	fiveCent.addReactors([5,10]);
+
+	for(var i = 0; i < inFocus.length; i++){
+		if(fiveCent.hasReaction(inFocus[i])){
+			fiveCent.addCombo(inFocus[i]);
+		}
+	}
+
+	
+});
+
+</script>
+
+</head>
+
+<body>
+Behavior Tests
+</body>
+</html>
