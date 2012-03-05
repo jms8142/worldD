@@ -18,8 +18,8 @@ var Game = Class.create({
 	actionTile : null,
 	MoveDirection : { LEFT : 0, DOWN : 1, RIGHT : 2},
 
-	initialize : function (){
 
+	initialize : function (_gameBoard){
 		_canvas = document.getElementById('canvas');
 		if (_canvas && _canvas.getContext) {
 			_canvasContext = _canvas.getContext('2d');
@@ -29,7 +29,12 @@ var Game = Class.create({
 			_canvasBufferContext = _canvasBuffer.getContext('2d');
 		}
 		this.GenerateTestGrid();
-		this.CreateTileMap();
+
+		if(_gameBoard !== undefined)
+			gameBoard = _gameBoard;
+		else
+			this.CreateTileMap();
+
 		this.CreateActionPiece(4,3);
 		this.DrawGameTiles();
 		
@@ -267,6 +272,7 @@ var Game = Class.create({
 	}/* */,
 	// Debugging and Testing Functions 
 	GenerateTestGrid : function(){
+
 		var x = 0;
 		var y = 0;
 		for(var i = 0; i < (this.defaultSettings.gameRows); i++){
@@ -282,7 +288,6 @@ var Game = Class.create({
 		
 	},
 	PrintGameBoardtoConsole : function(){
-		
 		var lineout;
 		for(var i = 0; i < gameBoard.length; i++){
 			lineout = '';
