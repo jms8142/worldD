@@ -19,7 +19,7 @@ var Game = Class.create({
 	MoveDirection : { LEFT : 0, DOWN : 1, RIGHT : 2},
 
 
-	initialize : function (_gameBoard){
+	initialize : function (_gameBoard,_startingPiece){
 		_canvas = document.getElementById('canvas');
 		if (_canvas && _canvas.getContext) {
 			_canvasContext = _canvas.getContext('2d');
@@ -35,7 +35,7 @@ var Game = Class.create({
 		else
 			this.CreateTileMap();
 
-		this.CreateActionPiece(4,3);
+		this.CreateActionPiece(4,3,_startingPiece);
 		this.DrawGameTiles();
 		
 
@@ -44,14 +44,7 @@ var Game = Class.create({
 
 		//register events
 		$(document).observe('keydown',this.KeyGrab.bind(this));
-		//console.info(this.BehaviorRules[0]);
-		//setup Behavior Rules
-		/*this.BehaviorRules[1].addReactors([1]);
-		this.BehaviorRules[5].addReactors([5,10]);
-		this.BehaviorRules[10].addReactors([5,10]);
-		this.BehaviorRules[25].addReactors([25]);
-		*/
-
+		
 	},
 
 	Update : function(){
@@ -123,10 +116,14 @@ var Game = Class.create({
 		this.Draw();
 
 	},
-	CreateActionPiece : function(x,y) {
+	CreateActionPiece : function(x,y,val) {
 		actionTile = new GameTile(this.LocationMapper({ x : x, y : y, mapX : x, mapY : y}));
-		var randomVal = Math.floor(Math.random()*(this.defaultSettings.currencyValues.length-1));
-		actionTile.setValue(randomVal+1);					
+		if(val === undefined) 
+			var singlePieceVal = Math.floor(Math.random()*(this.defaultSettings.currencyValues.length-1));
+		else
+			var singlePieceVal = val;
+
+		actionTile.setValue(singlePieceVal+1);					
 		gameBoard[y][x] = { val : actionTile.getValue(), active : true };
 	},
 	LocationMapper : function(MapCoordinates) {
@@ -180,6 +177,10 @@ var Game = Class.create({
 		//if tile has reached another tile (or bottom) - freeze and create a new one
 		if(this.LookAhead(actionTile.getLocation())){
 			if(this.Reactive(actionTile.getLocation())){
+
+
+
+
 				console.info('start some animation');
 			} else {
 				gameBoard[actionTile.getLocation().y][actionTile.getLocation().x].active = false;
@@ -239,25 +240,30 @@ var Game = Class.create({
 		//console.info(currentLocation);
 		//console.info('current val: ' + this.defaultSettings.currencyValues[gameBoard[currentLocation.y][currentLocation.x].val]);
 		var thisBehavior = new Behavior(this.defaultSettings.currencyValues[actionValue]);
-		//thisBehavior.
-		//console.info(searchVectors.length);
-		//for(var i = 0; i < searchVectors.length; i++){
-			var i = 1;
+		
+		for(var i = 0; i < searchVectors.length; i++){
+			console.info('starting position ' + searchVectors[i]);	
+			console.info('uno x:' + currentLocation.x + ' y:' + currentLocation.y);
 			var nextLocation = this.TransformLocation(currentLocation,searchVectors[i]);
+			console.info('doc x:' + currentLocation.x + ' y:' + currentLocation.y);
 			var nextLocationVal = gameBoard[nextLocation.y][nextLocation.x].val;
 			var nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
 
+			console.info('nextLocationPosition: x:' + nextLocation.x + ' y:' + nextLocation.y);
+		
 			console.info('nextLocationVal: ' + nextLocationVal);
+			//console.info('checking ' + searchVectors[i]);
+
 
 			while(this.LegalRealm(nextLocation) && 
 					nextLocationVal > 0 && 
 					thisBehavior.hasReaction(nextLocationCurrencyVal)) 
 				{
 
-				//console.info('searching' + searchVectors[i]);
-				//console.info('next location:');
+				console.info('searching ' + searchVectors[i]);
+				console.info('next location:');
 				//console.info(nextLocation);
-				//console.info(gameBoard[nextLocation.y][nextLocation.x].val);
+				console.info(gameBoard[nextLocation.y][nextLocation.x].val);
 				nextLocation = this.TransformLocation(nextLocation,searchVectors[i]);
 				
 				if(this.LegalRealm(nextLocation)) {
@@ -266,9 +272,9 @@ var Game = Class.create({
 				}
 				
 			}
+		}
 
-
-		return false;
+		return thisBehavior.getAnimationStart();
 	}/* */,
 	// Debugging and Testing Functions 
 	GenerateTestGrid : function(){

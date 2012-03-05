@@ -45,7 +45,7 @@ var Behavior = Class.create({
 	},
 
 	initialize : function (val){
-		console.info('new behavior created with ' + val);
+		//console.info('new behavior created with ' + val);
 		this.value = val;
 		this.chain = [];
 		this.chain[0] = this.value;
@@ -60,7 +60,9 @@ var Behavior = Class.create({
 	addReactors : function(reactors){
 		this.reactors = reactors;
 	},
-
+	getAnimationStart : function(){
+		return this.startAnimation;
+	},
 	hasReaction : function(val){
 		//console.info('in hasReaction with ' + val);
 
