@@ -17,6 +17,7 @@ var Game = Class.create({
 	gameBoard : null,
 	actionTile : null,
 	MoveDirection : { LEFT : 0, DOWN : 1, RIGHT : 2},
+	actionBehavior : null,
 
 
 	initialize : function (_gameBoard,_startingPiece){
@@ -176,12 +177,8 @@ var Game = Class.create({
 		
 		//if tile has reached another tile (or bottom) - freeze and create a new one
 		if(this.LookAhead(actionTile.getLocation())){
-			if(this.Reactive(actionTile.getLocation())){
-
-
-
-
-				console.info('start some animation');
+			if(this.Reactive(actionTile.getLocation())){ //A reaction has been detected - start cleaning up tiles
+				this.StartBoardTransition();
 			} else {
 				gameBoard[actionTile.getLocation().y][actionTile.getLocation().x].active = false;
 				this.CreateActionPiece(4,0);
@@ -240,7 +237,7 @@ var Game = Class.create({
 		//console.info('this location:');
 		//console.info(currentLocation);
 		//console.info('current val: ' + this.defaultSettings.currencyValues[gameBoard[currentLocation.y][currentLocation.x].val]);
-		var thisBehavior = new Behavior(this.defaultSettings.currencyValues[actionValue]);
+		this.actionBehavior = new Behavior(this.defaultSettings.currencyValues[actionValue],currentLocation);
 		
 		for(var i = 0; i < searchVectors.length; i++){
 			//console.info('starting position ' + searchVectors[i]);	
@@ -256,7 +253,7 @@ var Game = Class.create({
 
 			while(this.LegalRealm(nextLocation) && 
 					nextLocationVal > 0 && 
-					thisBehavior.hasReaction(nextLocationCurrencyVal)) 
+					this.actionBehavior.hasReaction(nextLocationCurrencyVal,nextLocation)) 
 				{
 
 				//console.info('searching ' + searchVectors[i]);
@@ -273,8 +270,29 @@ var Game = Class.create({
 			}
 		}
 
-		return thisBehavior.getAnimationStart();
-	}/* */,
+		return this.actionBehavior.getAnimationStart();
+	},
+	StartBoardTransition : function(){
+		var tileGroup = this.actionBehavior.getChain();
+		//console.info(tileGroup);
+		for(i = tileGroup.length - 1; i > 0; i--){
+			gameBoard[tileGroup[i].y][tileGroup[i].x] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
+		}
+	
+		gameBoard[tileGroup[0].y][tileGroup[0].x] = { val : this.actionBehavior.getUpgradedValue(), active : false };
+		
+		//now check for any suspended tiles - right now just deal with the action (this may be all we need)
+		console.info(actionTile.getLocation());
+		if(!this.LookAhead(actionTile.getLocation())){
+			console.info('starting some animation');
+			WDAnimation.animateBlock(actionTile.getLocation(),this.TransformLocation(actionTile.getLocation(),this.MoveDirection.DOWN));
+		}
+
+
+		this.Update();
+
+				
+	} /* */,
 	// Debugging and Testing Functions 
 	GenerateTestGrid : function(){
 

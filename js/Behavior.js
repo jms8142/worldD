@@ -9,31 +9,37 @@ var Behavior = Class.create({
 		minThreshold : 2 //when to start looking for patterns
 		,maxSize : 8
 	},
+	upgradedValue : 0,
 	patternMatrix : 
 		[{
 			pattern : /^1{5}$/,
 			name : "penny to nickel",
-			lookahead: false
+			lookahead: false,
+			newVal : 2
 		},
 		{
 			pattern : /^5{2}$/,
 			name : "nickel to dime",
-			lookahead : true
+			lookahead : true,
+			newVal : 3
 		},
 		{
 			pattern : /^5{5}$/,
 			name : "nickel to quarter",
-			lookahead : false
+			lookahead : false,
+			newVal : 4
 		},
 		{
 			pattern : /^(10105|51010|10510)$/,
 			name : "2 dimes and a nickel to quarter",
-			lookahead : false
+			lookahead : false,
+			newVal : 4
 		},
 		{
 			pattern : /^(25){4}$/,
 			name : "4 quarters to a dollar",
-			lookahead : false
+			lookahead : false,
+			newVal : 5
 		}]
 
 	,
@@ -44,11 +50,11 @@ var Behavior = Class.create({
 		25 : [25]
 	},
 
-	initialize : function (val){
+	initialize : function (val,coords){
 		//console.info('new behavior created with ' + val);
 		this.value = val;
 		this.chain = [];
-		this.chain[0] = this.value;
+		this.chain[0] = { val : this.value, x : coords.x, y : coords.y };
 
 	},
 	setValue : function(val){
@@ -63,36 +69,49 @@ var Behavior = Class.create({
 	getAnimationStart : function(){
 		return this.startAnimation;
 	},
-	hasReaction : function(val){
-		console.info('in hasReaction with ' + val);
+	getChain : function(){
+		return this.chain;
+	},
+	getUpgradedValue : function(){
+		return this.upgradedValue;
+	},
+	hasReaction : function(val,location){
+		//console.info('in hasReaction with ' + val);
 
 		for(var i = 0; i < this.reactorDefinition[this.value].length; i++){
 			//console.info('looking at ' + this.reactorDefinition[this.value][i]);
 			if(val === this.reactorDefinition[this.value][i]) {
-				this.addCombo(val);
+				this.addCombo(val,location);
 				return true;
 			}
 		}
 		
 		return false;
 	},
-	addCombo : function(val){
-		this.chain.push(val);
+	addCombo : function(val,location){
+
+		this.chain.push({ val : val, x : location.x, y : location.y});
 		if(this.Validate()){
-			console.info(this.chain.toString() + ' means money changing!');
+			console.info('money changing!');
 			this.startAnimation = true;
 		}
 	},
 	Validate : function(){
 		if(this.chain.length >= 2 && this.chain.length < this.rules.maxSize){
-			//console.info(this.chain.toString());
-			var _string = this.chain.toString().replace(/\,/g,'');
-			
+			//console.info(this.chain);
+			var _string = '';
+			for(i = 0; i < this.chain.length; i++){
+				_string += this.chain[i].val;
+			}
+
+			//console.info(_string);
+		
 			//console.info('starting pattern search for ' + _string);
 			for(i = 0;i < this.patternMatrix.length; i++){
 				//console.info('trying' + this.patternMatrix[i].pattern);
 				var patt= this.patternMatrix[i].pattern; 
 				if(patt.test(_string)){
+					this.upgradedValue = this.patternMatrix[i].newVal;
 					return true;
 				}
 			}

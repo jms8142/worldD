@@ -12,6 +12,7 @@ var GameTile = Class.create(DrawableElement,{
 	tileFill : 'rgb(201,227,230)',
 	textAdjust : [0,4,4,8,8],
 	defaultCoinColor : 'rgb(136,181,180)',
+	currencyValues : [-1,1,5,10,25],
 	initialize : function(coords){
 		this._x = coords.x;
 		this._y = coords.y;
