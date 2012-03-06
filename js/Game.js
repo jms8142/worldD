@@ -218,19 +218,20 @@ var Game = Class.create({
 		return false;
 	},
 	TransformLocation : function(coords,direction){
+		var _coords = { x : coords.x, y : coords.y }; //make sure the function modifies by value, not ref
 		switch (direction){
 			case this.MoveDirection.DOWN :
-				coords.y += 1;
+				_coords.y += 1;
 				break;
 			case this.MoveDirection.LEFT :
-				coords.x -= 1;
+				_coords.x -= 1;
 				break;
 			case this.MoveDirection.RIGHT :
-				coords.x += 1;
+				_coords.x += 1;
 				break;
 		}
 
-		return coords;
+		return _coords;
 	},
 	Reactive : function(currentLocation){
 		console.clear();
@@ -242,16 +243,14 @@ var Game = Class.create({
 		var thisBehavior = new Behavior(this.defaultSettings.currencyValues[actionValue]);
 		
 		for(var i = 0; i < searchVectors.length; i++){
-			console.info('starting position ' + searchVectors[i]);	
-			console.info('uno x:' + currentLocation.x + ' y:' + currentLocation.y);
+			//console.info('starting position ' + searchVectors[i]);	
 			var nextLocation = this.TransformLocation(currentLocation,searchVectors[i]);
-			console.info('doc x:' + currentLocation.x + ' y:' + currentLocation.y);
 			var nextLocationVal = gameBoard[nextLocation.y][nextLocation.x].val;
 			var nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
 
-			console.info('nextLocationPosition: x:' + nextLocation.x + ' y:' + nextLocation.y);
+			//console.info('nextLocationPosition: x:' + nextLocation.x + ' y:' + nextLocation.y);
 		
-			console.info('nextLocationVal: ' + nextLocationVal);
+			//console.info('nextLocationVal: ' + nextLocationVal);
 			//console.info('checking ' + searchVectors[i]);
 
 
@@ -260,10 +259,10 @@ var Game = Class.create({
 					thisBehavior.hasReaction(nextLocationCurrencyVal)) 
 				{
 
-				console.info('searching ' + searchVectors[i]);
-				console.info('next location:');
+				//console.info('searching ' + searchVectors[i]);
+				//console.info('next location:');
 				//console.info(nextLocation);
-				console.info(gameBoard[nextLocation.y][nextLocation.x].val);
+				//console.info(gameBoard[nextLocation.y][nextLocation.x].val);
 				nextLocation = this.TransformLocation(nextLocation,searchVectors[i]);
 				
 				if(this.LegalRealm(nextLocation)) {

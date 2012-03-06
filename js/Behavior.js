@@ -64,7 +64,7 @@ var Behavior = Class.create({
 		return this.startAnimation;
 	},
 	hasReaction : function(val){
-		//console.info('in hasReaction with ' + val);
+		console.info('in hasReaction with ' + val);
 
 		for(var i = 0; i < this.reactorDefinition[this.value].length; i++){
 			//console.info('looking at ' + this.reactorDefinition[this.value][i]);
@@ -88,7 +88,7 @@ var Behavior = Class.create({
 			//console.info(this.chain.toString());
 			var _string = this.chain.toString().replace(/\,/g,'');
 			
-			console.info('starting pattern search for ' + _string);
+			//console.info('starting pattern search for ' + _string);
 			for(i = 0;i < this.patternMatrix.length; i++){
 				//console.info('trying' + this.patternMatrix[i].pattern);
 				var patt= this.patternMatrix[i].pattern; 
