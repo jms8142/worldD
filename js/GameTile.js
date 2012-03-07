@@ -23,8 +23,14 @@ var GameTile = Class.create(DrawableElement,{
 	setHeight : function(_height){
 		this._height = _height;
 	},
+	getHeight : function(){
+		return this._height;
+	},
 	setWidth : function(_width){
 		this._width = _width;
+	},
+	getWidth : function(){
+		return this._width;
 	},
 	setValue : function(val){		
 		this._val = val;
@@ -42,6 +48,9 @@ var GameTile = Class.create(DrawableElement,{
 		this.mapX = coords.x;
 		this.mapY = coords.y;
 		this.update();
+	},
+	getCanvasLocation : function(){
+		return { x : this._x, y : this._y };
 	},
 	setStroke : function(color){
 		this.tileStroke = color;
@@ -76,9 +85,5 @@ var GameTile = Class.create(DrawableElement,{
 
 		_canvasContext.fillText(this._text, textX, textY);
 		
-	},
-	update : function(){
-		//_canvasContext.lineWidth = 1;
-		//_canvasContext.clearRect(this._x,this._y,this._width,this._height);
 	}
 });

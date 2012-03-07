@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>World Denomination</title>
+<link rel="stylesheet" href="/css/styles.css" type="text/css"/>
+<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+<script type='text/javascript' src='/js/lib/prototype.js'></script>
+<script type='text/javascript' src='/js/DrawableElement.js'></script>
+<script type='text/javascript' src='/js/GameTile.js'></script>
+
+<script>
+
+var x = 0;
+
+var tileMap =  new Array();
+var _canvas = null;
+var _canvasContext = null;
+var _canvasBufferContext = null;
+var _gameTile = null;
+var mask = {};
+var _timer;
+
+jQuery(function(){
+	/*
+	jQuery('#btn_start').click(function(e){
+		e.preventDefault();
+		setInterval(loop,100);
+	});
+	
+	function loop(){
+		console.info('[' + x + '] loop' )
+			x++;
+	}
+	*/
+
+
+	_canvas = document.getElementById('canvas');
+	_canvasContext = _canvas.getContext('2d');
+	_canvasBuffer = document.createElement('canvas');
+	_canvasBuffer.width = _canvas.width;
+	_canvasBuffer.height = _canvas.height;
+	_canvasBufferContext = _canvasBuffer.getContext('2d');
+
+	//create tile
+	_gameTile = new GameTile({ x : 50, y : 50, mapX : 0, mapY : 0 });
+	_gameTile.setHeight(50);
+	_gameTile.setWidth(50);
+	_gameTile.setValue(1);
+	_gameTile.setText(5);
+
+	_gameTile.render(_canvasBufferContext);
+	_canvasContext.drawImage(_canvasBuffer, 0, 0);
+
+
+	jQuery('#btn_moveup').click(function(e){
+		e.preventDefault();
+
+		mask.x = _gameTile.getCanvasLocation().x;
+		mask.y = _gameTile.getCanvasLocation().y;
+		mask.fillColor = 'rgb(255,255,255)';
+		mask.width = _gameTile.getWidth();
+		mask.height = _gameTile.getHeight();
+
+		console.info(mask);
+
+		_draw(mask,_canvasBufferContext);
+
+	});
+
+
+});
+
+
+function loop(_cContext){
+
+}
+
+function _draw(obj,canvasbuffer){
+	console.info(obj);
+	canvasbuffer.fillStyle = obj.fillColor;
+	canvasbuffer.fillRect(obj.x,obj.y,obj.width,obj.height);
+	_canvasContext.drawImage(canvasbuffer,0,0);
+}
+
+
+</script>
+
+</head>
+
+<body>
+Animation Tests<br/>
+<canvas id="canvas" width="150" height="150">
+Canvas not supported.
+</canvas><br/><br/>
+<br/>
+<input type="button" value="Move Up" id="btn_moveup"/>
+<input type="button" value="Move Down" id="btn_movedown"/>
+<input type="button" value="Move Left" id="btn_moveleft"/>
+<input type="button" value="Move Right" id="btn_moveright"/>
+</body>
+</html>
