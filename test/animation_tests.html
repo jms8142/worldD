@@ -56,15 +56,16 @@ jQuery(function(){
 	jQuery('#btn_moveup').click(function(e){
 		e.preventDefault();
 
-		mask.x = _gameTile.getCanvasLocation().x;
-		mask.y = _gameTile.getCanvasLocation().y;
+		mask.x = _gameTile.getCanvasLocation().x - 1;
+		mask.y = _gameTile.getCanvasLocation().y + _gameTile.getHeight();
 		mask.fillColor = 'rgb(255,255,255)';
-		mask.width = _gameTile.getWidth();
-		mask.height = _gameTile.getHeight();
-
+		mask.width = _gameTile.getWidth() + 2;
+		mask.endHeight = _gameTile.getHeight() + 2;
+		mask.startHeight = 1;
 		console.info(mask);
 
-		_draw(mask,_canvasBufferContext);
+		
+		_timer = setInterval(loop,10);
 
 	});
 
@@ -73,14 +74,19 @@ jQuery(function(){
 
 
 function loop(_cContext){
-
+	_draw(mask,_canvasBufferContext);
+	console.info(mask.startHeight);
+	mask.startHeight += 2;
+	mask.y -= 2;
+	if(mask.startHeight > mask.endHeight)
+		window.clearInterval(_timer);
 }
 
 function _draw(obj,canvasbuffer){
-	console.info(obj);
+	//console.info(obj);
 	canvasbuffer.fillStyle = obj.fillColor;
-	canvasbuffer.fillRect(obj.x,obj.y,obj.width,obj.height);
-	_canvasContext.drawImage(canvasbuffer,0,0);
+	canvasbuffer.fillRect(obj.x,obj.y,obj.width,obj.startHeight);
+	_canvasContext.drawImage(_canvasBuffer,0,0);
 }
 
 
