@@ -20,6 +20,23 @@ var _canvasBufferContext = null;
 var _gameTile = null;
 var mask = {};
 var _timer;
+var testSettings = {
+	blockHeight : 100,
+	blockWidth : 100,
+	maskFill : 'rgb(255,255,255)',
+	maskStrokeWidth : 1,
+	animationSpeed : 10
+}
+
+var grabX = 0;
+var grabY = 0;
+var grabWidth =  0;
+var grabHeight = 0;
+var testplacementX = 0;
+var testplacementY = 0;
+var imgd = null;
+var NewSectionSlice = 2;
+
 
 jQuery(function(){
 	/*
@@ -44,8 +61,8 @@ jQuery(function(){
 
 	//create tile
 	_gameTile = new GameTile({ x : 50, y : 50, mapX : 0, mapY : 0 });
-	_gameTile.setHeight(50);
-	_gameTile.setWidth(50);
+	_gameTile.setHeight(testSettings.blockHeight);
+	_gameTile.setWidth(testSettings.blockWidth);
 	_gameTile.setValue(1);
 	_gameTile.setText(5);
 
@@ -55,17 +72,18 @@ jQuery(function(){
 
 	jQuery('#btn_moveup').click(function(e){
 		e.preventDefault();
-
+		/*
 		mask.x = _gameTile.getCanvasLocation().x - 1;
 		mask.y = _gameTile.getCanvasLocation().y + _gameTile.getHeight();
-		mask.fillColor = 'rgb(255,255,255)';
+		mask.fillColor = testSettings.maskFill;
 		mask.width = _gameTile.getWidth() + 2;
 		mask.endHeight = _gameTile.getHeight() + 2;
 		mask.startHeight = 1;
 		console.info(mask);
-
+		*/
+		copyImage();
 		
-		_timer = setInterval(loop,10);
+		_timer = setInterval(loop,testSettings.animationSpeed);
 
 	});
 
@@ -73,19 +91,56 @@ jQuery(function(){
 });
 
 
-function loop(_cContext){
-	_draw(mask,_canvasBufferContext);
-	console.info(mask.startHeight);
-	mask.startHeight += 2;
-	mask.y -= 2;
-	if(mask.startHeight > mask.endHeight)
+function loop(){
+	
+	_draw();
+	//console.info(NewSectionSlice);
+	
+	NewSectionSlice += 2;
+	
+	if(NewSectionSlice > _gameTile.getHeight()) {
 		window.clearInterval(_timer);
+		clearArea();
+	}
 }
 
-function _draw(obj,canvasbuffer){
-	//console.info(obj);
-	canvasbuffer.fillStyle = obj.fillColor;
-	canvasbuffer.fillRect(obj.x,obj.y,obj.width,obj.startHeight);
+function copyImage(){	
+	grabX = _gameTile.getCanvasLocation().x-1;
+	grabY = _gameTile.getCanvasLocation().y-1;
+	grabWidth =  _gameTile.getWidth()+2;
+	grabHeight = _gameTile.getHeight()+2;
+	testplacementX = _gameTile.getCanvasLocation().x + (_gameTile.getWidth()+10);
+	testplacementY = _gameTile.getCanvasLocation().y-1;
+
+	imgd = _canvasBufferContext.getImageData(grabX, grabY, grabWidth, grabHeight);
+
+	_canvasBufferContext.putImageData(imgd,testplacementX,testplacementY);
+
+	_canvasContext.drawImage(_canvasBuffer,0,0);
+	
+	//now run through some kind of transition effect loop
+
+
+}
+
+function _draw(){
+	console.info(NewSectionSlice);
+	//mask the area first
+	clearArea()
+
+	//draw pieces
+	//var imageSlice = _canvasBufferContext.getImageData(imgd);
+	//var imageSlice = _canvasBufferContext.getImageData(grabX,grabY + NewSectionSlice,grabWidth,grabHeight - NewSectionSlice);
+
+	_canvasBufferContext.putImageData(imageSlice,testplacementX,testplacementY);
+
+	_canvasContext.drawImage(_canvasBuffer,0,0);
+	
+}
+
+function clearArea(){
+	_canvasBufferContext.fillStyle = testSettings.maskFill;
+	_canvasBufferContext.fillRect(testplacementX,testplacementY,grabWidth,grabHeight);
 	_canvasContext.drawImage(_canvasBuffer,0,0);
 }
 
@@ -96,7 +151,7 @@ function _draw(obj,canvasbuffer){
 
 <body>
 Animation Tests<br/>
-<canvas id="canvas" width="150" height="150">
+<canvas id="canvas" width="300" height="300">
 Canvas not supported.
 </canvas><br/><br/>
 <br/>
@@ -104,5 +159,6 @@ Canvas not supported.
 <input type="button" value="Move Down" id="btn_movedown"/>
 <input type="button" value="Move Left" id="btn_moveleft"/>
 <input type="button" value="Move Right" id="btn_moveright"/>
+
 </body>
 </html>

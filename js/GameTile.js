@@ -7,6 +7,7 @@ var GameTile = Class.create(DrawableElement,{
 	_width : 25,
 	_val : 1,
 	_text : '',
+	strokeWidth : 1,
 	colorMap : ['','rgb(183,129,26)','rgb(136,181,180)','rgb(136,181,180)','rgb(136,181,180)'],
 	tileStroke : 'rgb(43,136,148',
 	tileFill : 'rgb(201,227,230)',
@@ -46,8 +47,7 @@ var GameTile = Class.create(DrawableElement,{
 	},
 	setLocation : function(coords){
 		this.mapX = coords.x;
-		this.mapY = coords.y;
-		this.update();
+		this.mapY = coords.y;		
 	},
 	getCanvasLocation : function(){
 		return { x : this._x, y : this._y };
@@ -66,7 +66,7 @@ var GameTile = Class.create(DrawableElement,{
 		_canvasContext.fillRect(this._x,this._y,this._width,this._height);
 
 		_canvasContext.strokeStyle = this.tileStroke;
-		_canvasContext.lineWidth = 2;
+		_canvasContext.lineWidth = this.strokeWidth;
 		_canvasContext.strokeRect(this._x,this._y,this._width,this._height);
 
 		/* Print Text */
