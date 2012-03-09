@@ -50,7 +50,7 @@ jQuery(function(){
 
 	createTile();
 	
-	jQuery('#btn_moveup').click(function(e){ _timer = setInterval("loop(" + MoveDirection.UP + ")",testSettings.animationSpeed); });
+	jQuery('#btn_moveup').click(function(e){ loop(MoveDirection.UP); /*_timer = setInterval("loop(" + MoveDirection.UP + ")",testSettings.animationSpeed);*/ });
 	jQuery('#btn_movedown').click(function(e){ _timer = setInterval("loop(" + MoveDirection.DOWN + ")",testSettings.animationSpeed); });
 	jQuery('#btn_moveleft').click(function(e){ _timer = setInterval("loop(" + MoveDirection.LEFT + ")",testSettings.animationSpeed); });
 	jQuery('#btn_moveright').click(function(e){ _timer = setInterval("loop(" + MoveDirection.RIGHT + ")",testSettings.animationSpeed); });
@@ -84,7 +84,7 @@ function createTile(){
 
 function loop(direction){
 	
-	_draw();
+	
 	//console.info(direction);
 	switch (direction){
 		case this.MoveDirection.UP :
@@ -104,9 +104,9 @@ function loop(direction){
 	NewCaptureArea.x = _gameTile.getCanvasLocation().x - 1;
 	NewCaptureArea.y = _gameTile.getCanvasLocation().y - NewSectionSlice;
 
+	_draw();
 
-
-	
+	//console.info(NewSectionSlice);
 	
 	if(NewSectionSlice > imgd.height) {
 		window.clearInterval(_timer);
@@ -117,6 +117,9 @@ function loop(direction){
 function _draw(){
 	//mask the area first
 	clearArea();
+	//console.info(imgd.height - NewSectionSlice);
+	
+	//write some error catching here
 
 	_canvasBufferContext.putImageData(imgd,
 									NewCaptureArea.x,
