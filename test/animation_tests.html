@@ -25,7 +25,8 @@ var testSettings = {
 	blockWidth : 100,
 	maskFill : 'rgb(255,255,255)',
 	maskStrokeWidth : 1,
-	animationSpeed : 10
+	animationSpeed : 10,
+	moveIncrement : 4
 }
 var MoveDirection = { UP : 0, DOWN : 1, LEFT : 2, RIGHT : 4};
 
@@ -50,10 +51,10 @@ jQuery(function(){
 
 	createTile();
 	
-	jQuery('#btn_moveup').click(function(e){ loop(MoveDirection.UP); /*_timer = setInterval("loop(" + MoveDirection.UP + ")",testSettings.animationSpeed);*/ });
-	jQuery('#btn_movedown').click(function(e){ _timer = setInterval("loop(" + MoveDirection.DOWN + ")",testSettings.animationSpeed); });
-	jQuery('#btn_moveleft').click(function(e){ _timer = setInterval("loop(" + MoveDirection.LEFT + ")",testSettings.animationSpeed); });
-	jQuery('#btn_moveright').click(function(e){ _timer = setInterval("loop(" + MoveDirection.RIGHT + ")",testSettings.animationSpeed); });
+	jQuery('#btn_moveup').click(function(e){ preLoop(MoveDirection.UP); });
+	jQuery('#btn_movedown').click(function(e){ preLoop(MoveDirection.DOWN); });
+	jQuery('#btn_moveleft').click(function(e){ preLoop(MoveDirection.LEFT); });
+	jQuery('#btn_moveright').click(function(e){ preLoop(MoveDirection.RIGHT); });
 
 
 });
@@ -81,28 +82,51 @@ function createTile(){
 	}
 }
 
+function preLoop(direction){
+	//some static settings that don't need to be assigned in the loop
+	if(direction === this.MoveDirection.UP || direction === this.MoveDirection.DOWN){
+		NewCaptureArea.xPlacement = _gameTile.getCanvasLocation().x - 1;
+		NewCaptureArea.width = imgd.width;
+		NewCaptureArea.x = 0;		
+	} else { //right or left
+		NewCaptureArea.yPlacement = _gameTile.getCanvasLocation().y - 1;
+		NewCaptureArea.height = imgd.height;
+		NewCaptureArea.y = 0;	
+	}
+
+	_timer = setInterval("loop(" + direction + ")",testSettings.animationSpeed);
+}
+
 
 function loop(direction){
 	
-	
+	NewSectionSlice += testSettings.moveIncrement;
 	//console.info(direction);
 	switch (direction){
-		case this.MoveDirection.UP :
-			NewSectionSlice += 2;
+		case this.MoveDirection.UP :	
+			NewCaptureArea.yPlacement = _gameTile.getCanvasLocation().y  - NewSectionSlice;			
+			NewCaptureArea.height = imgd.height - NewSectionSlice;
+			NewCaptureArea.y = NewSectionSlice;
 			break;
-		case this.MoveDirection.DOWN :		
-			NewSectionSlice -= 2;
+		case this.MoveDirection.DOWN :
+			NewCaptureArea.yPlacement = _gameTile.getCanvasLocation().y + NewSectionSlice;
+			NewCaptureArea.height = imgd.height - NewSectionSlice;
+			NewCaptureArea.y = 0;		
 			break;
 		case this.MoveDirection.LEFT :		
-			NewSectionSlice -= 2;
+			NewCaptureArea.xPlacement = _gameTile.getCanvasLocation().x - NewSectionSlice;
+			NewCaptureArea.width = imgd.width - NewSectionSlice;
+			NewCaptureArea.x = NewSectionSlice;
 			break;
 		case this.MoveDirection.RIGHT :		
-			NewSectionSlice -= 2;
+			NewCaptureArea.xPlacement = _gameTile.getCanvasLocation().x + NewSectionSlice;
+			NewCaptureArea.width = imgd.width - NewSectionSlice;
+			NewCaptureArea.x = 0;	
 			break;
 	}
 
-	NewCaptureArea.x = _gameTile.getCanvasLocation().x - 1;
-	NewCaptureArea.y = _gameTile.getCanvasLocation().y - NewSectionSlice;
+	
+	
 
 	_draw();
 
@@ -117,26 +141,30 @@ function loop(direction){
 function _draw(){
 	//mask the area first
 	clearArea();
-	//console.info(imgd.height - NewSectionSlice);
 	
 	//write some error catching here
-
-	_canvasBufferContext.putImageData(imgd,
-									NewCaptureArea.x,
-									NewCaptureArea.y,
-									0,
-									NewSectionSlice,
-									imgd.width,
-									imgd.height - NewSectionSlice
-									);
-	
-	_canvasContext.drawImage(_canvasBuffer,0,0);
-	
+	try {
+		_canvasBufferContext.putImageData(imgd,
+										NewCaptureArea.xPlacement,
+										NewCaptureArea.yPlacement,
+										NewCaptureArea.x,
+										NewCaptureArea.y,
+										NewCaptureArea.width,
+										NewCaptureArea.height
+										);
+		
+		_canvasContext.drawImage(_canvasBuffer,0,0);
+	} 
+	catch(err){
+		console.info(err.message);
+		console.info(NewCaptureArea);
+		window.clearInterval(_timer);
+	}
 }
 
 function clearArea(){
 	_canvasBufferContext.fillStyle = testSettings.maskFill;
-	_canvasBufferContext.fillRect(grabX,grabY,grabWidth+1,grabHeight);
+	_canvasBufferContext.fillRect(grabX,grabY,grabWidth+1,grabHeight+1);
 }
 
 
