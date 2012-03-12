@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>World Denomination</title>
+<link rel="stylesheet" href="/css/styles.css" type="text/css"/>
+<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+<script type='text/javascript' src='/js/lib/prototype.js'></script>
+<script type='text/javascript' src='/js/DrawableElement.js'></script>
+<script type='text/javascript' src='/js/GameTile.js'></script>
+
+<script>
+
+/*
+www.html5canvastutorials.com/advanced/html5-canvas-animation-stage/
+*/
+
+window.requestAnimFrame = (function(callback){
+			console.info('requestAnimFrame');
+		    return window.requestAnimationFrame ||
+		    window.webkitRequestAnimationFrame ||
+		    window.mozRequestAnimationFrame ||
+		    window.oRequestAnimationFrame ||
+		    window.msRequestAnimationFrame ||
+		    function(callback){
+		        window.setTimeout(callback, 1000 / 60);
+		    };
+})();
+
+function animate(lastTime, myRectangle){
+	var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+ 
+    // update
+    var date = new Date();
+    var time = date.getTime();
+    var timeDiff = time - lastTime;
+    var linearSpeed = 100; // pixels / second
+    var linearDistEachFrame = linearSpeed * timeDiff / 1000;
+    var currentX = myRectangle.x;
+ 
+    if (currentX < canvas.width - myRectangle.width - myRectangle.borderWidth / 2) {
+        var newX = currentX + linearDistEachFrame;
+        myRectangle.x = newX;
+    }
+    lastTime = time;
+ 	
+ 
+    // clear
+    context.clearRect(0, 0, canvas.width, canvas.height);
+ 
+    // draw
+    context.beginPath();
+    context.rect(myRectangle.x, myRectangle.y, myRectangle.width, myRectangle.height);
+ 
+    context.fillStyle = "#8ED6FF";
+    context.fill();
+    context.lineWidth = myRectangle.borderWidth;
+    context.strokeStyle = "black";
+    context.stroke();
+ 
+    // request new frame
+    requestAnimFrame(function(){
+    	console.info('here');
+         animate(lastTime, myRectangle);
+    });
+
+}
+
+
+
+jQuery(function(){
+	 var myRectangle = {
+        x: 0,
+        y: 50,
+        width: 100,
+        height: 50,
+        borderWidth: 5
+    };
+ 
+    var date = new Date();
+    var time = date.getTime();
+    animate(time, myRectangle);
+		
+});
+
+</script>
+
+</head>
+
+<body>
+Animation Tests<br/>
+<canvas id="canvas" width="300" height="300">
+Canvas not supported.
+</canvas><br/><br/>
+<br/>
+<input type="button" value="Move Up" id="btn_moveup"/>
+<input type="button" value="Move Down" id="btn_movedown"/>
+<input type="button" value="Move Left" id="btn_moveleft"/>
+<input type="button" value="Move Right" id="btn_moveright"/>
+
+</body>
+</html>

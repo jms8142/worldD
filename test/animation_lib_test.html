@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>World Denomination</title>
+<link rel="stylesheet" href="/css/styles.css" type="text/css"/>
+<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+<script type='text/javascript' src='/js/lib/prototype.js'></script>
+<script type='text/javascript' src='/js/DrawableElement.js'></script>
+<script type='text/javascript' src='/js/GameTile.js'></script>
+<script type='text/javascript' src='/js/Animation.js'></script>
+
+<script>
+var imgd = null;
+
+var testSettings = {
+	blockHeight : 100,
+	blockWidth : 100,
+	maskFill : 'rgb(255,255,255)',
+	maskStrokeWidth : 1,
+	animationSpeed : 10,
+	moveIncrement : 4
+}
+
+//var MoveDirection = { UP : 0, DOWN : 1, LEFT : 2, RIGHT : 4};
+
+
+jQuery(function(){
+
+	_canvas = document.getElementById('canvas');
+	_canvasContext = _canvas.getContext('2d');
+	_canvasBuffer = document.createElement('canvas');
+	_canvasBuffer.width = _canvas.width;
+	_canvasBuffer.height = _canvas.height;
+	_canvasBufferContext = _canvasBuffer.getContext('2d');
+
+	createTile();
+
+
+
+	jQuery('#btn_moveup').click(function(e){ move(WDAnimation.Direction.UP); });
+	jQuery('#btn_movedown').click(function(e){ move(WDAnimation.Direction.DOWN); });
+	jQuery('#btn_moveleft').click(function(e){ move(WDAnimation.Direction.LEFT); });
+	jQuery('#btn_moveright').click(function(e){ move(WDAnimation.Direction.RIGHT); });
+	
+});
+
+
+
+function createTile(){
+	//create tile
+	_gameTile = new GameTile({ x : 50, y : 50, mapX : 0, mapY : 0 });
+	_gameTile.setHeight(testSettings.blockHeight);
+	_gameTile.setWidth(testSettings.blockWidth);
+	_gameTile.setValue(1);
+	_gameTile.setText(5);
+
+	_gameTile.render(_canvasBufferContext);
+	_canvasContext.drawImage(_canvasBuffer, 0, 0);
+
+	if(imgd === null) { //initialize everything
+		grabX = _gameTile.getCanvasLocation().x-1;
+		grabY = _gameTile.getCanvasLocation().y-1;
+		grabWidth =  _gameTile.getWidth()+2;
+		grabHeight = _gameTile.getHeight()+2;
+		testplacementX = _gameTile.getCanvasLocation().x + (_gameTile.getWidth()+10);
+		testplacementY = _gameTile.getCanvasLocation().y-1;
+
+		imgd = _canvasBufferContext.getImageData(grabX, grabY, grabWidth, grabHeight);
+	}
+}
+
+function move(direction){
+	//console.info('about to move: ' + direction);
+	var _options = { direction : direction };
+	WDAnimation.animateBlock(_canvasBufferContext, _gameTile,_options);
+}
+
+</script>
+
+</head>
+
+<body>
+Animation Tests<br/>
+<canvas id="canvas" width="300" height="300">
+Canvas not supported.
+</canvas><br/><br/>
+<br/>
+<input type="button" value="Move Up" id="btn_moveup"/>
+<input type="button" value="Move Down" id="btn_movedown"/>
+<input type="button" value="Move Left" id="btn_moveleft"/>
+<input type="button" value="Move Right" id="btn_moveright"/>
+
+</body>
+</html>
