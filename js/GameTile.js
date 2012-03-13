@@ -52,6 +52,9 @@ var GameTile = Class.create(DrawableElement,{
 	getCanvasLocation : function(){
 		return { x : this._x, y : this._y };
 	},
+	getPosition : function() {
+		return { x : this._x, y : this._y, width : this._width, height : this._height };
+	},
 	setStroke : function(color){
 		this.tileStroke = color;
 	},
