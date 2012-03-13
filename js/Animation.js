@@ -21,13 +21,24 @@ WDAnimation._options = {
                             IncrementDistance : 1000
                         }
 
+WDAnimation.canvasStruct = {};
 
-WDAnimation.animateBlock = function(context,block,opts){
 
+WDAnimation.animateBlock = function(_canvas,block,opts){
 
-	
     Object.extend(WDAnimation._options,opts);
-    WDAnimation._context = context;
+
+    if(WDAnimation.canvasStruct._canvasContext === undefined){
+         console.info('null, so creating a new one');
+         //WDAnimation._context = canvas.getContext('2d');
+         WDAnimation.canvasStruct._canvasContext = _canvas.getContext('2d');
+         WDAnimation.canvasStruct._canvasBuffer = document.createElement('canvas');
+         WDAnimation.canvasStruct._canvasBuffer.width = _canvas.width;
+         WDAnimation.canvasStruct._canvasBuffer.height = _canvas.height;
+         WDAnimation.canvasStruct._canvasBufferContext = WDAnimation.canvasStruct._canvasBuffer.getContext('2d');
+    }
+	
+   
     WDAnimation.animate(new Date().getTime(),block);
 
 
@@ -66,7 +77,8 @@ WDAnimation.animate = function(lastTime,_rect){
 
 
     try {
-       /* _canvasBufferContext.putImageData(imgd,
+        /*
+       WDAnimation.canvasStruct._canvasBufferContext.putImageData(imgd,
                                         NewCaptureArea.xPlacement,
                                         NewCaptureArea.yPlacement,
                                         NewCaptureArea.x,
@@ -74,8 +86,9 @@ WDAnimation.animate = function(lastTime,_rect){
                                         NewCaptureArea.width,
                                         NewCaptureArea.height
                                         );
+        
+        WDAnimation.canvasStruct._canvasContext.drawImage(WDAnimation.canvasStruct._canvasBuffer,0,0);
         */
-        _canvasContext.drawImage(_canvasBuffer,0,0);
     } 
     catch(err){
         console.info(err.message);
@@ -85,6 +98,9 @@ WDAnimation.animate = function(lastTime,_rect){
 }
 
 WDAnimation.clearArea = function(x,y,width,height){
-    //console.info(context);
-    WDAnimation._context.clearRect(x,y,width,height);
+    console.info('clear area');
+    //WDAnimation._context.clearRect(x,y,width,height);
+    //WDAnimation.canvasStruct._canvasBufferContext.clearRect(x,y,width,height);
+    WDAnimation.canvasStruct._canvasContext.clearRect(x-1,y-1,width+2,height+2);
+
 }
