@@ -3,8 +3,8 @@ var GameTile = Class.create(DrawableElement,{
 	_y : 0,
 	mapX : 0,
 	mapY : 0,
-	_height : 25,
-	_width : 25,
+	_height : 50,
+	_width : 50,
 	_val : 1,
 	_text : '',
 	strokeWidth : 1,
@@ -23,6 +23,7 @@ var GameTile = Class.create(DrawableElement,{
 	},
 	setHeight : function(_height){
 		this._height = _height;
+		console.info('set this tile to ' + this._height);
 	},
 	getHeight : function(){
 		return this._height;
@@ -48,6 +49,13 @@ var GameTile = Class.create(DrawableElement,{
 	setLocation : function(coords){
 		this.mapX = coords.x;
 		this.mapY = coords.y;		
+
+		//update physical location
+		this.setCanvasLocation(this.mapX * this._width, this.mapY * this._height)
+	},
+	setCanvasLocation : function(x,y){
+		this._x = x;
+		this._y = y;
 	},
 	getCanvasLocation : function(){
 		return { x : this._x, y : this._y };
@@ -63,7 +71,8 @@ var GameTile = Class.create(DrawableElement,{
 	},
 	render : function(_canvasContext){
 		
-
+		//console.info('game tile');
+		//console.info(_canvasContext);
 		//fill
 		_canvasContext.fillStyle = this.tileFill;
 		_canvasContext.fillRect(this._x,this._y,this._width,this._height);

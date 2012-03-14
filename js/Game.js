@@ -24,10 +24,12 @@ var Game = Class.create({
 		_canvas = document.getElementById('canvas');
 		if (_canvas && _canvas.getContext) {
 			_canvasContext = _canvas.getContext('2d');
+			console.info(_canvasContext);
 			_canvasBuffer = document.createElement('canvas');
 			_canvasBuffer.width = _canvas.width;
 			_canvasBuffer.height = _canvas.height;
 			_canvasBufferContext = _canvasBuffer.getContext('2d');
+			console.info(_canvasBufferContext);
 		}
 		this.GenerateTestGrid();
 
@@ -172,6 +174,7 @@ var Game = Class.create({
 			actionTile.setLocation(newLocation);
 			//this.PrintGameBoardtoConsole();
 			this.Update();
+			console.info(JSON.stringify(actionTile.getCanvasLocation()));
 			
 		} 
 		
@@ -285,11 +288,15 @@ var Game = Class.create({
 		console.info(actionTile.getLocation());
 		if(!this.LookAhead(actionTile.getLocation())){
 			console.info('starting some animation');
-			WDAnimation.animateBlock(actionTile.getLocation(),this.TransformLocation(actionTile.getLocation(),this.MoveDirection.DOWN));
+			var direction = WDAnimation.Direction.UP;
+			var _options = { direction : direction };
+			//console.info(_canvas);
+			WDAnimation.animateBlock(actionTile,_options);
+			console.info('done');
 		}
 
 
-		this.Update();
+		//this.Update();
 
 				
 	} /* */,
