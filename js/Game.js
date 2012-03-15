@@ -24,12 +24,10 @@ var Game = Class.create({
 		_canvas = document.getElementById('canvas');
 		if (_canvas && _canvas.getContext) {
 			_canvasContext = _canvas.getContext('2d');
-			console.info(_canvasContext);
 			_canvasBuffer = document.createElement('canvas');
 			_canvasBuffer.width = _canvas.width;
 			_canvasBuffer.height = _canvas.height;
 			_canvasBufferContext = _canvasBuffer.getContext('2d');
-			console.info(_canvasBufferContext);
 		}
 		this.GenerateTestGrid();
 
@@ -291,7 +289,12 @@ var Game = Class.create({
 			var direction = WDAnimation.Direction.UP;
 			var _options = { direction : direction };
 			//console.info(_canvas);
-			WDAnimation.animateBlock(actionTile,_options);
+
+			//here we need to send the outermost tiles - moving inwards
+			for(var x = tileGroup.length - 1; x > 0; x--){
+				console.info(JSON.stringify(tileGroup[x]));
+			}
+			//WDAnimation.animateBlock(actionTile,_options);
 			console.info('done');
 		}
 

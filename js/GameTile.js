@@ -23,7 +23,6 @@ var GameTile = Class.create(DrawableElement,{
 	},
 	setHeight : function(_height){
 		this._height = _height;
-		console.info('set this tile to ' + this._height);
 	},
 	getHeight : function(){
 		return this._height;
