@@ -275,12 +275,15 @@ var Game = Class.create({
 	},
 	StartBoardTransition : function(){
 		var tileGroup = this.actionBehavior.getChain();
-		//console.info(tileGroup);
+		console.info(tileGroup);
 		for(i = tileGroup.length - 1; i > 0; i--){
-			gameBoard[tileGroup[i].y][tileGroup[i].x] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
+			gameBoard[tileGroup[i].getLocation().y][tileGroup[i].getLocation().x] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
 		}
+		console.info(tileGroup[0].getLocation().y);
 	
-		gameBoard[tileGroup[0].y][tileGroup[0].x] = { val : this.actionBehavior.getUpgradedValue(), active : false };
+		console.info(tileGroup[0].getLocation().x);
+
+		gameBoard[tileGroup[0].getLocation().y][tileGroup[0].getLocation().x] = { val : this.actionBehavior.getUpgradedValue(), active : false };
 		
 		//now check for any suspended tiles - right now just deal with the action (this may be all we need)
 		console.info(actionTile.getLocation());
@@ -292,7 +295,8 @@ var Game = Class.create({
 
 			//here we need to send the outermost tiles - moving inwards
 			for(var x = tileGroup.length - 1; x > 0; x--){
-				console.info(JSON.stringify(tileGroup[x]));
+				//console.info(JSON.stringify(tileGroup[x]));
+				console.info(tileGroup[x]);
 			}
 			//WDAnimation.animateBlock(actionTile,_options);
 			console.info('done');

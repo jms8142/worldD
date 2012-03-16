@@ -3,7 +3,7 @@ var Behavior = Class.create({
 	name : null,
 	value : null,
 	reactors : [],
-	chain: [],
+	chain: null, //arraylist of gameTile objects
 	startAnimation : false,
 	rules : {
 		minThreshold : 2 //when to start looking for patterns
@@ -53,8 +53,10 @@ var Behavior = Class.create({
 	initialize : function (val,coords){
 		//console.info('new behavior created with ' + val);
 		this.value = val;
-		this.chain = [];
-		this.chain[0] = { val : this.value, x : coords.x, y : coords.y };
+		this.chain = new Array();
+		this.chain[0] = new GameTile(coords.x,coords.y);
+		this.chain[0].setValue(this.value);
+			//{ val : this.value, x : coords.x, y : coords.y };
 
 	},
 	setValue : function(val){
@@ -90,7 +92,9 @@ var Behavior = Class.create({
 	},
 	addCombo : function(val,location){
 
-		this.chain.push({ val : val, x : location.x, y : location.y});
+		//this.chain.push({ val : val, x : location.x, y : location.y});
+		this.chain.push(new GameTile(location.x,location.y));
+		this.chain[this.chain.length-1].setValue(val);
 		if(this.Validate()){
 			console.info('money changing!');
 			this.startAnimation = true;
@@ -101,7 +105,7 @@ var Behavior = Class.create({
 			//console.info(this.chain);
 			var _string = '';
 			for(i = 0; i < this.chain.length; i++){
-				_string += this.chain[i].val;
+				_string += this.chain[i].getValue();
 			}
 
 			//console.info(_string);
