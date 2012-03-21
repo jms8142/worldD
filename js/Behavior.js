@@ -49,21 +49,16 @@ var Behavior = Class.create({
 		10 : [5,10],
 		25 : [25]
 	},
-
-	initialize : function (val,coords){
-		//console.info('new behavior created with ' + val);
-		this.value = val;
+	/**
+	* @param Object GameTile
+	* @return void
+	* @description Constructor function - accepts a GameTile object
+	**/
+	//initialize : function (val,_gameTile){
+	initialize : function(_gameTile) {
+		console.info(_gameTile.toString());
 		this.chain = new Array();
-		this.chain[0] = new GameTile(coords.x,coords.y);
-		this.chain[0].setValue(this.value);
-			//{ val : this.value, x : coords.x, y : coords.y };
-
-	},
-	setValue : function(val){
-		this.value = val;
-	},
-	getValue : function(){
-		return this.value;
+		this.chain[0] = _gameTile;
 	},
 	addReactors : function(reactors){
 		this.reactors = reactors;
@@ -77,24 +72,38 @@ var Behavior = Class.create({
 	getUpgradedValue : function(){
 		return this.upgradedValue;
 	},
-	hasReaction : function(val,location){
+	/**		
+	* @param object	_gameTile gameTile object
+	* @return bool
+	* @description true if gameTile value is in the reactorDefinition of the current 'starter' tile
+	**/
+	//hasReaction : function(val,location){
+	hasReaction : function(_gameTile) {
 		//console.info('in hasReaction with ' + val);
 
-		for(var i = 0; i < this.reactorDefinition[this.value].length; i++){
+		for(var i = 0; i < this.reactorDefinition[this.chain[0].getValue()].length; i++){
 			//console.info('looking at ' + this.reactorDefinition[this.value][i]);
-			if(val === this.reactorDefinition[this.value][i]) {
-				this.addCombo(val,location);
+			if(_gameTile.getValue() === this.reactorDefinition[this.chain[0].getValue()][i]) {
+				this.addCombo(_gameTile);
 				return true;
 			}
 		}
 		
 		return false;
 	},
-	addCombo : function(val,location){
+	/**		
+	* @param object	_gameTile gameTile object
+	* @return void
+	* @description Adds gameTile object the chain array
+	**/
+	//addCombo : function(val,location){
+	addCombo : function(_gameTile) {
 
 		//this.chain.push({ val : val, x : location.x, y : location.y});
-		this.chain.push(new GameTile(location.x,location.y));
-		this.chain[this.chain.length-1].setValue(val);
+		//this.chain.push(new GameTile(location.x,location.y));
+		//this.chain[this.chain.length-1].setValue(val);
+		this.chain.push(_gameTile);
+
 		if(this.Validate()){
 			console.info('money changing!');
 			this.startAnimation = true;

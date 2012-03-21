@@ -17,7 +17,8 @@ var Game = Class.create({
 	gameBoard : null,
 	actionTile : null,
 	MoveDirection : { LEFT : 0, DOWN : 1, RIGHT : 2},
-	actionBehavior : null,
+	MoveDescription : ["Left","Down","Right"], //for debugging
+	actionBehavior : null,  //'starter' gametile which represents the newly placed tile with potential to begin a reaction
 
 
 	initialize : function (_gameBoard,_startingPiece){
@@ -158,30 +159,30 @@ var Game = Class.create({
 		//console.info(event);
 	},
 	Move : function(direction){
-		if(this.ValidateMove(actionTile.getLocation(),direction)){
+		if(this.ValidateMove(actionTile.getMapLocation(),direction)){
 			//console.clear();
 			//console.info('current location:')
-			// console.info(actionTile.getLocation());
-			gameBoard[actionTile.getLocation().y][actionTile.getLocation().x] = { val : 0, active : false };
+			// console.info(actionTile.getMapLocation());
+			gameBoard[actionTile.getMapLocation().y][actionTile.getMapLocation().x] = { val : 0, active : false };
 			//console.info('ok to move!')
-			var newLocation = this.TransformLocation(actionTile.getLocation(),direction);
+			var newLocation = this.TransformLocation(actionTile.getMapLocation(),direction);
 
 			//console.info('new location');
 			//console.info(newLocation);
 			gameBoard[newLocation.y][newLocation.x] = { val : actionTile.getValue(), active : true };
-			actionTile.setLocation(newLocation);
+			actionTile.setMapLocation(newLocation);
 			//this.PrintGameBoardtoConsole();
 			this.Update();
-			console.info(JSON.stringify(actionTile.getCanvasLocation()));
+			console.info(actionTile.toString());
 			
 		} 
 		
 		//if tile has reached another tile (or bottom) - freeze and create a new one
-		if(this.LookAhead(actionTile.getLocation())){
-			if(this.Reactive(actionTile.getLocation())){ //A reaction has been detected - start cleaning up tiles
+		if(this.LookAhead(actionTile.getMapLocation())){
+			if(this.Reactive(actionTile)){ //A reaction has been detected - start cleaning up tiles
 				this.StartBoardTransition();
 			} else {
-				gameBoard[actionTile.getLocation().y][actionTile.getLocation().x].active = false;
+				gameBoard[actionTile.getMapLocation().y][actionTile.getMapLocation().x].active = false;
 				this.CreateActionPiece(4,0);
 				this.Update();
 			}
@@ -215,6 +216,11 @@ var Game = Class.create({
 
 		return false;
 	},
+	/**		
+	* @param object	coords tilemap coordinates
+	* @param enum MoveDirection enum represention direction to transform to
+	* @return object coords of transformed location
+	**/
 	TransformLocation : function(coords,direction){
 		var _coords = { x : coords.x, y : coords.y }; //make sure the function modifies by value, not ref
 		switch (direction){
@@ -231,30 +237,41 @@ var Game = Class.create({
 
 		return _coords;
 	},
-	Reactive : function(currentLocation){
+	Reactive : function(_gameTile){
 		console.clear();
+		//console.info(_gameTile.currentLocation);
 		var searchVectors = Array(this.MoveDirection.LEFT,this.MoveDirection.DOWN,this.MoveDirection.RIGHT);
-		var actionValue = gameBoard[currentLocation.y][currentLocation.x].val;
+		//var actionValue = gameBoard[_gameTile.getMapLocation().y][_gameTile.getMapLocation().x].val;
+		
+		//console.info('actionValue ' + actionValue);
+		//console.info('game actionValue ' + _gameTile.getValue());
+
 		//console.info('this location:');
 		//console.info(currentLocation);
 		//console.info('current val: ' + this.defaultSettings.currencyValues[gameBoard[currentLocation.y][currentLocation.x].val]);
-		this.actionBehavior = new Behavior(this.defaultSettings.currencyValues[actionValue],currentLocation);
+		//this.actionBehavior = new Behavior(this.defaultSettings.currencyValues[actionValue],_gameTile);
+		this.actionBehavior = new Behavior(_gameTile);
 		
 		for(var i = 0; i < searchVectors.length; i++){
-			//console.info('starting position ' + searchVectors[i]);	
-			var nextLocation = this.TransformLocation(currentLocation,searchVectors[i]);
+			//console.info('looking ' + this.MoveDescription[searchVectors[i]]);	
+
+			var nextLocation = this.TransformLocation(_gameTile.getMapLocation(),searchVectors[i]);
 			var nextLocationVal = gameBoard[nextLocation.y][nextLocation.x].val;
 			var nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
-
-			//console.info('nextLocationPosition: x:' + nextLocation.x + ' y:' + nextLocation.y);
-		
+			var nextLocationPosition = this.FindPhysicalLocation(nextLocation);
+			//console.info('nextLocation: x:' + nextLocation.x + ' y:' + nextLocation.y);
+			//console.info('nextLocationPosition: x:' + nextLocationPosition.x + ' y:' + nextLocationPosition.y);
 			//console.info('nextLocationVal: ' + nextLocationVal);
 			//console.info('checking ' + searchVectors[i]);
-
+			//lets make a gametile instead
+			//var _nextTile = new GameTile()
+			//var nextInit = { x. }
+			//console.info('physical location:');
+			//console.info(this.FindPhysicalLocation(nextLocation));
 
 			while(this.LegalRealm(nextLocation) && 
 					nextLocationVal > 0 && 
-					this.actionBehavior.hasReaction(nextLocationCurrencyVal,nextLocation)) 
+					this.actionBehavior.hasReaction(new GameTile(nextLocationPosition.x,nextLocationPosition.y,nextLocation.x,nextLocation.y))) 
 				{
 
 				//console.info('searching ' + searchVectors[i]);
@@ -266,6 +283,7 @@ var Game = Class.create({
 				if(this.LegalRealm(nextLocation)) {
 					nextLocationVal = gameBoard[nextLocation.y][nextLocation.x].val;
 					nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
+					var nextLocationPosition = this.FindPhysicalLocation(nextLocation);
 				}
 				
 			}
@@ -275,19 +293,21 @@ var Game = Class.create({
 	},
 	StartBoardTransition : function(){
 		var tileGroup = this.actionBehavior.getChain();
-		console.info(tileGroup);
+		//console.info(tileGroup);
 		for(i = tileGroup.length - 1; i > 0; i--){
-			gameBoard[tileGroup[i].getLocation().y][tileGroup[i].getLocation().x] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
+			console.info(tileGroup[i]);
+			console.info(tileGroup[i].getMapLocation());
+			gameBoard[tileGroup[i].getMapLocation().y][tileGroup[i].getMapLocation().x] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
 		}
-		console.info(tileGroup[0].getLocation().y);
+		console.info(tileGroup[0].getMapLocation().y);
 	
-		console.info(tileGroup[0].getLocation().x);
+		console.info(tileGroup[0].getMapLocation().x);
 
-		gameBoard[tileGroup[0].getLocation().y][tileGroup[0].getLocation().x] = { val : this.actionBehavior.getUpgradedValue(), active : false };
+		gameBoard[tileGroup[0].getMapLocation().y][tileGroup[0].getMapLocation().x] = { val : this.actionBehavior.getUpgradedValue(), active : false };
 		
 		//now check for any suspended tiles - right now just deal with the action (this may be all we need)
-		console.info(actionTile.getLocation());
-		if(!this.LookAhead(actionTile.getLocation())){
+		console.info(actionTile.getMapLocation());
+		if(!this.LookAhead(actionTile.getMapLocation())){
 			console.info('starting some animation');
 			var direction = WDAnimation.Direction.UP;
 			var _options = { direction : direction };
@@ -306,7 +326,15 @@ var Game = Class.create({
 		//this.Update();
 
 				
-	} /* */,
+	} ,
+	FindPhysicalLocation : function(coords) {
+		var mapX = coords.x;
+		var mapY = coords.y;
+		mapX = coords.x * this.defaultSettings.tileWidth;
+		mapY = coords.y * this.defaultSettings.tileHeight;
+		return { x : mapX, y : mapY };
+
+	}/* */,
 	// Debugging and Testing Functions 
 	GenerateTestGrid : function(){
 

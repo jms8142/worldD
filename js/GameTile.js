@@ -13,7 +13,16 @@ var GameTile = Class.create(DrawableElement,{
 	tileFill : 'rgb(201,227,230)',
 	textAdjust : [0,4,4,8,8],
 	defaultCoinColor : 'rgb(136,181,180)',
-	currencyValues : [-1,1,5,10,25],
+	/**
+	* @param Object coords
+	* @return void
+	* @description Constructor function - accepts an object containing the following properties:
+	* { x : float, y : float, mapX : int, mapY : int }
+	* x int 'x' coordinate represented in the actual space of the canvas object
+	* y int 'y' coordinate represented in the actual space of the canvas object
+	* mapX Float 'x' coordinate in relation to the tile map - zero based
+	* mapY Float 'y' coordinate in relation to the tile map - zero based
+	**/
 	initialize : function(coords){
 		this._x = coords.x;
 		this._y = coords.y;
@@ -33,19 +42,24 @@ var GameTile = Class.create(DrawableElement,{
 	getWidth : function(){
 		return this._width;
 	},
-	setValue : function(val){		
+	/**		
+	* @param int val
+	* @return void
+	* @description tile currency value as represented as the index of Game.defaultSettings.currencyValues[]
+	**/
+	setValue : function(val){	
 		this._val = val;
-	},
-	setText : function(text){
-		this._text = text;
 	},
 	getValue : function(){
 		return this._val;
 	},
-	getLocation : function(){
+	setText : function(text){
+		this._text = text;
+	},
+	getMapLocation : function(){
 		return { x : this.mapX, y : this.mapY };
 	},
-	setLocation : function(coords){
+	setMapLocation : function(coords){
 		this.mapX = coords.x;
 		this.mapY = coords.y;		
 
@@ -96,5 +110,8 @@ var GameTile = Class.create(DrawableElement,{
 
 		_canvasContext.fillText(this._text, textX, textY);
 		
+	},
+	toString : function(){
+		return '[val: ' + this._val + '] x:' + this._x + ' y:' + this._y + ' tilemapX: ' + this.mapX + ' tilemapY: ' + this.mapY;
 	}
 });
