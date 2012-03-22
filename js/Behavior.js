@@ -80,7 +80,8 @@ var Behavior = Class.create({
 	//hasReaction : function(val,location){
 	hasReaction : function(_gameTile) {
 		//console.info('in hasReaction with ' + val);
-
+		//console.info('in hasReaction with');
+		//console.info(_gameTile.toString());
 		for(var i = 0; i < this.reactorDefinition[this.chain[0].getValue()].length; i++){
 			//console.info('looking at ' + this.reactorDefinition[this.value][i]);
 			if(_gameTile.getValue() === this.reactorDefinition[this.chain[0].getValue()][i]) {
@@ -103,6 +104,8 @@ var Behavior = Class.create({
 		//this.chain.push(new GameTile(location.x,location.y));
 		//this.chain[this.chain.length-1].setValue(val);
 		this.chain.push(_gameTile);
+		//console.info('just added to chain:');
+		//console.info(this.chain[this.chain.length-1].toString());
 
 		if(this.Validate()){
 			console.info('money changing!');

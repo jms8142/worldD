@@ -268,10 +268,14 @@ var Game = Class.create({
 			//var nextInit = { x. }
 			//console.info('physical location:');
 			//console.info(this.FindPhysicalLocation(nextLocation));
-
+			var nextTileParams = { x : nextLocationPosition.x,
+									y : nextLocationPosition.y,
+									mapX : nextLocation.x,
+									mapY : nextLocation.y
+								};
 			while(this.LegalRealm(nextLocation) && 
 					nextLocationVal > 0 && 
-					this.actionBehavior.hasReaction(new GameTile(nextLocationPosition.x,nextLocationPosition.y,nextLocation.x,nextLocation.y))) 
+					this.actionBehavior.hasReaction(new GameTile(nextTileParams))) 
 				{
 
 				//console.info('searching ' + searchVectors[i]);
@@ -283,7 +287,12 @@ var Game = Class.create({
 				if(this.LegalRealm(nextLocation)) {
 					nextLocationVal = gameBoard[nextLocation.y][nextLocation.x].val;
 					nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
-					var nextLocationPosition = this.FindPhysicalLocation(nextLocation);
+					nextLocationPosition = this.FindPhysicalLocation(nextLocation);
+					nextTileParams = { x : nextLocationPosition.x,
+									y : nextLocationPosition.y,
+									mapX : nextLocation.x,
+									mapY : nextLocation.y
+								};
 				}
 				
 			}
@@ -295,30 +304,32 @@ var Game = Class.create({
 		var tileGroup = this.actionBehavior.getChain();
 		//console.info(tileGroup);
 		for(i = tileGroup.length - 1; i > 0; i--){
-			console.info(tileGroup[i]);
-			console.info(tileGroup[i].getMapLocation());
+			//console.info('chain item: ' + i)
+			//console.info(tileGroup[i]);
+			//console.info(tileGroup[i].toString());
 			gameBoard[tileGroup[i].getMapLocation().y][tileGroup[i].getMapLocation().x] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
 		}
-		console.info(tileGroup[0].getMapLocation().y);
+		//console.info(tileGroup[0].getMapLocation().y);
 	
-		console.info(tileGroup[0].getMapLocation().x);
+		//console.info(tileGroup[0].getMapLocation().x);
 
 		gameBoard[tileGroup[0].getMapLocation().y][tileGroup[0].getMapLocation().x] = { val : this.actionBehavior.getUpgradedValue(), active : false };
 		
 		//now check for any suspended tiles - right now just deal with the action (this may be all we need)
-		console.info(actionTile.getMapLocation());
+		//console.info(actionTile.getMapLocation());
 		if(!this.LookAhead(actionTile.getMapLocation())){
 			console.info('starting some animation');
 			var direction = WDAnimation.Direction.UP;
-			var _options = { direction : direction };
+			var _options = { direction : direction, pixelSpeed : 1 };
 			//console.info(_canvas);
 
+			var _options = { direction : WDAnimation.Direction.UP };
 			//here we need to send the outermost tiles - moving inwards
 			for(var x = tileGroup.length - 1; x > 0; x--){
 				//console.info(JSON.stringify(tileGroup[x]));
-				console.info(tileGroup[x]);
+				console.info(tileGroup[x].toString());
+				WDAnimation.animateBlock(tileGroup[x],_options);
 			}
-			//WDAnimation.animateBlock(actionTile,_options);
 			console.info('done');
 		}
 
