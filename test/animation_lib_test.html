@@ -70,8 +70,8 @@ function createTile(){
 
 function move(direction){
 	//console.info('about to move: ' + direction);
-	var _options = { direction : direction };
-	WDAnimation.animateBlock(_canvas, _gameTile,_options);
+	var _options = { direction : direction, pixelSpeed : 25 };
+	WDAnimation.animateBlock(_gameTile,_options);
 }
 
 </script>

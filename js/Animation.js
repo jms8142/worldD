@@ -26,12 +26,13 @@ WDAnimation.canvasStruct = {};
 WDAnimation.animateOn = true;
 WDAnimation.sourceImage = null;
 WDAnimation._gameTile = null;
+WDAnimation.eventTrigger = null;
 
 
 WDAnimation.animateBlock = function(block,opts){
     var _canvas = document.getElementById('canvas');
-    //console.info(WDAnimation.canvasStruct);
-
+    console.info('animateBlock: ' + block.toString());
+    //console.info(opts);
     WDAnimation._gameTile = block;
     Object.extend(WDAnimation._options,opts);
 
@@ -68,10 +69,13 @@ WDAnimation.animateBlock = function(block,opts){
 
 WDAnimation.animate = function(lastTime,_rect){
     if(WDAnimation.animateOn){
-        //console.info(_rect);
+        console.info(WDAnimation._options.NewSectionSlice);
 
         if(WDAnimation._options.NewSectionSlice > WDAnimation.sourceImage.height){
             WDAnimation.animateOn = false;
+            //fire animation done event
+            console.info('fire event');
+            document.fire('WD::tileFinished');
         }
 
 
@@ -80,6 +84,7 @@ WDAnimation.animate = function(lastTime,_rect){
         var time = date.getTime();
         var timeDiff = time - lastTime;
         var speed = WDAnimation._options.pixelSpeed;
+       // console.info('speed' + speed);
         var frameDistance = speed * timeDiff / WDAnimation._options.IncrementDistance;
 
         //console.info(WDAnimation._options.direction);
@@ -100,9 +105,9 @@ WDAnimation.animate = function(lastTime,_rect){
             NewCaptureArea.y = 0;   
         }
 
-        WDAnimation._options.NewSectionSlice += frameDistance;
+        WDAnimation._options.NewSectionSlice += Math.round(frameDistance);
         //var NewSectionSlice = frameDistance;
-       // console.info(WDAnimation._options.NewSectionSlice);
+        //console.info(WDAnimation._options.NewSectionSlice);
 
         lastTime = time;
 

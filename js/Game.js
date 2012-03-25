@@ -19,7 +19,7 @@ var Game = Class.create({
 	MoveDirection : { LEFT : 0, DOWN : 1, RIGHT : 2},
 	MoveDescription : ["Left","Down","Right"], //for debugging
 	actionBehavior : null,  //'starter' gametile which represents the newly placed tile with potential to begin a reaction
-
+	chainMemberIndex : 0,
 
 	initialize : function (_gameBoard,_startingPiece){
 		_canvas = document.getElementById('canvas');
@@ -318,26 +318,37 @@ var Game = Class.create({
 		//now check for any suspended tiles - right now just deal with the action (this may be all we need)
 		//console.info(actionTile.getMapLocation());
 		if(!this.LookAhead(actionTile.getMapLocation())){
-			console.info('starting some animation');
-			var direction = WDAnimation.Direction.UP;
-			var _options = { direction : direction, pixelSpeed : 1 };
-			//console.info(_canvas);
+			this.chainMemberIndex = tileGroup.length;
+			
+			document.observe('WD::tileFinished',this.RunChainAnimation.bind(this));
 
-			var _options = { direction : WDAnimation.Direction.UP };
-			//here we need to send the outermost tiles - moving inwards
-			for(var x = tileGroup.length - 1; x > 0; x--){
-				//console.info(JSON.stringify(tileGroup[x]));
-				console.info(tileGroup[x].toString());
-				WDAnimation.animateBlock(tileGroup[x],_options);
-			}
-			console.info('done');
+			console.info('about to animate these:');
+			for(var x = tileGroup.length-1; x > 0; x--){
+				console.info('index[' + x + '] ' + tileGroup[x].toString());
+			} 
+
+			this.RunChainAnimation();
+				
 		}
-
 
 		//this.Update();
 
 				
 	} ,
+	RunChainAnimation : function(e){
+		if(e){
+			console.info('event observed');
+		}
+		console.info('starting chain animation');
+		//console.info(this.chainMemberIndex);
+		var tileGroup = this.actionBehavior.getChain();
+		var direction = WDAnimation.Direction.UP;
+		var _options = { direction : WDAnimation.Direction.UP, pixelSpeed : 100 };
+		if(this.chainMemberIndex>0){
+			WDAnimation.animateBlock(tileGroup[--this.chainMemberIndex],_options);
+			console.info('just animated index ' + this.chainMemberIndex);
+		}
+	},
 	FindPhysicalLocation : function(coords) {
 		var mapX = coords.x;
 		var mapY = coords.y;
