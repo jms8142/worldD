@@ -20,6 +20,7 @@ var Game = Class.create({
 	MoveDescription : ["Left","Down","Right"], //for debugging
 	actionBehavior : null,  //'starter' gametile which represents the newly placed tile with potential to begin a reaction
 	chainMemberIndex : 0,
+	keysLocked : false,
 
 	initialize : function (_gameBoard,_startingPiece){
 		_canvas = document.getElementById('canvas');
@@ -134,26 +135,28 @@ var Game = Class.create({
 		return MapCoordinates;
 	},
 	KeyGrab : function(event){
-		var keyID = event.keyCode;
-		switch (keyID) {
-			case 83 : //S
-				this.Move(this.MoveDirection.DOWN);
-			break;
-			case 40: //down arrow
-				this.Move(this.MoveDirection.DOWN);
-			break; 
-			case 65: //A
-				this.Move(this.MoveDirection.LEFT);
-			break;
-			case 37: //left arrow
-				this.Move(this.MoveDirection.LEFT);
-			break;
-			case 68: //D
-				this.Move(this.MoveDirection.RIGHT);
-			break;
-			case 39: //right arrow
-				this.Move(this.MoveDirection.RIGHT);
-			break;
+		if(!this.keysLocked){
+			var keyID = event.keyCode;
+			switch (keyID) {
+				case 83 : //S
+					this.Move(this.MoveDirection.DOWN);
+				break;
+				case 40: //down arrow
+					this.Move(this.MoveDirection.DOWN);
+				break; 
+				case 65: //A
+					this.Move(this.MoveDirection.LEFT);
+				break;
+				case 37: //left arrow
+					this.Move(this.MoveDirection.LEFT);
+				break;
+				case 68: //D
+					this.Move(this.MoveDirection.RIGHT);
+				break;
+				case 39: //right arrow
+					this.Move(this.MoveDirection.RIGHT);
+				break;
+			}
 		}
 		
 		//console.info(event);
@@ -301,8 +304,13 @@ var Game = Class.create({
 		return this.actionBehavior.getAnimationStart();
 	},
 	StartBoardTransition : function(){
+		document.observe('WD::animationFinished',this.animationFinished.bind(this));
 		var tileGroup = this.actionBehavior.getChain();
+		//lock keys
+		this.keysLocked = true;
+
 		//console.info(tileGroup);
+		//this.PrintGameBoardtoConsole();
 		for(i = tileGroup.length - 1; i > 0; i--){
 			//console.info('chain item: ' + i)
 			//console.info(tileGroup[i]);
@@ -310,44 +318,49 @@ var Game = Class.create({
 			gameBoard[tileGroup[i].getMapLocation().y][tileGroup[i].getMapLocation().x] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
 		}
 		//console.info(tileGroup[0].getMapLocation().y);
-	
+		//this.PrintGameBoardtoConsole();
 		//console.info(tileGroup[0].getMapLocation().x);
 
 		gameBoard[tileGroup[0].getMapLocation().y][tileGroup[0].getMapLocation().x] = { val : this.actionBehavior.getUpgradedValue(), active : false };
 		
 		//now check for any suspended tiles - right now just deal with the action (this may be all we need)
-		//console.info(actionTile.getMapLocation());
 		if(!this.LookAhead(actionTile.getMapLocation())){
 			this.chainMemberIndex = tileGroup.length;
 			
 			document.observe('WD::tileFinished',this.RunChainAnimation.bind(this));
 
-			console.info('about to animate these:');
-			for(var x = tileGroup.length-1; x > 0; x--){
+			//console.info('about to animate these:');
+			/*for(var x = tileGroup.length-1; x > 0; x--){
 				console.info('index[' + x + '] ' + tileGroup[x].toString());
-			} 
+			} */
 
 			this.RunChainAnimation();
 				
 		}
-
-		//this.Update();
-
 				
 	} ,
-	RunChainAnimation : function(e){
-		if(e){
-			console.info('event observed');
-		}
-		console.info('starting chain animation');
+	RunChainAnimation : function(e){	
 		//console.info(this.chainMemberIndex);
 		var tileGroup = this.actionBehavior.getChain();
-		var direction = WDAnimation.Direction.UP;
-		var _options = { direction : WDAnimation.Direction.UP, pixelSpeed : 100 };
-		if(this.chainMemberIndex>0){
-			WDAnimation.animateBlock(tileGroup[--this.chainMemberIndex],_options);
-			console.info('just animated index ' + this.chainMemberIndex);
+		var direction = WDAnimation.DIRECTION.UP;
+		
+		if(this.chainMemberIndex>1){
+			var _options = { animationType : WDAnimation.TYPE.SLIDE, direction : WDAnimation.DIRECTION.UP, pixelSpeed : 400,  endEvent : 'WD::tileFinished' };
+			var animObject = new WDAnimation(_options);
+			animObject.animateBlock(tileGroup[--this.chainMemberIndex]);
+			//console.info('just animated index ' + this.chainMemberIndex);
+		} else {
+			//animate action block
+			var _options = { animationType : WDAnimation.TYPE.MOVE, startX : 0, startY : 0, endX : 0, endY : 0, speed : 100,  };
+			//var _options = { direction : WDAnimation.Direction.RIGHT, pixelSpeed : 50,  endEvent : 'WD::animationFinished' };
+			var animObject = new WDAnimation(_options);
+			//animObject.animateBlock(tileGroup[0]);
+			//document.fire('WD::animationFinished');
 		}
+	},
+	animationFinished : function(){
+		this.keysLocked = false;
+		console.info('animation finished!');
 	},
 	FindPhysicalLocation : function(coords) {
 		var mapX = coords.x;

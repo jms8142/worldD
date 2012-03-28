@@ -56,7 +56,7 @@ var Behavior = Class.create({
 	**/
 	//initialize : function (val,_gameTile){
 	initialize : function(_gameTile) {
-		console.info(_gameTile.toString());
+		//console.info(_gameTile.toString());
 		this.chain = new Array();
 		this.chain[0] = _gameTile;
 	},
@@ -108,7 +108,7 @@ var Behavior = Class.create({
 		//console.info(this.chain[this.chain.length-1].toString());
 
 		if(this.Validate()){
-			console.info('money changing!');
+			//console.info('money changing!');
 			this.startAnimation = true;
 		}
 	},
