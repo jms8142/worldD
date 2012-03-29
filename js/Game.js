@@ -354,7 +354,7 @@ var Game = Class.create({
 			var _options = { animationType : WDAnimation.TYPE.MOVE, startX : 0, startY : 0, endX : 0, endY : 0, speed : 100,  };
 			//var _options = { direction : WDAnimation.Direction.RIGHT, pixelSpeed : 50,  endEvent : 'WD::animationFinished' };
 			var animObject = new WDAnimation(_options);
-			//animObject.animateBlock(tileGroup[0]);
+			animObject.animateBlock(tileGroup[0]);
 			//document.fire('WD::animationFinished');
 		}
 	},
