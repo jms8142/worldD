@@ -88,7 +88,7 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
       var speed = animateObj._options.pixelSpeed;
       var frameDistance = speed * timeDiff / animateObj._options.IncrementDistance;
 
-
+      console.info(JSON.stringify(_rect));
       animateObj.clearArea(_rect);
 
       switch (animateObj._options.animationType){
@@ -115,14 +115,17 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
           break;
           case WDAnimation.TYPE.MOVE :
            // console.info('move called');
-            console.info(animateObj._options.NewSectionSlice);
+            
             //if(animateObj._options.NewSectionSlice)
-            if(animateObj._options.NewSectionSlice > animateObj.sourceImage.height){
+            if(animateObj._options.NewSectionSlice > 150){
+               console.info('stopping animation');
                 animateObj.animateOn = false;
                 //fire animation done event
                 document.fire(animateObj._options.endEvent);
             } else {
+                 console.info('frameDistance: ' + frameDistance);
                  animateObj._options.NewSectionSlice += Math.round(frameDistance);
+                 console.info('NewSectionSlice: ' + animateObj._options.NewSectionSlice);
                  lastTime = time;
 
                  var NewCaptureArea = {};
