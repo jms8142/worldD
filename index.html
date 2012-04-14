@@ -15,7 +15,13 @@
 
 <script>
 jQuery(function(){
-	var _game = new Game(oneTower,0);
+	var opts = {
+		gameBoard : oneTower,
+		startingPiece : 0 //[0=1,1=5,2=10,3=25]
+
+	}
+
+	var _game = new Game(opts);
 	//_game.PrintGameBoardtoConsole();
 });
 

@@ -17,13 +17,16 @@ WDAnimation = Class.create({
     _options : { 
                             pixelSpeed : 100,
                             IncrementDistance : 250,
-                            NewSectionSlice : 0
+                            NewSectionSlice : 0,
+                            newY : 0,
+                            newX : 0
                         },
     canvasStruct : {},
     animateOn : true,
     sourceImage : null,
     _gameTile : null,
     eventTrigger : null,
+    debug_Counter : 0,
 		initialize : function (opts) {
       this._options.NewSectionSlice = 2;
 
@@ -70,7 +73,6 @@ WDAnimation = Class.create({
 
     },
     clearArea : function(rect){
-        //console.info(rect);
         this.canvasStruct._canvasBufferContext.fillStyle = 'rgb(255,255,255)';
         this.canvasStruct._canvasBufferContext.fillRect(rect.x-1,rect.y-1,rect.width+3,rect.height+3);
     }
@@ -82,6 +84,9 @@ WDAnimation.TYPE = { SLIDE : 0, MOVE : 1};
 
 WDAnimation.animate = function(lastTime,_rect,animateObj){
   if(animateObj.animateOn && animateObj._options.animationType !== undefined){
+      //if(animateObj._options.animationType == WDAnimation.TYPE.MOVE)
+         // console.info('ANIMATION PASS: ' + (++animateObj.debug_Counter));
+
       var date = new Date();
       var time = date.getTime();
       var timeDiff = time - lastTime;
@@ -90,6 +95,12 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
 
 
       animateObj.clearArea(_rect);
+      if(animateObj._options.animationType == WDAnimation.TYPE.MOVE) {
+          //console.info('clear: ' + JSON.stringify(_rect));
+        }
+
+      //if(animateObj._options.animationType == WDAnimation.TYPE.MOVE)
+      //console.info(JSON.stringify(animateObj._options));
 
       switch (animateObj._options.animationType){
           case WDAnimation.TYPE.SLIDE :
@@ -114,24 +125,33 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
 
           break;
           case WDAnimation.TYPE.MOVE :
-           // console.info('move called');
-            console.info(animateObj._options.NewSectionSlice);
-            //if(animateObj._options.NewSectionSlice)
-            if(animateObj._options.NewSectionSlice > animateObj.sourceImage.height){
+            
+            //console.info(animateObj._options.newY);
+            //console.info((_rect.y +  animateObj._options.newY));
+            //console.info('NewSectionSlice: ' + animateObj._options.NewSectionSlice + ' sourceImage.height: ' + animateObj.sourceImage.height);
+            animateObj._options.newY += Math.round(frameDistance);
+            
+            
+
+            if((animateObj._gameTile.getCanvasLocation().y  +  animateObj._options.newY) > animateObj._options.endY) { //this is one step behind - should be compared to the new position
                 animateObj.animateOn = false;
                 //fire animation done event
                 document.fire(animateObj._options.endEvent);
             } else {
-                 animateObj._options.NewSectionSlice += Math.round(frameDistance);
+                 //animateObj._options.NewSectionSlice += Math.round(frameDistance);
+                
                  lastTime = time;
 
                  var NewCaptureArea = {};
                  NewCaptureArea = WDAnimation.move(animateObj); //calculate the new dimensions of what to copy from the original image
                
-
+                 //adjust clear area for next frame
+                 _rect = { x : NewCaptureArea.xPlacement, y : NewCaptureArea.yPlacement, width : NewCaptureArea.width, height : NewCaptureArea.height};
             }
             break;
       }
+      //if(animateObj._options.animationType == WDAnimation.TYPE.MOVE)
+      //  console.info(JSON.stringify(NewCaptureArea));
 
       if(animateObj.animateOn) {
         try {
@@ -203,12 +223,14 @@ WDAnimation.slide = function(animateObj){
 }
 
 WDAnimation.move = function(animateObj){
+  //console.info('in WDAnimation.move')
   var NewCaptureArea = {};
   NewCaptureArea.x = 0;
   NewCaptureArea.y = 0;
   NewCaptureArea.width = animateObj.sourceImage.width;
   NewCaptureArea.height = animateObj.sourceImage.height;
   NewCaptureArea.xPlacement = animateObj._gameTile.getCanvasLocation().x;
-  NewCaptureArea.yPlacement = animateObj._gameTile.getCanvasLocation().y + animateObj._options.NewSectionSlice;;
+  NewCaptureArea.yPlacement = animateObj._gameTile.getCanvasLocation().y + animateObj._options.newY;
+ // console.info('new placement: ' + JSON.stringify(NewCaptureArea));
   return NewCaptureArea;
 }

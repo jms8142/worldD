@@ -22,7 +22,7 @@ var Game = Class.create({
 	chainMemberIndex : 0,
 	keysLocked : false,
 
-	initialize : function (_gameBoard,_startingPiece){
+	initialize : function (opts){
 		_canvas = document.getElementById('canvas');
 		if (_canvas && _canvas.getContext) {
 			_canvasContext = _canvas.getContext('2d');
@@ -33,12 +33,12 @@ var Game = Class.create({
 		}
 		this.GenerateTestGrid();
 
-		if(_gameBoard !== undefined)
-			gameBoard = _gameBoard;
+		if(opts.gameBoard !== undefined)
+			gameBoard = opts.gameBoard;
 		else
 			this.CreateTileMap();
 
-		this.CreateActionPiece(4,3,_startingPiece);
+		this.CreateActionPiece(4,3,opts.startingPiece);
 		this.DrawGameTiles();
 		
 
@@ -328,6 +328,7 @@ var Game = Class.create({
 			this.chainMemberIndex = tileGroup.length;
 			
 			document.observe('WD::tileFinished',this.RunChainAnimation.bind(this));
+			document.observe('WD::animationFinished',this.animationFinished.bind(this));
 
 			//console.info('about to animate these:');
 			/*for(var x = tileGroup.length-1; x > 0; x--){
@@ -339,8 +340,7 @@ var Game = Class.create({
 		}
 				
 	} ,
-	RunChainAnimation : function(e){	
-		//console.info(this.chainMemberIndex);
+	RunChainAnimation : function(){	
 		var tileGroup = this.actionBehavior.getChain();
 		var direction = WDAnimation.DIRECTION.UP;
 		
@@ -348,14 +348,17 @@ var Game = Class.create({
 			var _options = { animationType : WDAnimation.TYPE.SLIDE, direction : WDAnimation.DIRECTION.UP, pixelSpeed : 400,  endEvent : 'WD::tileFinished' };
 			var animObject = new WDAnimation(_options);
 			animObject.animateBlock(tileGroup[--this.chainMemberIndex]);
-			//console.info('just animated index ' + this.chainMemberIndex);
 		} else {
-			//animate action block
-			var _options = { animationType : WDAnimation.TYPE.MOVE, startX : 0, startY : 0, endX : 0, endY : 0, speed : 100,  };
-			//var _options = { direction : WDAnimation.Direction.RIGHT, pixelSpeed : 50,  endEvent : 'WD::animationFinished' };
+			var _options = { animationType : WDAnimation.TYPE.MOVE, 
+								endX : tileGroup[tileGroup.length-1].getCanvasLocation().x, 
+								endY : tileGroup[tileGroup.length-1].getCanvasLocation().y, 
+								speed : 100, 
+								pixelSpeed : 100, 
+								endEvent : 'WD::animationFinished'
+							};
 			var animObject = new WDAnimation(_options);
+
 			animObject.animateBlock(tileGroup[0]);
-			//document.fire('WD::animationFinished');
 		}
 	},
 	animationFinished : function(){
