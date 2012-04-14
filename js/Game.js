@@ -349,6 +349,7 @@ var Game = Class.create({
 			var animObject = new WDAnimation(_options);
 			animObject.animateBlock(tileGroup[--this.chainMemberIndex]);
 		} else {
+<<<<<<< HEAD
 			var _options = { animationType : WDAnimation.TYPE.MOVE, 
 								endX : tileGroup[tileGroup.length-1].getCanvasLocation().x, 
 								endY : tileGroup[tileGroup.length-1].getCanvasLocation().y, 
@@ -356,6 +357,10 @@ var Game = Class.create({
 								pixelSpeed : 100, 
 								endEvent : 'WD::animationFinished'
 							};
+=======
+			//animate action block
+			var _options = { animationType : WDAnimation.TYPE.MOVE, startX : 0, startY : 0, endX : 0, endY : 0, speed : 100,  endEvent : 'WD::animationFinished' };
+>>>>>>> dde0bbb51d928ecf93d28425ff3de9b9af06d21c
 			var animObject = new WDAnimation(_options);
 
 			animObject.animateBlock(tileGroup[0]);
