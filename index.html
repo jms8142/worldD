@@ -16,12 +16,13 @@
 <script>
 jQuery(function(){
 	var opts = {
-		gameBoard : oneTower,
-		startingPiece : 0 //[0=1,1=5,2=10,3=25]
-
+		gameBoard : emptyBoard,
+		startingPiece : 3, //[0=1,1=5,2=10,3=25]
+		startingPiecePosition : { x : 4, y : 7 }
 	}
 
 	var _game = new Game(opts);
+	//var _game = new Game();
 	//_game.PrintGameBoardtoConsole();
 });
 
@@ -33,11 +34,8 @@ jQuery(function(){
 <canvas id="canvas" width="450" height="500">
 Canvas not supported.
 </canvas>
+Next:<br/>
+Bug on empty canvas tile placement
 
-
-<br/>Next<br/>
-<ul>
-	<li></li>
-	</ul>
 </body>
 </html>

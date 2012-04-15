@@ -79,12 +79,15 @@ var Behavior = Class.create({
 	**/
 	//hasReaction : function(val,location){
 	hasReaction : function(_gameTile) {
+		console.info('testing against: ' + _gameTile.toString());
+		console.info('action tile: ' + this.chain[0].toString());
 		//console.info('in hasReaction with ' + val);
-		//console.info('in hasReaction with');
-		//console.info(_gameTile.toString());
-		for(var i = 0; i < this.reactorDefinition[this.chain[0].getValue()].length; i++){
+		//console.info('in hasReaction with ' + _gameTile.toString());
+		//console.info('reaction tile: ' + this.chain[0].toString());
+		//console.info(this.chain[0].getCurVal());
+		for(var i = 0; i < this.reactorDefinition[this.chain[0].getCurVal()].length; i++){
 			//console.info('looking at ' + this.reactorDefinition[this.value][i]);
-			if(_gameTile.getValue() === this.reactorDefinition[this.chain[0].getValue()][i]) {
+			if(_gameTile.getCurVal() === this.reactorDefinition[this.chain[0].getCurVal()][i]) {
 				this.addCombo(_gameTile);
 				return true;
 			}

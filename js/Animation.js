@@ -93,7 +93,7 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
       var speed = animateObj._options.pixelSpeed;
       var frameDistance = speed * timeDiff / animateObj._options.IncrementDistance;
 
-      console.info(JSON.stringify(_rect));
+      //console.info(JSON.stringify(_rect));
       animateObj.clearArea(_rect);
       if(animateObj._options.animationType == WDAnimation.TYPE.MOVE) {
           //console.info('clear: ' + JSON.stringify(_rect));
@@ -125,7 +125,6 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
 
           break;
           case WDAnimation.TYPE.MOVE :
-<<<<<<< HEAD
             
             //console.info(animateObj._options.newY);
             //console.info((_rect.y +  animateObj._options.newY));
@@ -135,25 +134,19 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
             
 
             if((animateObj._gameTile.getCanvasLocation().y  +  animateObj._options.newY) > animateObj._options.endY) { //this is one step behind - should be compared to the new position
-=======
            // console.info('move called');
             
             //if(animateObj._options.NewSectionSlice)
-            if(animateObj._options.NewSectionSlice > 150){
-               console.info('stopping animation');
->>>>>>> dde0bbb51d928ecf93d28425ff3de9b9af06d21c
+            
                 animateObj.animateOn = false;
                 //fire animation done event
                 document.fire(animateObj._options.endEvent);
             } else {
-<<<<<<< HEAD
                  //animateObj._options.NewSectionSlice += Math.round(frameDistance);
                 
-=======
-                 console.info('frameDistance: ' + frameDistance);
+                 //console.info('frameDistance: ' + frameDistance);
                  animateObj._options.NewSectionSlice += Math.round(frameDistance);
-                 console.info('NewSectionSlice: ' + animateObj._options.NewSectionSlice);
->>>>>>> dde0bbb51d928ecf93d28425ff3de9b9af06d21c
+                 //console.info('NewSectionSlice: ' + animateObj._options.NewSectionSlice);
                  lastTime = time;
 
                  var NewCaptureArea = {};

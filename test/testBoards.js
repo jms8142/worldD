@@ -1,6 +1,23 @@
 //some test configs
 
+var rows = 10;
+var cols = 9;
 
+
+emptyBoardMap = [
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0]
+];
+
+var emptyBoard = mapToObject(emptyBoardMap);
 
 oneRowMap = [
 	[0,0,0,0,0,0,0,0,0],
@@ -48,7 +65,23 @@ fiveTowerMap = [
 	[1,1,1,1,2,1,1,1,1]
 ];
 
+
 var fiveTower = mapToObject(fiveTowerMap);
+
+random_01Map = [
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,1,0,0,0,0,2]
+];
+
+var random_01 = mapToObject(random_01Map);
 
 
 
@@ -59,9 +92,9 @@ Conversion function for rewriting maps as a gameboard objects
 
 function mapToObject (_matrix){
 	var retObj = new Array(_matrix.length);
-	for(var i = 0; i < oneRowMap.length; i++){
+	for(var i = 0; i < rows; i++){
 		retObj[i] = new Array(_matrix[i].length);
-		for(y = 0; y < oneRowMap[i].length; y++){
+		for(y = 0; y < cols; y++){
 			retObj[i][y] = { val : _matrix[i][y], active : false};
 		}
 	}

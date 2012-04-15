@@ -33,12 +33,17 @@ var Game = Class.create({
 		}
 		this.GenerateTestGrid();
 
-		if(opts.gameBoard !== undefined)
+		if(opts && opts.gameBoard)
 			gameBoard = opts.gameBoard;
 		else
 			this.CreateTileMap();
 
-		this.CreateActionPiece(4,3,opts.startingPiece);
+		//starting piece
+		var startingPiece = (opts && opts.startingPiece !== undefined) ? opts.startingPiece : 1;
+		var startingPiecePositionX = (opts && opts.startingPiecePosition) ? opts.startingPiecePosition.x : 4;
+		var startingPiecePositionY = (opts && opts.startingPiecePosition) ? opts.startingPiecePosition.y : 2;
+		
+		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY,startingPiece);
 		this.DrawGameTiles();
 		
 
@@ -99,7 +104,7 @@ var Game = Class.create({
 					_gameTile.setHeight(this.defaultSettings.tileHeight);
 					_gameTile.setWidth(this.defaultSettings.tileWidth);
 					_gameTile.setValue(gameBoard[i][j].val);
-					_gameTile.setText(this.defaultSettings.currencyValues[gameBoard[i][j].val])
+					_gameTile.setCurVal(this.defaultSettings.currencyValues[gameBoard[i][j].val])
 					if(gameBoard[i][j].active) {
 						_gameTile.setStroke(this.defaultSettings.actionTileStroke);
 						_gameTile.setFill(this.defaultSettings.actionTileFill);
@@ -126,7 +131,8 @@ var Game = Class.create({
 		else
 			var singlePieceVal = val;
 
-		actionTile.setValue(singlePieceVal+1);					
+		actionTile.setValue(singlePieceVal+1);	
+		actionTile.setCurVal(this.defaultSettings.currencyValues[singlePieceVal+1]);				
 		gameBoard[y][x] = { val : actionTile.getValue(), active : true };
 	},
 	LocationMapper : function(MapCoordinates) {
@@ -176,7 +182,7 @@ var Game = Class.create({
 			actionTile.setMapLocation(newLocation);
 			//this.PrintGameBoardtoConsole();
 			this.Update();
-			console.info(actionTile.toString());
+			//console.info(actionTile.toString());
 			
 		} 
 		
@@ -186,7 +192,7 @@ var Game = Class.create({
 				this.StartBoardTransition();
 			} else {
 				gameBoard[actionTile.getMapLocation().y][actionTile.getMapLocation().x].active = false;
-				this.CreateActionPiece(4,0);
+				this.CreateActionPiece(4,4);
 				this.Update();
 			}
 			
@@ -241,7 +247,9 @@ var Game = Class.create({
 		return _coords;
 	},
 	Reactive : function(_gameTile){
-		console.clear();
+		
+		//console.info(_gameTile.toString());
+		//console.clear();
 		//console.info(_gameTile.currentLocation);
 		var searchVectors = Array(this.MoveDirection.LEFT,this.MoveDirection.DOWN,this.MoveDirection.RIGHT);
 		//var actionValue = gameBoard[_gameTile.getMapLocation().y][_gameTile.getMapLocation().x].val;
@@ -265,6 +273,7 @@ var Game = Class.create({
 			//console.info('nextLocation: x:' + nextLocation.x + ' y:' + nextLocation.y);
 			//console.info('nextLocationPosition: x:' + nextLocationPosition.x + ' y:' + nextLocationPosition.y);
 			//console.info('nextLocationVal: ' + nextLocationVal);
+			//console.info('nextLocationCurrencyVal: ' + nextLocationCurrencyVal);
 			//console.info('checking ' + searchVectors[i]);
 			//lets make a gametile instead
 			//var _nextTile = new GameTile()
@@ -274,8 +283,12 @@ var Game = Class.create({
 			var nextTileParams = { x : nextLocationPosition.x,
 									y : nextLocationPosition.y,
 									mapX : nextLocation.x,
-									mapY : nextLocation.y
+									mapY : nextLocation.y,
+									val : nextLocationVal,
+									curVal : nextLocationCurrencyVal
 								};
+								//console.info(JSON.stringify(nextTileParams));
+
 			while(this.LegalRealm(nextLocation) && 
 					nextLocationVal > 0 && 
 					this.actionBehavior.hasReaction(new GameTile(nextTileParams))) 
@@ -304,25 +317,29 @@ var Game = Class.create({
 		return this.actionBehavior.getAnimationStart();
 	},
 	StartBoardTransition : function(){
-		document.observe('WD::animationFinished',this.animationFinished.bind(this));
+		
 		var tileGroup = this.actionBehavior.getChain();
+		
 		//lock keys
 		this.keysLocked = true;
+		this.PrintGameBoardtoConsole();
+		//console.info(tileGroup.length);
+		for(var i = 0; i < tileGroup.length; i++){
+			console.info(tileGroup[i].toString());
+		}
 
-		//console.info(tileGroup);
-		//this.PrintGameBoardtoConsole();
-		for(i = tileGroup.length - 1; i > 0; i--){
-			//console.info('chain item: ' + i)
-			//console.info(tileGroup[i]);
-			//console.info(tileGroup[i].toString());
+
+		
+		for(i = tileGroup.length - 2; i >= 0; i--){
 			gameBoard[tileGroup[i].getMapLocation().y][tileGroup[i].getMapLocation().x] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
 		}
+
 		//console.info(tileGroup[0].getMapLocation().y);
-		//this.PrintGameBoardtoConsole();
+		
 		//console.info(tileGroup[0].getMapLocation().x);
 
-		gameBoard[tileGroup[0].getMapLocation().y][tileGroup[0].getMapLocation().x] = { val : this.actionBehavior.getUpgradedValue(), active : false };
-		
+		gameBoard[tileGroup[tileGroup.length-1].getMapLocation().y][tileGroup[tileGroup.length-1].getMapLocation().x] = { val : this.actionBehavior.getUpgradedValue(), active : false };
+		this.PrintGameBoardtoConsole();
 		//now check for any suspended tiles - right now just deal with the action (this may be all we need)
 		if(!this.LookAhead(actionTile.getMapLocation())){
 			this.chainMemberIndex = tileGroup.length;
@@ -345,11 +362,16 @@ var Game = Class.create({
 		var direction = WDAnimation.DIRECTION.UP;
 		
 		if(this.chainMemberIndex>1){
-			var _options = { animationType : WDAnimation.TYPE.SLIDE, direction : WDAnimation.DIRECTION.UP, pixelSpeed : 400,  endEvent : 'WD::tileFinished' };
+			var _options = { animationType : WDAnimation.TYPE.SLIDE, 
+								direction : WDAnimation.DIRECTION.UP, 
+								pixelSpeed : 400,  
+								endEvent : 'WD::tileFinished' 
+							};
+
 			var animObject = new WDAnimation(_options);
 			animObject.animateBlock(tileGroup[--this.chainMemberIndex]);
 		} else {
-<<<<<<< HEAD
+
 			var _options = { animationType : WDAnimation.TYPE.MOVE, 
 								endX : tileGroup[tileGroup.length-1].getCanvasLocation().x, 
 								endY : tileGroup[tileGroup.length-1].getCanvasLocation().y, 
@@ -357,10 +379,9 @@ var Game = Class.create({
 								pixelSpeed : 100, 
 								endEvent : 'WD::animationFinished'
 							};
-=======
+
 			//animate action block
-			var _options = { animationType : WDAnimation.TYPE.MOVE, startX : 0, startY : 0, endX : 0, endY : 0, speed : 100,  endEvent : 'WD::animationFinished' };
->>>>>>> dde0bbb51d928ecf93d28425ff3de9b9af06d21c
+			//var _options = { animationType : WDAnimation.TYPE.MOVE, startX : 0, startY : 0, endX : 0, endY : 0, speed : 100,  endEvent : 'WD::animationFinished' };
 			var animObject = new WDAnimation(_options);
 
 			animObject.animateBlock(tileGroup[0]);
@@ -368,7 +389,10 @@ var Game = Class.create({
 	},
 	animationFinished : function(){
 		this.keysLocked = false;
-		console.info('animation finished!');
+		this.CreateActionPiece(4,0);
+		this.Update();
+		//this.PrintGameBoardtoConsole();
+		//console.info('animation finished!');
 	},
 	FindPhysicalLocation : function(coords) {
 		var mapX = coords.x;
@@ -402,7 +426,7 @@ var Game = Class.create({
 			for(var j = 0;j < gameBoard[i].length; j++){
 				lineout += gameBoard[i][j].val + '|';
 			}
-			console.info('[row ' + (i + 1) + '] ' + lineout.substr(0,lineout.length-1));
+			console.info('[row ' + (i + 1) + '] \t' +  lineout.substr(0,lineout.length-1));
 		}
 	}/**/
 });

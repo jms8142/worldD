@@ -5,8 +5,9 @@ var GameTile = Class.create(DrawableElement,{
 	mapY : 0,
 	_height : 50,
 	_width : 50,
-	_val : 1,
+	_val : 0,
 	_text : '',
+	currencyValue : 0,
 	strokeWidth : 1,
 	colorMap : ['','rgb(183,129,26)','rgb(136,181,180)','rgb(136,181,180)','rgb(136,181,180)'],
 	tileStroke : 'rgb(43,136,148',
@@ -23,11 +24,13 @@ var GameTile = Class.create(DrawableElement,{
 	* mapX Float 'x' coordinate in relation to the tile map - zero based
 	* mapY Float 'y' coordinate in relation to the tile map - zero based
 	**/
-	initialize : function(coords){
-		this._x = coords.x;
-		this._y = coords.y;
-		this.mapX = coords.mapX;
-		this.mapY = coords.mapY;
+	initialize : function(opts){
+		this._x = opts.x;
+		this._y = opts.y;
+		this.mapX = opts.mapX;
+		this.mapY = opts.mapY;
+		this._val = opts.val;
+		this.currencyValue = opts.curVal;
 		//console.info('new game tile created with the coords ' + this._x + ' and ' + this._y + ' (Map: x:' + this.mapX + ', y:' + this.mapY + ')');
 	},
 	setHeight : function(_height){
@@ -52,6 +55,14 @@ var GameTile = Class.create(DrawableElement,{
 	},
 	getValue : function(){
 		return this._val;
+	},
+	setCurVal : function(currencyVal){
+		this.currencyValue = currencyVal;
+		this.setText(this.currencyValue);
+		//console.info(this.currencyValue);
+	},
+	getCurVal : function(){
+		return this.currencyValue;
 	},
 	setText : function(text){
 		this._text = text;
@@ -112,6 +123,8 @@ var GameTile = Class.create(DrawableElement,{
 		
 	},
 	toString : function(){
-		return '[val: ' + this._val + '] x:' + this._x + ' y:' + this._y + ' tilemapX: ' + this.mapX + ' tilemapY: ' + this.mapY;
+		//console.info(this._val);
+		//console.info(this.currencyValue);
+		return '[val: ' + this._val + ', curVal: ' + this.currencyValue + '] x:' + this._x + ' y:' + this._y + ' tilemapX: ' + this.mapX + ' tilemapY: ' + this.mapY;
 	}
 });
