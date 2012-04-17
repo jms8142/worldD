@@ -6,7 +6,6 @@ var Game = Class.create({
 	_canvasBufferContext : null,
 	defaultSettings : { 
 						columns : 9,
-						rows : 5,
 						currencyValues : [-1,1,5,10,25],
 						tileWidth : 50,
 						tileHeight : 50,
@@ -185,6 +184,7 @@ var Game = Class.create({
 			//console.info(actionTile.toString());
 			
 		} 
+
 		
 		//if tile has reached another tile (or bottom) - freeze and create a new one
 		if(this.LookAhead(actionTile.getMapLocation())){
@@ -219,8 +219,8 @@ var Game = Class.create({
 	},
 	LookAhead : function(currentLocation){
 		var LookAheadLocation = this.TransformLocation(currentLocation,this.MoveDirection.DOWN);
-
-		if(gameBoard[LookAheadLocation.y][LookAheadLocation.x].val > 0)
+		//console.info(this.LegalRealm(LookAheadLocation));
+		if(!this.LegalRealm(LookAheadLocation) || gameBoard[LookAheadLocation.y][LookAheadLocation.x].val > 0)
 			return true;
 
 		return false;
@@ -264,8 +264,23 @@ var Game = Class.create({
 		this.actionBehavior = new Behavior(_gameTile);
 		
 		for(var i = 0; i < searchVectors.length; i++){
-			//console.info('looking ' + this.MoveDescription[searchVectors[i]]);	
 
+			//Skip looking LEFT if tile is on left most column
+			if((_gameTile.getMapLocation().x == 0) && 
+				searchVectors[i] == this.MoveDirection.LEFT)
+				i++;
+
+			//Skip looking DOWN if tile is on bottom row
+			if((this.defaultSettings.gameRows-1 == _gameTile.getMapLocation().y) && 
+				searchVectors[i] == this.MoveDirection.DOWN)
+				i++;
+			
+			//Skip looking RIGHT if tile is on right most column
+			if((_gameTile.getMapLocation().x == this.defaultSettings.columns - 1) && 
+				searchVectors[i] == this.MoveDirection.RIGHT)
+				break;
+
+			
 			var nextLocation = this.TransformLocation(_gameTile.getMapLocation(),searchVectors[i]);
 			var nextLocationVal = gameBoard[nextLocation.y][nextLocation.x].val;
 			var nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
