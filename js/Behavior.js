@@ -79,14 +79,10 @@ var Behavior = Class.create({
 	**/
 	//hasReaction : function(val,location){
 	hasReaction : function(_gameTile) {
-		console.info('testing against: ' + _gameTile.toString());
-		console.info('action tile: ' + this.chain[0].toString());
-		//console.info('in hasReaction with ' + val);
-		//console.info('in hasReaction with ' + _gameTile.toString());
-		//console.info('reaction tile: ' + this.chain[0].toString());
-		//console.info(this.chain[0].getCurVal());
+		//console.info('testing against: ' + _gameTile.toString());
+		//console.info('action tile: ' + this.chain[0].toString());
 		for(var i = 0; i < this.reactorDefinition[this.chain[0].getCurVal()].length; i++){
-			//console.info('looking at ' + this.reactorDefinition[this.value][i]);
+			//console.info('looking at ' + this.reactorDefinition[this.chain[0].getCurVal()][i]);
 			if(_gameTile.getCurVal() === this.reactorDefinition[this.chain[0].getCurVal()][i]) {
 				this.addCombo(_gameTile);
 				return true;
@@ -120,7 +116,7 @@ var Behavior = Class.create({
 			//console.info(this.chain);
 			var _string = '';
 			for(i = 0; i < this.chain.length; i++){
-				_string += this.chain[i].getValue();
+				_string += this.chain[i].getCurVal();
 			}
 
 			//console.info(_string);
@@ -131,6 +127,7 @@ var Behavior = Class.create({
 				var patt= this.patternMatrix[i].pattern; 
 				if(patt.test(_string)){
 					this.upgradedValue = this.patternMatrix[i].newVal;
+					//console.info(this.upgradedValue);
 					return true;
 				}
 			}

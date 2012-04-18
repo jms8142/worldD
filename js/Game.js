@@ -20,8 +20,11 @@ var Game = Class.create({
 	actionBehavior : null,  //'starter' gametile which represents the newly placed tile with potential to begin a reaction
 	chainMemberIndex : 0,
 	keysLocked : false,
+	constantPiece : null,
 
 	initialize : function (opts){
+		constantPiece = opts.constantPiece;
+
 		_canvas = document.getElementById('canvas');
 		if (_canvas && _canvas.getContext) {
 			_canvasContext = _canvas.getContext('2d');
@@ -124,6 +127,10 @@ var Game = Class.create({
 
 	},
 	CreateActionPiece : function(x,y,val) {
+		
+		if(constantPiece)
+			val = constantPiece;
+
 		actionTile = new GameTile(this.LocationMapper({ x : x, y : y, mapX : x, mapY : y}));
 		if(val === undefined) 
 			var singlePieceVal = Math.floor(Math.random()*(this.defaultSettings.currencyValues.length-1));
@@ -332,15 +339,15 @@ var Game = Class.create({
 		return this.actionBehavior.getAnimationStart();
 	},
 	StartBoardTransition : function(){
-		
+		console.info('STARING TRANSITION');
 		var tileGroup = this.actionBehavior.getChain();
 		
 		//lock keys
 		this.keysLocked = true;
-		this.PrintGameBoardtoConsole();
+		//this.PrintGameBoardtoConsole();
 		//console.info(tileGroup.length);
 		for(var i = 0; i < tileGroup.length; i++){
-			console.info(tileGroup[i].toString());
+			//console.info(tileGroup[i].toString());
 		}
 
 
@@ -354,25 +361,29 @@ var Game = Class.create({
 		//console.info(tileGroup[0].getMapLocation().x);
 
 		gameBoard[tileGroup[tileGroup.length-1].getMapLocation().y][tileGroup[tileGroup.length-1].getMapLocation().x] = { val : this.actionBehavior.getUpgradedValue(), active : false };
-		this.PrintGameBoardtoConsole();
+		
+
+		this.PrintGameBoardtoConsole('clear');
 		//now check for any suspended tiles - right now just deal with the action (this may be all we need)
-		if(!this.LookAhead(actionTile.getMapLocation())){
+		//console.info('lookAhead' + this.LookAhead(actionTile.getMapLocation()));
+		//if(!this.LookAhead(actionTile.getMapLocation())){
 			this.chainMemberIndex = tileGroup.length;
 			
 			document.observe('WD::tileFinished',this.RunChainAnimation.bind(this));
 			document.observe('WD::animationFinished',this.animationFinished.bind(this));
 
 			//console.info('about to animate these:');
-			/*for(var x = tileGroup.length-1; x > 0; x--){
-				console.info('index[' + x + '] ' + tileGroup[x].toString());
-			} */
+			for(var x = tileGroup.length-1; x > 0; x--){
+				//console.info('index[' + x + '] ' + tileGroup[x].toString());
+			}
 
 			this.RunChainAnimation();
 				
-		}
+		//}
 				
 	} ,
 	RunChainAnimation : function(){	
+		//console.info('RUNNING CHAIN ANIMATION');
 		var tileGroup = this.actionBehavior.getChain();
 		var direction = WDAnimation.DIRECTION.UP;
 		
@@ -404,7 +415,7 @@ var Game = Class.create({
 	},
 	animationFinished : function(){
 		this.keysLocked = false;
-		this.CreateActionPiece(4,0);
+		this.CreateActionPiece(4,4);
 		this.Update();
 		//this.PrintGameBoardtoConsole();
 		//console.info('animation finished!');
@@ -434,7 +445,11 @@ var Game = Class.create({
 		}
 		
 	},
-	PrintGameBoardtoConsole : function(){
+	PrintGameBoardtoConsole : function(clr){
+		if(clr)
+			console.clear();
+
+
 		var lineout;
 		for(var i = 0; i < gameBoard.length; i++){
 			lineout = '';
