@@ -79,8 +79,8 @@ var Behavior = Class.create({
 	**/
 	//hasReaction : function(val,location){
 	hasReaction : function(_gameTile) {
-		//console.info('testing against: ' + _gameTile.toString());
-		//console.info('action tile: ' + this.chain[0].toString());
+		console.info('testing against: ' + _gameTile.toString());
+		console.info('starter tile: ' + this.chain[0].toString());
 		for(var i = 0; i < this.reactorDefinition[this.chain[0].getCurVal()].length; i++){
 			//console.info('looking at ' + this.reactorDefinition[this.chain[0].getCurVal()][i]);
 			if(_gameTile.getCurVal() === this.reactorDefinition[this.chain[0].getCurVal()][i]) {

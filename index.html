@@ -15,13 +15,20 @@
 
 <script>
 jQuery(function(){
+	/*
 	var opts = {
-		gameBoard : emptyBoard,
+		gameBoard : twentyfiveTower,
 		startingPiece : 3, //[0=1,1=5,2=10,3=25]
-		startingPiecePosition : { x : 4, y : 7 },
-		constantPiece : null
+		startingPiecePosition : { x : 4, y : 4 },
+		constantPiece : null,
+		debugWindow : true
 	}
+	*/
 
+	var opts = {
+		startingPiecePosition : { x : 4, y : 2 },
+		debugWindow : true
+	}
 	var _game = new Game(opts);
 	//var _game = new Game();
 	//_game.PrintGameBoardtoConsole();
@@ -35,38 +42,7 @@ jQuery(function(){
 <canvas id="canvas" width="450" height="500">
 Canvas not supported.
 </canvas>
-<div class="debugWindow">
-
-	<table class="gameMap">
-		<tr>
-			<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
-		</tr>
-		<tr>
-			<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
-		</tr>
-		<tr>
-			<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
-		</tr>
-		<tr>
-			<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
-		</tr>
-		<tr>
-			<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
-		</tr>
-		<tr>
-			<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
-		</tr>
-		<tr>
-			<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
-		</tr>
-		<tr>
-			<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
-		</tr>
-
-	</table>
-
-
-</div>
+<div class="debugWindow"></div>
 
 </body>
 </html>

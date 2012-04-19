@@ -52,7 +52,7 @@ var oneTower = mapToObject(oneTowerMap);
 
 
 
-fiveTowerMap = [
+twentyfiveTowerMap = [
 	[0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0],
@@ -60,13 +60,13 @@ fiveTowerMap = [
 	[0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0],
-	[1,1,1,1,2,1,1,1,1]
+	[0,0,0,0,4,0,0,0,0],
+	[0,0,0,0,4,0,0,0,0],
+	[1,1,1,1,4,1,1,1,1]
 ];
 
 
-var fiveTower = mapToObject(fiveTowerMap);
+var twentyfiveTower = mapToObject(twentyfiveTowerMap);
 
 random_01Map = [
 	[0,0,0,0,0,0,0,0,0],

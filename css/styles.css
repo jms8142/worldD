@@ -24,8 +24,18 @@ canvas {
 
 .debugWindow {
 	float:left;
+	background:#136eaa;
 }
 
 .debugWindow table {
 	margin:0 12px;
+}
+
+.debugWindow .gameMap {
+	font-size:.75em;
+}
+
+.debugWindow .gameMap td {
+	width:15px;
+	text-align:center;
 }

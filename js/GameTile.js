@@ -25,12 +25,14 @@ var GameTile = Class.create(DrawableElement,{
 	* mapY Float 'y' coordinate in relation to the tile map - zero based
 	**/
 	initialize : function(opts){
+		//console.info(opts);
 		this._x = opts.x;
 		this._y = opts.y;
 		this.mapX = opts.mapX;
 		this.mapY = opts.mapY;
 		this._val = opts.val;
 		this.currencyValue = opts.curVal;
+		//console.info(opts.curVal);
 		//console.info('new game tile created with the coords ' + this._x + ' and ' + this._y + ' (Map: x:' + this.mapX + ', y:' + this.mapY + ')');
 	},
 	setHeight : function(_height){

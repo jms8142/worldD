@@ -9,6 +9,7 @@ var Game = Class.create({
 						currencyValues : [-1,1,5,10,25],
 						tileWidth : 50,
 						tileHeight : 50,
+						rows : 2,
 						gameRows: 10,
 						actionTileFill: 'rgb(251,182,182)',
 						actionTileStroke: 'rgb(255,0,0)'
@@ -21,9 +22,11 @@ var Game = Class.create({
 	chainMemberIndex : 0,
 	keysLocked : false,
 	constantPiece : null,
+	debugWindow : false,
 
 	initialize : function (opts){
-		constantPiece = opts.constantPiece;
+		if(opts && opts.constantPiece)
+			this.constantPiece = opts.constantPiece;
 
 		_canvas = document.getElementById('canvas');
 		if (_canvas && _canvas.getContext) {
@@ -34,11 +37,18 @@ var Game = Class.create({
 			_canvasBufferContext = _canvasBuffer.getContext('2d');
 		}
 		this.GenerateTestGrid();
-
+		
 		if(opts && opts.gameBoard)
 			gameBoard = opts.gameBoard;
 		else
 			this.CreateTileMap();
+
+
+		//debug window
+		if(opts && opts.debugWindow)
+			this.debugWindow = true;
+
+		//console.info(debugWindow);
 
 		//starting piece
 		var startingPiece = (opts && opts.startingPiece !== undefined) ? opts.startingPiece : 1;
@@ -51,6 +61,8 @@ var Game = Class.create({
 
 		this.Draw();
 		//this.PrintGameBoardtoConsole();
+		if(this.debugWindow)
+			this.PrintGameBoardtoDebugWindow();
 
 		//register events
 		$(document).observe('keydown',this.KeyGrab.bind(this));
@@ -63,7 +75,9 @@ var Game = Class.create({
 		this.DrawGameTiles();
 		this.Draw();	
 		//this.PrintGameBoardtoConsole();
-		
+
+		if(this.debugWindow)
+			this.PrintGameBoardtoDebugWindow();
 	},
 
 	Draw : function(){
@@ -127,9 +141,9 @@ var Game = Class.create({
 
 	},
 	CreateActionPiece : function(x,y,val) {
-		
-		if(constantPiece)
-			val = constantPiece;
+		//console.info(constantPiece);
+		if(this.constantPiece)
+			val = this.constantPiece;
 
 		actionTile = new GameTile(this.LocationMapper({ x : x, y : y, mapX : x, mapY : y}));
 		if(val === undefined) 
@@ -175,7 +189,7 @@ var Game = Class.create({
 	},
 	Move : function(direction){
 		if(this.ValidateMove(actionTile.getMapLocation(),direction)){
-			//console.clear();
+			console.clear();
 			//console.info('current location:')
 			// console.info(actionTile.getMapLocation());
 			gameBoard[actionTile.getMapLocation().y][actionTile.getMapLocation().x] = { val : 0, active : false };
@@ -287,15 +301,15 @@ var Game = Class.create({
 				searchVectors[i] == this.MoveDirection.RIGHT)
 				break;
 
-			
+			console.info('checking ' + this.MoveDescription[searchVectors[i]]);
 			var nextLocation = this.TransformLocation(_gameTile.getMapLocation(),searchVectors[i]);
 			var nextLocationVal = gameBoard[nextLocation.y][nextLocation.x].val;
 			var nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
 			var nextLocationPosition = this.FindPhysicalLocation(nextLocation);
-			//console.info('nextLocation: x:' + nextLocation.x + ' y:' + nextLocation.y);
+			console.info('nextLocation: x:' + nextLocation.x + ' y:' + nextLocation.y);
 			//console.info('nextLocationPosition: x:' + nextLocationPosition.x + ' y:' + nextLocationPosition.y);
-			//console.info('nextLocationVal: ' + nextLocationVal);
-			//console.info('nextLocationCurrencyVal: ' + nextLocationCurrencyVal);
+			console.info('nextLocationVal: ' + nextLocationVal);
+			console.info('nextLocationCurrencyVal: ' + nextLocationCurrencyVal);
 			//console.info('checking ' + searchVectors[i]);
 			//lets make a gametile instead
 			//var _nextTile = new GameTile()
@@ -310,12 +324,12 @@ var Game = Class.create({
 									curVal : nextLocationCurrencyVal
 								};
 								//console.info(JSON.stringify(nextTileParams));
-
+								
 			while(this.LegalRealm(nextLocation) && 
 					nextLocationVal > 0 && 
 					this.actionBehavior.hasReaction(new GameTile(nextTileParams))) 
 				{
-
+					console.info(JSON.stringify(nextTileParams));
 				//console.info('searching ' + searchVectors[i]);
 				//console.info('next location:');
 				//console.info(nextLocation);
@@ -326,10 +340,13 @@ var Game = Class.create({
 					nextLocationVal = gameBoard[nextLocation.y][nextLocation.x].val;
 					nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
 					nextLocationPosition = this.FindPhysicalLocation(nextLocation);
+					nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
+
 					nextTileParams = { x : nextLocationPosition.x,
 									y : nextLocationPosition.y,
 									mapX : nextLocation.x,
-									mapY : nextLocation.y
+									mapY : nextLocation.y,
+									curVal : nextLocationCurrencyVal
 								};
 				}
 				
@@ -457,6 +474,19 @@ var Game = Class.create({
 				lineout += gameBoard[i][j].val + '|';
 			}
 			console.info('[row ' + (i + 1) + '] \t' +  lineout.substr(0,lineout.length-1));
+		}
+	},
+	PrintGameBoardtoDebugWindow : function(){
+		var row = '';
+		for(var i = 0; i < gameBoard.length; i++){
+			row += '<tr>';
+			for(var j = 0;j < gameBoard[i].length; j++){
+				var displayVal = (gameBoard[i][j].val === 0) ? '-' : this.defaultSettings.currencyValues[gameBoard[i][j].val];
+				row += '<td>' + displayVal + '</td>';
+			}
+			row += '</tr>\n';
+			//console.info(row);
+			jQuery('.debugWindow').html("<table class='gameMap'>" + row + "</table>");
 		}
 	}/**/
 });
