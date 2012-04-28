@@ -56,7 +56,9 @@ var Behavior = Class.create({
 	**/
 	//initialize : function (val,_gameTile){
 	initialize : function(_gameTile) {
-		//console.info(_gameTile.toString());
+		if(_game.debugFlags & Game.debugBehavior)
+			console.info("[BEHAVIOR] Chain[0]:" + _gameTile.toString());
+
 		this.chain = new Array();
 		this.chain[0] = _gameTile;
 	},
@@ -79,8 +81,9 @@ var Behavior = Class.create({
 	**/
 	//hasReaction : function(val,location){
 	hasReaction : function(_gameTile) {
-		console.info('testing against: ' + _gameTile.toString());
-		console.info('starter tile: ' + this.chain[0].toString());
+		if(_game.debugFlags & Game.debugBehavior)
+				console.info('[BEHAVIOR] Testing against:' + _gameTile.toString());
+
 		for(var i = 0; i < this.reactorDefinition[this.chain[0].getCurVal()].length; i++){
 			//console.info('looking at ' + this.reactorDefinition[this.chain[0].getCurVal()][i]);
 			if(_gameTile.getCurVal() === this.reactorDefinition[this.chain[0].getCurVal()][i]) {
@@ -119,13 +122,17 @@ var Behavior = Class.create({
 				_string += this.chain[i].getCurVal();
 			}
 
-			//console.info(_string);
-		
-			//console.info('starting pattern search for ' + _string);
+			
+			if(_game.debugFlags & Game.debugBehavior)
+			console.info("[BEHAVIOR] Starting Pattern Search:" + _string);
+
 			for(i = 0;i < this.patternMatrix.length; i++){
 				//console.info('trying' + this.patternMatrix[i].pattern);
 				var patt= this.patternMatrix[i].pattern; 
 				if(patt.test(_string)){
+					if(_game.debugFlags & Game.debugBehavior)
+						console.info("[BEHAVIOR] Tested positive pattern:" + patt);
+
 					this.upgradedValue = this.patternMatrix[i].newVal;
 					//console.info(this.upgradedValue);
 					return true;

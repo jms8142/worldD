@@ -127,6 +127,6 @@ var GameTile = Class.create(DrawableElement,{
 	toString : function(){
 		//console.info(this._val);
 		//console.info(this.currencyValue);
-		return '[val: ' + this._val + ', curVal: ' + this.currencyValue + '] x:' + this._x + ' y:' + this._y + ' tilemapX: ' + this.mapX + ' tilemapY: ' + this.mapY;
+		return '[curVal: ' + this.currencyValue + '] x:' + this._x + ' y:' + this._y + ' tilemapX: ' + this.mapX + ' tilemapY: ' + this.mapY;
 	}
 });
