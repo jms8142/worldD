@@ -3,7 +3,7 @@
 var rows = 10;
 var cols = 9;
 
-
+/*
 emptyBoardMap = [
 	[0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0],
@@ -82,7 +82,7 @@ random_01Map = [
 ];
 
 var random_01 = mapToObject(random_01Map);
-
+*/
 five_and_tenMap = [
 	[0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0],
@@ -99,20 +99,17 @@ five_and_tenMap = [
 var five_and_ten = mapToObject(five_and_tenMap);
 
 
-
-
 /**
-Conversion function for rewriting maps as a gameboard objects
+Conversion function for transposing maps into gameboard objects
 **/
-
 function mapToObject (_matrix){
-	var retObj = new Array(_matrix.length);
-	for(var i = 0; i < rows; i++){
-		retObj[i] = new Array(_matrix[i].length);
-		for(y = 0; y < cols; y++){
-			retObj[i][y] = { val : _matrix[i][y], active : false};
+
+	var retObj = new Array(_matrix[0].length);
+	for(var col = 0; col < _matrix[0].length; col++){
+		retObj[col] = new Array(_matrix[0].length);
+		for(var row = 0; row < _matrix.length; row++){
+			retObj[col][row] = { val : _matrix[row][col], active : false};
 		}
 	}
-
 	return retObj;
 }

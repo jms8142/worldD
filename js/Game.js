@@ -53,6 +53,7 @@ var Game = Class.create({
 			this.debugWindow = true;
 
 		//console.info(debugWindow);
+		//this.PrintGameBoardtoConsole();
 
 		//starting piece
 		var startingPiece = (opts && opts.startingPiece !== undefined) ? opts.startingPiece : 1;
@@ -64,7 +65,7 @@ var Game = Class.create({
 		
 
 		this.Draw();
-		this.PrintGameBoardtoConsole();
+		//this.PrintGameBoardtoConsole();
 		if(this.debugWindow)
 			this.PrintGameBoardtoDebugWindow();
 
@@ -379,20 +380,22 @@ var Game = Class.create({
 			}
 		}
 		
-
-
-		
-		for(i = tileGroup.length - 2; i >= 0; i--){
+		//console.info(tileGroup.length);
+		for(i = tileGroup.length - 1; i > 0; i--){
+		//for(i=0;i<tileGroup.length; i++) {
+			//console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
 			gameBoard[tileGroup[i].getMapLocation().x][tileGroup[i].getMapLocation().y] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
 		}
 
+		this.PrintGameBoardtoConsole();
 		//console.info(tileGroup[0].getMapLocation().y);
 		
 		//console.info(tileGroup[0].getMapLocation().x);
-		gameBoard[1][0] = { val : 3, active : false };
-		gameBoard[tileGroup[tileGroup.length-1].getMapLocation().x][tileGroup[tileGroup.length-1].getMapLocation().y] = { val : this.actionBehavior.getUpgradedValue(), active : false };
+		//gameBoard[1][0] = { val : 3, active : false };
+		//gameBoard[tileGroup[tileGroup.length-1].getMapLocation().x][tileGroup[tileGroup.length-1].getMapLocation().y] = { val : this.actionBehavior.getUpgradedValue(), active : false };
+		gameBoard[tileGroup[0].getMapLocation().x][tileGroup[0].getMapLocation().y] = { val : this.actionBehavior.getUpgradedValue(), active : false };
 		
-		this.PrintGameBoardtoConsole();
+		//this.PrintGameBoardtoConsole();
 		//this.PrintGameBoardtoConsole('clear');
 		//now check for any suspended tiles - right now just deal with the action (this may be all we need)
 		//console.info('lookAhead' + this.LookAhead(actionTile.getMapLocation()));
@@ -402,11 +405,7 @@ var Game = Class.create({
 			document.observe('WD::tileFinished',this.RunChainAnimation.bind(this));
 			document.observe('WD::animationFinished',this.animationFinished.bind(this));
 
-			//console.info('about to animate these:');
-			for(var x = tileGroup.length-1; x > 0; x--){
-				//console.info('index[' + x + '] ' + tileGroup[x].toString());
-			}
-
+			
 			this.RunChainAnimation();
 				
 		//}
@@ -416,19 +415,20 @@ var Game = Class.create({
 		//console.info('RUNNING CHAIN ANIMATION');
 		var tileGroup = this.actionBehavior.getChain();
 		var direction = WDAnimation.DIRECTION.UP;
-		
+		console.info(this.chainMemberIndex);
 		if(this.chainMemberIndex>1){
+			console.info('yao');
 			var _options = { animationType : WDAnimation.TYPE.SLIDE, 
-								direction : WDAnimation.DIRECTION.UP, 
-								pixelSpeed : 400,  
+								direction : WDAnimation.DIRECTION.RIGHT, 
+								pixelSpeed : 10,  
 								endEvent : 'WD::tileFinished' 
 							};
 
 			var animObject = new WDAnimation(_options);
 			animObject.animateBlock(tileGroup[--this.chainMemberIndex]);
-		} else {
-
-			var _options = { animationType : WDAnimation.TYPE.MOVE, 
+		} else { 
+			if(tileGroup[0].getMapLocation().y < (this.defaultSettings.gameRows - 1)){ //move this only if tile is in the air (gravity move)
+					var _options = { animationType : WDAnimation.TYPE.MOVE, 
 								endX : tileGroup[tileGroup.length-1].getCanvasLocation().x, 
 								endY : tileGroup[tileGroup.length-1].getCanvasLocation().y, 
 								speed : 100, 
@@ -436,11 +436,16 @@ var Game = Class.create({
 								endEvent : 'WD::animationFinished'
 							};
 
-			//animate action block
-			//var _options = { animationType : WDAnimation.TYPE.MOVE, startX : 0, startY : 0, endX : 0, endY : 0, speed : 100,  endEvent : 'WD::animationFinished' };
-			var animObject = new WDAnimation(_options);
+					//animate action block
+					//var _options = { animationType : WDAnimation.TYPE.MOVE, startX : 0, startY : 0, endX : 0, endY : 0, speed : 100,  endEvent : 'WD::animationFinished' };
+					var animObject = new WDAnimation(_options);
 
-			animObject.animateBlock(tileGroup[0]);
+					animObject.animateBlock(tileGroup[0]);
+			} else {
+				console.info('calling animation Finished');
+				animationFinished();
+			}
+			
 		}
 	},
 	animationFinished : function(){
@@ -479,9 +484,6 @@ var Game = Class.create({
 
 
 				x += this.defaultSettings.tileWidth;
-
-
-
 
 			}
 			y += this.defaultSettings.tileHeight

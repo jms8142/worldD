@@ -134,7 +134,7 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
             
 
             if((animateObj._gameTile.getCanvasLocation().y  +  animateObj._options.newY) > animateObj._options.endY) { //this is one step behind - should be compared to the new position
-           // console.info('move called');
+            console.info('move called');
             
             //if(animateObj._options.NewSectionSlice)
             

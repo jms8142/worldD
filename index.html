@@ -20,22 +20,22 @@ var _game;
 <script>
 jQuery(function(){
 	
-	/*var opts = {
+	var opts = {
 		gameBoard : five_and_ten,
 		startingPiece : 1, //[0=1,1=5,2=10,3=25]
-		startingPiecePosition : { x : 4, y : 4 },
+		startingPiecePosition : { x : 4, y : 6 },
 		constantPiece : null,
 		debugWindow : true,
-		debugShow : Game.debugBehavior | Game.debugMovement | Game.debugTransition
-	}*/
+		debugShow : Game.debugMovement | Game.debugTransition
+	}
 	
-	
+	/*
 	var opts = {
 		startingPiecePosition : { x : 4, y : 4 },
 		debugWindow : true,
 		debugShow : Game.debugBehavior | Game.debugMovement | Game.debugTransition
 	}
-	
+	*/
 	_game = new Game(opts);
 	//var _game = new Game();a
 	//_game.PrintGameBoardtoConsole();
