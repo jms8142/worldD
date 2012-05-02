@@ -383,19 +383,19 @@ var Game = Class.create({
 		//console.info(tileGroup.length);
 		for(i = tileGroup.length - 1; i > 0; i--){
 		//for(i=0;i<tileGroup.length; i++) {
-			//console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
+			console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
 			gameBoard[tileGroup[i].getMapLocation().x][tileGroup[i].getMapLocation().y] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
 		}
 
-		this.PrintGameBoardtoConsole();
+		//this.PrintGameBoardtoConsole();
 		//console.info(tileGroup[0].getMapLocation().y);
 		
 		//console.info(tileGroup[0].getMapLocation().x);
-		//gameBoard[1][0] = { val : 3, active : false };
 		//gameBoard[tileGroup[tileGroup.length-1].getMapLocation().x][tileGroup[tileGroup.length-1].getMapLocation().y] = { val : this.actionBehavior.getUpgradedValue(), active : false };
+		console.info('setting tile index: x ' + tileGroup[0].getMapLocation().x + ' y ' + tileGroup[0].getMapLocation().y + ' to ' + this.actionBehavior.getUpgradedValue());
 		gameBoard[tileGroup[0].getMapLocation().x][tileGroup[0].getMapLocation().y] = { val : this.actionBehavior.getUpgradedValue(), active : false };
 		
-		//this.PrintGameBoardtoConsole();
+		this.PrintGameBoardtoConsole();
 		//this.PrintGameBoardtoConsole('clear');
 		//now check for any suspended tiles - right now just deal with the action (this may be all we need)
 		//console.info('lookAhead' + this.LookAhead(actionTile.getMapLocation()));
@@ -412,15 +412,18 @@ var Game = Class.create({
 				
 	} ,
 	RunChainAnimation : function(){	
-		//console.info('RUNNING CHAIN ANIMATION');
+		console.info('RUNNING CHAIN ANIMATION');
 		var tileGroup = this.actionBehavior.getChain();
-		var direction = WDAnimation.DIRECTION.UP;
-		console.info(this.chainMemberIndex);
+		var direction = WDAnimation.vector(tileGroup);
+		console.info('direction ' + direction);
+		//console.info(this.chainMemberIndex);
 		if(this.chainMemberIndex>1){
-			console.info('yao');
+			//determine direction to slide
+
+
 			var _options = { animationType : WDAnimation.TYPE.SLIDE, 
-								direction : WDAnimation.DIRECTION.RIGHT, 
-								pixelSpeed : 10,  
+								direction : direction, 
+								pixelSpeed : 40,  
 								endEvent : 'WD::tileFinished' 
 							};
 
@@ -442,8 +445,8 @@ var Game = Class.create({
 
 					animObject.animateBlock(tileGroup[0]);
 			} else {
-				console.info('calling animation Finished');
-				animationFinished();
+				//console.info('calling animation Finished');
+				this.animationFinished();
 			}
 			
 		}

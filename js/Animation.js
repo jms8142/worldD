@@ -241,3 +241,17 @@ WDAnimation.move = function(animateObj){
  // console.info('new placement: ' + JSON.stringify(NewCaptureArea));
   return NewCaptureArea;
 }
+/**
+  * @param GameTile<arraylist>
+  * @return WDAnimation.Direction
+  * @description Determines direction based on coordinates of first two gametile elements.  Direction points to origin - which is the way the animation will slide
+  **/
+WDAnimation.vector = function(gameTiles){
+  if(gameTiles.length > 1){
+      if(gameTiles[0].y == gameTiles[1].y){
+          return (gameTiles[0].getPosition().x > gameTiles[1].getPosition().x) ? WDAnimation.DIRECTION.RIGHT : WDAnimation.DIRECTION.LEFT;
+      } else {
+        return WDAnimation.DIRECTION.DOWN; //only other possible direction to animate
+      }
+  }
+}
