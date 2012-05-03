@@ -40,7 +40,7 @@ var Game = Class.create({
 			_canvasBuffer.height = _canvas.height;
 			_canvasBufferContext = _canvasBuffer.getContext('2d');
 		}
-		this.GenerateTestGrid();
+		//this.GenerateTestGrid();
 		
 		if(opts && opts.gameBoard)
 			gameBoard = opts.gameBoard;
@@ -76,7 +76,7 @@ var Game = Class.create({
 
 	Update : function(){
 		this.ClearCanvas();
-		this.GenerateTestGrid();
+		//this.GenerateTestGrid();
 		this.DrawGameTiles();
 		this.Draw();	
 		//this.PrintGameBoardtoConsole();

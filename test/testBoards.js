@@ -3,7 +3,7 @@
 var rows = 10;
 var cols = 9;
 
-/*
+
 emptyBoardMap = [
 	[0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0],
@@ -82,7 +82,7 @@ random_01Map = [
 ];
 
 var random_01 = mapToObject(random_01Map);
-*/
+
 five_and_tenMap = [
 	[0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0],

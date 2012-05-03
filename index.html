@@ -21,14 +21,13 @@ var _game;
 jQuery(function(){
 	
 	var opts = {
-		gameBoard : five_and_ten,
-		startingPiece : 1, //[0=1,1=5,2=10,3=25]
-		startingPiecePosition : { x : 4, y : 6 },
+		gameBoard : oneTower,
+		startingPiece : 0, //[0=1,1=5,2=10,3=25]
+		startingPiecePosition : { x : 4, y : 3 },
 		constantPiece : null,
 		debugWindow : true,
 		debugShow : Game.debugMovement | Game.debugTransition
 	}
-	
 	/*
 	var opts = {
 		startingPiecePosition : { x : 4, y : 4 },
@@ -50,6 +49,5 @@ jQuery(function(){
 Canvas not supported.
 </canvas>
 <div class="debugWindow"></div>
-
 </body>
 </html>
