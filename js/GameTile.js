@@ -98,9 +98,9 @@ var GameTile = Class.create(DrawableElement,{
 		this.tileFill = color;
 	},
 	render : function(_canvasContext){
-		if(this._val == 1){ //try penny pic for now
-			_canvasContext.drawImage(this.pennyPic,this._x,this._y);
-		} else {
+		//if(this._val == 1){ //try penny pic for now
+		//	_canvasContext.drawImage(this.pennyPic,this._x,this._y);
+		//} else {
 		//console.info('game tile');
 		//console.info(_canvasContext);
 		//fill
@@ -126,7 +126,7 @@ var GameTile = Class.create(DrawableElement,{
 		//console.info(this.textAdjust[this._val]);
 
 		_canvasContext.fillText(this._text, textX, textY);
-		}
+		//}
 		
 	},
 	toString : function(){

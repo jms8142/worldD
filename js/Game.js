@@ -40,7 +40,7 @@ var Game = Class.create({
 			_canvasBuffer.height = _canvas.height;
 			_canvasBufferContext = _canvasBuffer.getContext('2d');
 		}
-		//this.GenerateTestGrid();
+		this.GenerateTestGrid();
 		
 		if(opts && opts.gameBoard)
 			gameBoard = opts.gameBoard;
@@ -76,7 +76,7 @@ var Game = Class.create({
 
 	Update : function(){
 		this.ClearCanvas();
-		//this.GenerateTestGrid();
+		this.GenerateTestGrid();
 		this.DrawGameTiles();
 		this.Draw();	
 		//this.PrintGameBoardtoConsole();
@@ -337,7 +337,7 @@ var Game = Class.create({
 					this.actionBehavior.hasReaction(new GameTile(nextTileParams)) && //next tile has reaction
 					this.actionBehavior.getAnimationStart() != true) //that next tile didn't start an instant reaction
 				{
-					console.info('in while');
+					//console.info('in while');
 				//console.info(JSON.stringify(nextTileParams));
 				//console.info('searching ' + searchVectors[i]);
 				//console.info('next location:');
@@ -369,7 +369,9 @@ var Game = Class.create({
 				console.info('[TRANSITION] Starting Transition');
 
 		var tileGroup = this.actionBehavior.getChain();
-		
+		console.info('getting direction:');
+		var direction = WDAnimation.vector(tileGroup);
+		console.info('direction: ' + direction);
 		//lock keys
 		this.keysLocked = true;
 		//this.PrintGameBoardtoConsole();
@@ -393,9 +395,16 @@ var Game = Class.create({
 		//console.info(tileGroup[0].getMapLocation().x);
 		//gameBoard[tileGroup[tileGroup.length-1].getMapLocation().x][tileGroup[tileGroup.length-1].getMapLocation().y] = { val : this.actionBehavior.getUpgradedValue(), active : false };
 		console.info('setting tile index: x ' + tileGroup[0].getMapLocation().x + ' y ' + tileGroup[0].getMapLocation().y + ' to ' + this.actionBehavior.getUpgradedValue());
-		gameBoard[tileGroup[0].getMapLocation().x][tileGroup[0].getMapLocation().y] = { val : this.actionBehavior.getUpgradedValue(), active : false };
 		
-		this.PrintGameBoardtoConsole();
+		/**
+		Normally, the first tile in the group (index[0]) will get upgraded, as the remaining tiles in the chain animate into it, but
+		for vertical matches, the last tile in the array should get upgraded, since the first tile will drop to the last tile position
+		**/
+		var tileUpgradeIndex = (direction === WDAnimation.DIRECTION.UP) ? tileGroup.length - 1 : 0; 
+
+		gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : this.actionBehavior.getUpgradedValue(), active : false };
+		
+		//this.PrintGameBoardtoConsole();
 		//this.PrintGameBoardtoConsole('clear');
 		//now check for any suspended tiles - right now just deal with the action (this may be all we need)
 		//console.info('lookAhead' + this.LookAhead(actionTile.getMapLocation()));

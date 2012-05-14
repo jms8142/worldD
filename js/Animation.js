@@ -248,10 +248,10 @@ WDAnimation.move = function(animateObj){
   **/
 WDAnimation.vector = function(gameTiles){
   if(gameTiles.length > 1){
-      if(gameTiles[0].y == gameTiles[1].y){
-          return (gameTiles[0].getPosition().x > gameTiles[1].getPosition().x) ? WDAnimation.DIRECTION.RIGHT : WDAnimation.DIRECTION.LEFT;
+      if(gameTiles[0].getMapLocation().y == gameTiles[1].getMapLocation().y){
+        return (gameTiles[0].getMapLocation().x > gameTiles[1].getMapLocation().x) ? WDAnimation.DIRECTION.RIGHT : WDAnimation.DIRECTION.LEFT;
       } else {
-        return WDAnimation.DIRECTION.DOWN; //only other possible direction to animate
+        return WDAnimation.DIRECTION.UP; //only other possible direction to animate
       }
   }
 }
