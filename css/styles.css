@@ -19,6 +19,14 @@ canvas {
 	background:#FFF;
 }
 
+.score {
+	width:624px;
+	margin:12px 0;
+	font-size:.825em;
+	padding:12px;
+	background:#4d4d4d;
+}
+
 
 /* Debug Window */
 

@@ -1,5 +1,5 @@
 var Game = Class.create({
-
+	/** all references to these members need to have a this prefix **/
 	_canvas : null,
 	_canvasContext : null,
 	_canvasBuffer : null,
@@ -24,20 +24,23 @@ var Game = Class.create({
 	constantPiece : null,
 	debugWindow : false,
 	debugFlags : 0x0,
-
+	startingPiecePositionX : 0,
+	startingPiecePositionY : 0,
+	score : 0,
 	initialize : function (opts){
+		
 		if(opts && opts.constantPiece)
 			this.constantPiece = opts.constantPiece;
 
 		if(opts && opts.debugShow)
 			this.debugFlags = opts.debugShow;
 
-		_canvas = document.getElementById('canvas');
-		if (_canvas && _canvas.getContext) {
-			_canvasContext = _canvas.getContext('2d');
+		this._canvas = document.getElementById('canvas');
+		if (this._canvas && this._canvas.getContext) {
+			_canvasContext = this._canvas.getContext('2d');
 			_canvasBuffer = document.createElement('canvas');
-			_canvasBuffer.width = _canvas.width;
-			_canvasBuffer.height = _canvas.height;
+			_canvasBuffer.width = this._canvas.width;
+			_canvasBuffer.height = this._canvas.height;
 			_canvasBufferContext = _canvasBuffer.getContext('2d');
 		}
 		this.GenerateTestGrid();
@@ -57,9 +60,8 @@ var Game = Class.create({
 
 		//starting piece
 		var startingPiece = (opts && opts.startingPiece !== undefined) ? opts.startingPiece : 1;
-		var startingPiecePositionX = (opts && opts.startingPiecePosition) ? opts.startingPiecePosition.x : 4;
-		var startingPiecePositionY = (opts && opts.startingPiecePosition) ? opts.startingPiecePosition.y : 2;
-		
+	 	startingPiecePositionX = (opts && opts.startingPiecePosition) ? opts.startingPiecePosition.x : 4;
+		startingPiecePositionY = (opts && opts.startingPiecePosition) ? opts.startingPiecePosition.y : 2;
 		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY,startingPiece);
 		this.DrawGameTiles();
 		
@@ -89,7 +91,7 @@ var Game = Class.create({
     	_canvasContext.drawImage(_canvasBuffer, 0, 0);
 	},
 	ClearCanvas : function(){
-		_canvasContext.clearRect(0,0,_canvas.width,_canvas.height);
+		_canvasContext.clearRect(0,0,this._canvas.width,this._canvas.height);
 		_canvasBufferContext.clearRect(0,0,_canvasBuffer.width,_canvasBuffer.height);
 	},
 	CreateTileMap : function(){
@@ -98,12 +100,12 @@ var Game = Class.create({
 					gameBoard[i] = new Array(this.defaultSettings.gameRows);
 					for (var j = 0; j < gameBoard[i].length; j++){
 						//pick random game tile value from currencyValues
-						if(j < (this.defaultSettings.gameRows - this.defaultSettings.populatedRows)){
+						//if(j < (this.defaultSettings.gameRows - this.defaultSettings.populatedRows)){
 							gameBoard[i][j] = { val : 0, active : false };
-						} else {
-							var randomVal = Math.floor(Math.random()*(this.defaultSettings.currencyValues.length-1));	
-							gameBoard[i][j] = { val : (randomVal + 1), active : false };
-						}
+						//} else {
+						//	var randomVal = Math.floor(Math.random()*(this.defaultSettings.currencyValues.length-1));	
+						//	gameBoard[i][j] = { val : (randomVal + 1), active : false };
+						//}
 						
 					}
 
@@ -144,7 +146,7 @@ var Game = Class.create({
 
 	},
 	CreateActionPiece : function(x,y,val) {
-		//console.info(constantPiece);
+		//console.info(x);
 		if(this.constantPiece)
 			val = this.constantPiece;
 
@@ -218,7 +220,7 @@ var Game = Class.create({
 				this.StartBoardTransition();
 			} else {
 				gameBoard[actionTile.getMapLocation().x][actionTile.getMapLocation().y].active = false;
-				this.CreateActionPiece(4,4);
+				this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
 				this.Update();
 			}
 			
@@ -383,7 +385,7 @@ var Game = Class.create({
 		}
 		
 		//console.info(tileGroup.length);
-		for(i = tileGroup.length - 1; i > 0; i--){
+		for(i = tileGroup.length - 1; i >= 0; i--){
 		//for(i=0;i<tileGroup.length; i++) {
 			console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
 			gameBoard[tileGroup[i].getMapLocation().x][tileGroup[i].getMapLocation().y] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
@@ -401,8 +403,16 @@ var Game = Class.create({
 		for vertical matches, the last tile in the array should get upgraded, since the first tile will drop to the last tile position
 		**/
 		var tileUpgradeIndex = (direction === WDAnimation.DIRECTION.UP) ? tileGroup.length - 1 : 0; 
+		var upgradedValue = 0;
+		if(this.actionBehavior.getUpgradedValue() === 5){
+			this.score += 1;
+			this.updateScoreBoard(this.score);
+		} else {
+			upgradedValue = this.actionBehavior.getUpgradedValue();
+		}
 
-		gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : this.actionBehavior.getUpgradedValue(), active : false };
+
+		gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : upgradedValue, active : false };
 		
 		//this.PrintGameBoardtoConsole();
 		//this.PrintGameBoardtoConsole('clear');
@@ -424,7 +434,7 @@ var Game = Class.create({
 		console.info('RUNNING CHAIN ANIMATION');
 		var tileGroup = this.actionBehavior.getChain();
 		var direction = WDAnimation.vector(tileGroup);
-		console.info('direction ' + direction);
+		//console.info('direction ' + direction);
 		//console.info(this.chainMemberIndex);
 		if(this.chainMemberIndex>1){
 			//determine direction to slide
@@ -439,6 +449,7 @@ var Game = Class.create({
 			var animObject = new WDAnimation(_options);
 			animObject.animateBlock(tileGroup[--this.chainMemberIndex]);
 		} else { 
+			//console.info('ready for freddy');
 			if(tileGroup[0].getMapLocation().y < (this.defaultSettings.gameRows - 1)){ //move this only if tile is in the air (gravity move)
 					var _options = { animationType : WDAnimation.TYPE.MOVE, 
 								endX : tileGroup[tileGroup.length-1].getCanvasLocation().x, 
@@ -462,7 +473,7 @@ var Game = Class.create({
 	},
 	animationFinished : function(){
 		this.keysLocked = false;
-		this.CreateActionPiece(4,4);
+		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
 		this.Update();
 		//this.PrintGameBoardtoConsole();
 		//console.info('animation finished!');
@@ -474,6 +485,9 @@ var Game = Class.create({
 		mapY = coords.y * this.defaultSettings.tileHeight;
 		return { x : mapX, y : mapY };
 
+	},
+	updateScoreBoard : function(val) {
+		jQuery('.score').html('Score: $' + val + '.00');
 	}/* */,
 	// Debugging and Testing Functions 
 	GenerateTestGrid : function(){

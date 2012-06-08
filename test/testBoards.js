@@ -98,6 +98,21 @@ five_and_tenMap = [
 
 var five_and_ten = mapToObject(five_and_tenMap);
 
+sandboxMap = [
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,4,4,4,0]
+];
+
+var sandbox = mapToObject(sandboxMap);
+
 
 /**
 Conversion function for transposing maps into gameboard objects
