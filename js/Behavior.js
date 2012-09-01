@@ -111,11 +111,12 @@ var Behavior = Class.create({
 
 		if(this.Validate()){
 			//console.info('money changing!');
+			WDAnimation.assignDirection(this.chain);
 			this.startAnimation = true;
 		}
 	},
 	Validate : function(){
-		if(this.chain.length >= 2 && this.chain.length < this.rules.maxSize){
+		if(this.chain.length >= this.rules.minThreshold && this.chain.length < this.rules.maxSize){
 			//console.info(this.chain);
 			var _string = '';
 			for(i = 0; i < this.chain.length; i++){

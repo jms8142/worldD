@@ -21,12 +21,12 @@ var _game;
 jQuery(function(){
 	
 	var opts = {
-		gameBoard : sandbox,
+		/* gameBoard : twentyfiveTower, */
 		startingPiece : 3, //[0=1,1=5,2=10,3=25]
-		startingPiecePosition : { x : 4, y : 6 },
+		startingPiecePosition : { x : 4, y : 5 },
 		constantPiece : null,
 		debugWindow : true,
-		debugShow : Game.debugMovement | Game.debugTransition
+		debugShow : Game.debugMovement | Game.debugTransition | Game.debugBehavior
 	}
 	/*
 	var opts = {
@@ -40,13 +40,9 @@ jQuery(function(){
 	//_game.PrintGameBoardtoConsole();
 
 /**
-To do
-
-combos to debug:
-4 25's
-5105
-
-
+next:
+keep testing
+take care of floating blocks
 
 
 **/

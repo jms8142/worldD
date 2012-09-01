@@ -241,17 +241,52 @@ WDAnimation.move = function(animateObj){
  // console.info('new placement: ' + JSON.stringify(NewCaptureArea));
   return NewCaptureArea;
 }
+
 /**
   * @param GameTile<arraylist>
-  * @return WDAnimation.Direction
-  * @description Determines direction based on coordinates of first two gametile elements.  Direction points to origin - which is the way the animation will slide
+  * @return void
+  * @description Determines animation direction of each tile and assigns it to gametile.setDirection()
   **/
-WDAnimation.vector = function(gameTiles){
+WDAnimation.assignDirection = function(gameTiles){
+
+  //console.info(gameTiles);
+  //console.info(gameTiles.toString());
+  var middle = false,
+  direction = 0;
   if(gameTiles.length > 1){
-      if(gameTiles[0].getMapLocation().y == gameTiles[1].getMapLocation().y){
-        return (gameTiles[0].getMapLocation().x > gameTiles[1].getMapLocation().x) ? WDAnimation.DIRECTION.RIGHT : WDAnimation.DIRECTION.LEFT;
+    //console.info(gameTiles.length);
+
+    //if the starter tile is in the middle of a 3 tile pattern
+    if(gameTiles.length === 3 &&
+      gameTiles[0].mapX > gameTiles[1].mapX &&
+      gameTiles[0].mapX < gameTiles[2].mapX
+      ) {
+      console.info('monkey in the middle situation');
+      middle = true;
+    } else {
+        if(gameTiles[0].getMapLocation().y == gameTiles[1].getMapLocation().y){
+          direction = (gameTiles[0].getMapLocation().x > gameTiles[1].getMapLocation().x) ? WDAnimation.DIRECTION.RIGHT : WDAnimation.DIRECTION.LEFT;
+        } else {
+          direction = WDAnimation.DIRECTION.UP; //only other possible direction to animate
+        }
+    }
+
+
+
+    for(x = 1; x < gameTiles.length; x++){
+      if(middle){
+        if(x === 1){
+          console.info(WDAnimation.DIRECTION.RIGHT);
+          gameTiles[x].setDirection(WDAnimation.DIRECTION.RIGHT);
+        } else {
+          gameTiles[x].setDirection(WDAnimation.DIRECTION.LEFT);
+        }
       } else {
-        return WDAnimation.DIRECTION.UP; //only other possible direction to animate
+        gameTiles[x].setDirection(direction);
       }
+     
+    }
+
+   
   }
 }

@@ -14,6 +14,7 @@ var GameTile = Class.create(DrawableElement,{
 	tileFill : 'rgb(201,227,230)',
 	textAdjust : [0,4,4,8,8],
 	defaultCoinColor : 'rgb(136,181,180)',
+	direction : 0, //The direction this tile will animate
 	/**
 	* @param Object coords
 	* @return void
@@ -48,6 +49,12 @@ var GameTile = Class.create(DrawableElement,{
 	},
 	getWidth : function(){
 		return this._width;
+	},
+	setDirection : function(dir){
+		this.direction = dir;
+	},
+	getDirection : function(){
+		return this.direction;
 	},
 	/**		
 	* @param int val
@@ -132,6 +139,6 @@ var GameTile = Class.create(DrawableElement,{
 	toString : function(){
 		//console.info(this._val);
 		//console.info(this.currencyValue);
-		return '[curVal: ' + this.currencyValue + '] x:' + this._x + ' y:' + this._y + ' tilemapX: ' + this.mapX + ' tilemapY: ' + this.mapY;
+		return '[curVal: ' + this.currencyValue + '] x:' + this._x + ' y:' + this._y + ' mapX: ' + this.mapX + ' mapY: ' + this.mapY + ' |direction: ' + this.getDirection();
 	}
 });

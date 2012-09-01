@@ -311,6 +311,7 @@ var Game = Class.create({
 
 			if(this.debugFlags & Game.debugBehavior)
 				console.info('[BEHAVIOR] Checking:' + this.MoveDescription[searchVectors[i]]);
+
 			var nextLocation = this.TransformLocation(_gameTile.getMapLocation(),searchVectors[i]);
 			var nextLocationVal = gameBoard[nextLocation.x][nextLocation.y].val;
 			var nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
@@ -339,7 +340,8 @@ var Game = Class.create({
 					this.actionBehavior.hasReaction(new GameTile(nextTileParams)) && //next tile has reaction
 					this.actionBehavior.getAnimationStart() != true) //that next tile didn't start an instant reaction
 				{
-					//console.info('in while');
+				
+				//console.info('in while');
 				//console.info(JSON.stringify(nextTileParams));
 				//console.info('searching ' + searchVectors[i]);
 				//console.info('next location:');
@@ -372,8 +374,7 @@ var Game = Class.create({
 
 		var tileGroup = this.actionBehavior.getChain();
 		console.info('getting direction:');
-		var direction = WDAnimation.vector(tileGroup);
-		console.info('direction: ' + direction);
+		
 		//lock keys
 		this.keysLocked = true;
 		//this.PrintGameBoardtoConsole();
@@ -387,7 +388,7 @@ var Game = Class.create({
 		//console.info(tileGroup.length);
 		for(i = tileGroup.length - 1; i >= 0; i--){
 		//for(i=0;i<tileGroup.length; i++) {
-			console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
+			//console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
 			gameBoard[tileGroup[i].getMapLocation().x][tileGroup[i].getMapLocation().y] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
 		}
 
@@ -402,7 +403,7 @@ var Game = Class.create({
 		Normally, the first tile in the group (index[0]) will get upgraded, as the remaining tiles in the chain animate into it, but
 		for vertical matches, the last tile in the array should get upgraded, since the first tile will drop to the last tile position
 		**/
-		var tileUpgradeIndex = (direction === WDAnimation.DIRECTION.UP) ? tileGroup.length - 1 : 0; 
+		var tileUpgradeIndex = (tileGroup[1].getDirection() === WDAnimation.DIRECTION.UP) ? tileGroup.length - 1 : 0; 
 		var upgradedValue = 0;
 		if(this.actionBehavior.getUpgradedValue() === 5){
 			this.score += 1;
@@ -433,23 +434,19 @@ var Game = Class.create({
 	RunChainAnimation : function(){	
 		console.info('RUNNING CHAIN ANIMATION');
 		var tileGroup = this.actionBehavior.getChain();
-		var direction = WDAnimation.vector(tileGroup);
-		//console.info('direction ' + direction);
+		
 		//console.info(this.chainMemberIndex);
 		if(this.chainMemberIndex>1){
-			//determine direction to slide
-
-
 			var _options = { animationType : WDAnimation.TYPE.SLIDE, 
-								direction : direction, 
+								direction : tileGroup[--this.chainMemberIndex].getDirection(), 
 								pixelSpeed : 40,  
 								endEvent : 'WD::tileFinished' 
 							};
 
 			var animObject = new WDAnimation(_options);
-			animObject.animateBlock(tileGroup[--this.chainMemberIndex]);
+			animObject.animateBlock(tileGroup[this.chainMemberIndex]);
 		} else { 
-			//console.info('ready for freddy');
+			console.info('ready for freddy');
 			if(tileGroup[0].getMapLocation().y < (this.defaultSettings.gameRows - 1)){ //move this only if tile is in the air (gravity move)
 					var _options = { animationType : WDAnimation.TYPE.MOVE, 
 								endX : tileGroup[tileGroup.length-1].getCanvasLocation().x, 
