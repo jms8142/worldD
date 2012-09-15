@@ -52,13 +52,14 @@ canvas {
 	float:left;
 	padding-left:4px;
 	margin-top:4px;
-	width:150px;
+	width:650px;
 }
 
 .utilinfo a {
 	color:#FFF;
 	font-size:.75em;
 	text-decoration: none;
+	margin:0 4px;
 }
 
 .utilinfo a:hover {

@@ -15,7 +15,7 @@ var Game = Class.create({
 						actionTileStroke: 'rgb(255,0,0)'
 					},
 	gameBoard : null,
-	lastgameBoard : null,
+	lastgameBoard : [],
 	lastTest : 0,
 	actionTile : null,
 	MoveDirection : { LEFT : 0, DOWN : 1, RIGHT : 2},
@@ -74,9 +74,6 @@ var Game = Class.create({
 			var _this = this;
 			this.PrintGameBoardtoDebugWindow();
 			window.debugger = new Debugger();
-			jQuery('#snapshot').click(function(e){
-				window.debugger.PrintGameBoardtoConsole(_this.defaultSettings.gameRows,_this.defaultSettings.columns,_this.lastgameBoard);
-			});
 		}
 		//register events
 		$(document).observe('keydown',this.KeyGrab.bind(this));
@@ -92,8 +89,6 @@ var Game = Class.create({
 
 		if(this.debugWindow)
 			this.PrintGameBoardtoDebugWindow();
-
-	 window.debugger.PrintGameBoardtoConsole(this.defaultSettings.gameRows,this.defaultSettings.columns,this.gameBoard);
 
 	},
 
@@ -203,14 +198,14 @@ var Game = Class.create({
 		//console.info(event);
 	},
 	Move : function(direction){
-		console.info('huh?');
-		this.lastgameBoard = Object.clone(this.gameBoard);
-		//window.debugger.PrintGameBoardtoConsole(this.defaultSettings.gameRows,this.defaultSettings.columns,this.gameBoard);
+			
+		//this.lastgameBoard = jQuery.extend(true, {}, this.gameBoard);
+		this.lastgameBoard.push(jQuery.extend(true, {}, this.gameBoard));
+		window.debugger.updateSnapshotText(this.lastgameBoard.length);
+
 		if(this.ValidateMove(actionTile.getMapLocation(),direction)){
 
-			//window.debugger.PrintGameBoardtoConsole(this.defaultSettings.gameRows,this.defaultSettings.columns,this.gameBoard);
-			console.clear();
-			//console.info('here');
+			//console.clear();
 			
 			this.lastTest = 1;
 			//window.debugger.PrintGameBoardtoConsole(this.defaultSettings.gameRows,this.defaultSettings.columns,this.gameBoard);
