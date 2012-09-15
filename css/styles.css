@@ -20,7 +20,7 @@ canvas {
 }
 
 .score {
-	width:624px;
+	width:650px;
 	margin:12px 0;
 	font-size:.825em;
 	padding:12px;
@@ -44,6 +44,23 @@ canvas {
 }
 
 .debugWindow .gameMap td {
-	width:15px;
+	width:18px;
 	text-align:center;
+}
+
+.utilinfo {
+	float:left;
+	padding-left:4px;
+	margin-top:4px;
+	width:150px;
+}
+
+.utilinfo a {
+	color:#FFF;
+	font-size:.75em;
+	text-decoration: none;
+}
+
+.utilinfo a:hover {
+	text-decoration:underline;
 }

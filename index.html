@@ -14,6 +14,7 @@ var _game;
 <script type="text/javascript" src="js/GameTile.js"></script>
 <script type="text/javascript" src="js/Behavior.js"></script>
 <script type="text/javascript" src="js/Animation.js"></script>
+<script type="text/javascript" src="js/Debugger.js"></script>
 <script type="text/javascript" src="js/Game.js"></script>
 <script type="text/javascript" src="test/testBoards.js"></script>
 
@@ -21,8 +22,8 @@ var _game;
 jQuery(function(){
 	
 	var opts = {
-		/* gameBoard : twentyfiveTower, */
-		startingPiece : 3, //[0=1,1=5,2=10,3=25]
+		gameBoard : sandbox,
+		startingPiece : 1, //[0=1,1=5,2=10,3=25]
 		startingPiecePosition : { x : 4, y : 5 },
 		constantPiece : null,
 		debugWindow : true,
@@ -41,9 +42,9 @@ jQuery(function(){
 
 /**
 next:
-keep testing
+make a snap shot function - either bring the debugger function locale or something
+figure out why the animation is blocking other sections
 take care of floating blocks
-add a last step snapshot for debugging
 
 **/
 
@@ -58,6 +59,9 @@ add a last step snapshot for debugging
 Canvas not supported.
 </canvas>
 <div class="debugWindow"></div>
+
 <div class="score">Total: $0.00</div>
+<div class='utilinfo'><a href='#' id='snapshot'>print snapshot</a></div>
+
 </body>
 </html>
