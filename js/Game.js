@@ -45,20 +45,26 @@ var Game = Class.create({
 			_canvasBuffer.height = this._canvas.height;
 			_canvasBufferContext = _canvasBuffer.getContext('2d');
 		}
-		this.GenerateTestGrid();
+		
 		
 		if(opts && opts.gameBoard)
 			this.gameBoard = opts.gameBoard;
 		else
 			this.CreateTileMap();
 
-
+		
 		//debug window
 		if(opts && opts.debugWindow)
 			this.debugWindow = true;
 
-		//console.info(debugWindow);
-		//this.PrintGameBoardtoConsole();
+		//show transition - debugging
+		this.showTransition = (opts.showTransition !== undefined) ? opts.showTransition : true;
+
+		//show test grig
+		this.showTestGrid = (opts.showTestGrid !== undefined) ? opts.showTestGrid : false;
+
+		if(this.showTestGrid)
+			this.GenerateTestGrid();
 
 		//starting piece
 		var startingPiece = (opts && opts.startingPiece !== undefined) ? opts.startingPiece : 1;
@@ -82,7 +88,8 @@ var Game = Class.create({
 
 	Update : function(){
 		this.ClearCanvas();
-		this.GenerateTestGrid();
+		if(this.showTestGrid)
+			this.GenerateTestGrid();
 		this.DrawGameTiles();
 		this.Draw();	
 		//window.debugger.PrintGameBoardtoConsole(this.defaultSettings.gameRows,this.defaultSettings.columns,this.gameBoard);
@@ -276,6 +283,9 @@ var Game = Class.create({
 	TransformLocation : function(coords,direction){
 		var _coords = { x : coords.x, y : coords.y }; //make sure the function modifies by value, not ref
 		switch (direction){
+			case this.MoveDirection.UP :
+				_coords.y -= 1;
+				break;
 			case this.MoveDirection.DOWN :
 				_coords.y += 1;
 				break;
@@ -423,8 +433,12 @@ var Game = Class.create({
 			document.observe('WD::tileFinished',this.RunChainAnimation.bind(this));
 			document.observe('WD::animationFinished',this.animationFinished.bind(this));
 
-			
-			this.RunChainAnimation();
+			if(this.showTransition){
+				this.RunChainAnimation();
+			} else {
+				this.animationFinished();
+				//console.clear();
+			}
 				
 		//}
 				
@@ -469,6 +483,7 @@ var Game = Class.create({
 	animationFinished : function(){
 		this.keysLocked = false;
 		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
+		this.scanForSpaces();
 		this.Update();
 		//this.PrintGameBoardtoConsole();
 		//console.info('animation finished!');
@@ -511,19 +526,30 @@ var Game = Class.create({
 			x = 0;
 		}
 		
-	}/*,
-	PrintGameBoardtoConsole : function(clr){
-		if(clr)
-			console.clear();
-
-		for(var row = 0; row < this.defaultSettings.gameRows; row++){
-			var lineout = '';
+	},
+	scanForSpaces : function(){
+		var tileAbove = {};
+		//start with bottom row and move up
+		for(var row = this.defaultSettings.gameRows - 1; row > -1; row--){
+			totalAcross = 0;
 			for(var col = 0; col < this.defaultSettings.columns; col++){
-				lineout += this.gameBoard[col][row].val + '|';
+				var _gameTile = this.gameBoard[col][row];
+				totalAcross += _gameTile.val;
+
+				if(_gameTile.val===0) { //lookup
+					tileAbove = this.TransformLocation({ x : col, y : row },this.MoveDirection.UP)
+					
+					if(this.gameBoard[tileAbove.x][tileAbove.y].val>0){ //this is a floating block
+						this.gameBoard[col][row] = this.gameBoard[tileAbove.x][tileAbove.y]; //clone?
+						this.gameBoard[tileAbove.x][tileAbove.y] = { val : 0, active : false }
+					}
+				}
 			}
-			console.info('[row ' + (row + 1) + '] \t' +  lineout.substr(0,lineout.length-1));
+			console.info('row' + row + ' total :' + totalAcross);
+			if(totalAcross===0)
+				break;
 		}
-	}*/,
+	},
 	PrintGameBoardtoDebugWindow : function(){
 		var HTMLout = '';
 		for(var row = 0; row < this.defaultSettings.gameRows; row++){

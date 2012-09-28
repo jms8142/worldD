@@ -33,7 +33,7 @@ var GameTile = Class.create(DrawableElement,{
 		this.mapY = opts.mapY;
 		this._val = opts.val;
 		this.currencyValue = opts.curVal;
-		this.pennyPic = Image();
+		this.pennyPic = new Image();
 		this.pennyPic.src = '../assets/onecent.png';
 		//console.info(opts.curVal);
 		//console.info('new game tile created with the coords ' + this._x + ' and ' + this._y + ' (Map: x:' + this.mapX + ', y:' + this.mapY + ')');

@@ -22,12 +22,14 @@ var _game;
 jQuery(function(){
 	
 	var opts = {
-		gameBoard : sandbox,
-		startingPiece : 1, //[0=1,1=5,2=10,3=25]
+		/*gameBoard : sandbox,*/
+		startingPiece : 2, //[0=1,1=5,2=10,3=25]
 		startingPiecePosition : { x : 4, y : 5 },
 		constantPiece : null,
 		debugWindow : true,
-		debugShow : Game.debugMovement | Game.debugTransition | Game.debugBehavior
+		debugShow : Game.debugMovement | Game.debugTransition | Game.debugBehavior,
+		showTransition : false,
+		showTestGrid : false
 	}
 	/*
 	var opts = {
@@ -42,10 +44,11 @@ jQuery(function(){
 
 /**
 next:
-make a snap shot function - either bring the debugger function locale or something
+first goal - $10 dollars - green squares leading to 10
+and a dollar sound
 figure out why the animation is blocking other sections
-take care of floating blocks
-
+after logic is done:
+http://www.createjs.com/#!/EaselJS
 **/
 
 });

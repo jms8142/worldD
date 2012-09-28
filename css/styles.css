@@ -60,6 +60,7 @@ canvas {
 	font-size:.75em;
 	text-decoration: none;
 	margin:0 4px;
+	float:left;
 }
 
 .utilinfo a:hover {

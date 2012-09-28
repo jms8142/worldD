@@ -10,6 +10,8 @@ var Debugger = Class.create({
 		if(clr)
 			console.clear();
 
+		console.info('---------------------------------');
+
 		for(var row = 0; row < rows; row++){
 			var lineout = '';
 			for(var col = 0; col < cols; col++){
