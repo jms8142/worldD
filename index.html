@@ -4,25 +4,27 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>World Denomination</title>
 <link rel="stylesheet" href="css/styles.css" type="text/css"/>
+
+
 <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
 <script type='text/javascript' src='js/lib/prototype.js'></script>
 <script>
 var _game;
 </script>
 
-<script type="text/javascript" src="js/DrawableElement.js"></script>
-<script type="text/javascript" src="js/GameTile.js"></script>
-<script type="text/javascript" src="js/Behavior.js"></script>
-<script type="text/javascript" src="js/Animation.js"></script>
-<script type="text/javascript" src="js/Debugger.js"></script>
-<script type="text/javascript" src="js/Game.js"></script>
-<script type="text/javascript" src="test/testBoards.js"></script>
+<script type="text/javascript" src="js/drawableElements/DrawableElement.js"></script>
+<script type="text/javascript" src="js/drawableElements/GameTile.js"></script>
+<script type="text/javascript" src="js/control/Behavior.js"></script>
+<script type="text/javascript" src="js/control/Animation.js"></script>
+<script type="text/javascript" src="js/debug/Debugger.js"></script>
+<script type="text/javascript" src="js/control/Game.js"></script>
+<script type="text/javascript" src="js/test/testBoards.js"></script>
 
 <script>
 jQuery(function(){
 	
 	var opts = {
-		/*gameBoard : sandbox,*/
+		//gameBoard : sandbox,
 		startingPiece : 2, //[0=1,1=5,2=10,3=25]
 		startingPiecePosition : { x : 4, y : 5 },
 		constantPiece : null,
@@ -31,16 +33,9 @@ jQuery(function(){
 		showTransition : false,
 		showTestGrid : false
 	}
-	/*
-	var opts = {
-		startingPiecePosition : { x : 4, y : 4 },
-		debugWindow : true,
-		debugShow : Game.debugBehavior | Game.debugMovement | Game.debugTransition
-	}*/
 	
 	_game = new Game(opts);
-	//var _game = new Game();
-	//_game.PrintGameBoardtoConsole();
+
 
 /**
 next:
@@ -49,6 +44,7 @@ and a dollar sound
 figure out why the animation is blocking other sections
 after logic is done:
 http://www.createjs.com/#!/EaselJS
+
 **/
 
 });
@@ -58,7 +54,7 @@ http://www.createjs.com/#!/EaselJS
 </head>
 
 <body>
-<canvas id="canvas" width="450" height="500">
+<canvas id="canvas" width="450" height="520">
 Canvas not supported.
 </canvas>
 <div class="debugWindow"></div>

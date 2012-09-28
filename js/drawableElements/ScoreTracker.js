@@ -1,0 +1,4 @@
+var ScoreTracker = Class.create({
+
+
+});
