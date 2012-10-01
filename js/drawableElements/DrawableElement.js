@@ -6,6 +6,6 @@ var DrawableElement = Class.create({
 		return null;
 	},
 
-	imageRespository : null
+	render : function(){} //override
 
 });

@@ -38,7 +38,7 @@ var Game = Class.create({
 		if(opts && opts.debugShow)
 			this.debugFlags = opts.debugShow;
 
-		this._canvas = document.getElementById('canvas');
+		this._canvas = document.getElementById('wdCanvas');
 		if (this._canvas && this._canvas.getContext) {
 			_canvasContext = this._canvas.getContext('2d');
 			_canvasBuffer = document.createElement('canvas');
@@ -107,8 +107,8 @@ var Game = Class.create({
     	_canvasContext.drawImage(_canvasBuffer, 0, 0);
 	},
 	ClearCanvas : function(){
-		_canvasContext.clearRect(0,0,this._canvas.width,this._canvas.height);
-		_canvasBufferContext.clearRect(0,0,_canvasBuffer.width,_canvasBuffer.height);
+		_canvasContext.clearRect(0,0,this._canvas.width,this._canvas.height-ScoreTracker.prototype.height); //minus scoreboard
+		_canvasBufferContext.clearRect(0,0,_canvasBuffer.width,_canvasBuffer.height-ScoreTracker.prototype.height);
 	},
 	CreateTileMap : function(){
 			this.gameBoard = new Array(this.defaultSettings.columns);
@@ -419,7 +419,7 @@ var Game = Class.create({
 		var upgradedValue = 0;
 		if(this.actionBehavior.getUpgradedValue() === 5){
 			this.score += 1;
-			this.updateScoreBoard(this.score);
+			this.scoretracker.updateScore(this.score,this._canvasContext);
 		} else {
 			upgradedValue = this.actionBehavior.getUpgradedValue();
 		}
@@ -500,9 +500,7 @@ var Game = Class.create({
 		return { x : mapX, y : mapY };
 
 	},
-	updateScoreBoard : function(val) {
-		jQuery('.score').html('Score: $' + val + '.00');
-	}/* */,
+	/* */
 	// Debugging and Testing Functions 
 	GenerateTestGrid : function(){
 
