@@ -26,6 +26,7 @@ var Game = Class.create({
 	constantPiece : null,
 	debugWindow : false,
 	debugFlags : 0x0,
+	scoreboard : null, //ScoreTracker
 	startingPiecePositionX : 0,
 	startingPiecePositionY : 0,
 	score : 0,
@@ -72,6 +73,9 @@ var Game = Class.create({
 		startingPiecePositionY = (opts && opts.startingPiecePosition) ? opts.startingPiecePosition.y : 2;
 		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY,startingPiece);
 		this.DrawGameTiles();
+
+		this.scoretracker = new ScoreTracker; //temp
+		this.scoretracker.drawScoreBoard(_canvasBufferContext);
 		
 
 		this.Draw();
