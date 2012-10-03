@@ -18,6 +18,7 @@ var _game;
 <script type="text/javascript" src="js/drawableElements/ScoreTracker.js"></script>
 <script type="text/javascript" src="js/control/Behavior.js"></script>
 <script type="text/javascript" src="js/control/Animation.js"></script>
+<script type="text/javascript" src="js/control/Location.js"></script>
 <script type="text/javascript" src="js/debug/Debugger.js"></script>
 <script type="text/javascript" src="js/control/Game.js"></script>
 <script type="text/javascript" src="js/test/testBoards.js"></script>
@@ -26,14 +27,14 @@ var _game;
 jQuery(function(){
 	
 	var opts = {
-		//gameBoard : sandbox,
-		startingPiece : 2, //[0=1,1=5,2=10,3=25]
-		startingPiecePosition : { x : 4, y : 4 },
+		gameBoard : sandbox,
+		startingPiece : 3, //[0=1,1=5,2=10,3=25]
+		startingPiecePosition : { x : 3, y : 6 },
 		constantPiece : null,
 		debugWindow : true,
 		debugShow : Game.debugMovement | Game.debugTransition | Game.debugBehavior,
 		showTransition : false,
-		showTestGrid : false
+		showTestGrid : true
 	}
 	
 	_game = new Game(opts);
@@ -41,8 +42,10 @@ jQuery(function(){
 
 /**
 next:
+4 quarters in a box should disappear
 first goal - $10 dollars - green squares leading to 10
 and a dollar sound
+press space bar to hit bottom
 figure out why the animation is blocking other sections
 after logic is done:
 http://www.createjs.com/#!/EaselJS

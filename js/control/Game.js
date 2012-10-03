@@ -378,6 +378,11 @@ var Game = Class.create({
 			}
 		}
 
+		if(_gameTile.getQuad()){ //check if this is in a box configuration (e.g. 4 quarters)
+			//return this.actionBehavior.runBoxCheck()
+			this.actionBehavior.runBoxCheck(_gameTile);
+		}
+
 		return this.actionBehavior.getAnimationStart();
 	},
 	StartBoardTransition : function(){

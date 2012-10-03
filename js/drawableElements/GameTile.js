@@ -8,6 +8,7 @@ var GameTile = Class.create(DrawableElement,{
 	_val : 0,
 	_text : '',
 	currencyValue : 0,
+	quad : false,
 	strokeWidth : 1,
 	colorMap : ['','rgb(183,129,26)','rgb(136,181,180)','rgb(136,181,180)','rgb(136,181,180)'],
 	tileStroke : 'rgb(43,136,148',
@@ -35,8 +36,10 @@ var GameTile = Class.create(DrawableElement,{
 		this.currencyValue = opts.curVal;
 		this.pennyPic = new Image();
 		this.pennyPic.src = '../assets/onecent.png';
-		//console.info(opts.curVal);
-		//console.info('new game tile created with the coords ' + this._x + ' and ' + this._y + ' (Map: x:' + this.mapX + ', y:' + this.mapY + ')');
+
+	},
+	getQuad : function(){
+		return this.quad;
 	},
 	setHeight : function(_height){
 		this._height = _height;
@@ -63,6 +66,7 @@ var GameTile = Class.create(DrawableElement,{
 	**/
 	setValue : function(val){	
 		this._val = val;
+		if(this._val===4){ this.quad = true; }//a coin that can react when in a 2x2 configuration (basically quarters)
 	},
 	getValue : function(){
 		return this._val;

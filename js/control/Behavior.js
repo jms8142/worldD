@@ -50,7 +50,7 @@ var Behavior = Class.create({
 		25 : [25]
 	},
 	/**
-	* @param Object GameTile
+	* @param GameTile
 	* @return void
 	* @description Constructor function - accepts a GameTile object
 	**/
@@ -75,7 +75,7 @@ var Behavior = Class.create({
 		return this.upgradedValue;
 	},
 	/**		
-	* @param object	_gameTile gameTile object
+	* @param GameTile
 	* @return bool
 	* @description true if gameTile value is in the reactorDefinition of the current 'starter' tile
 	**/
@@ -95,24 +95,59 @@ var Behavior = Class.create({
 		return false;
 	},
 	/**		
-	* @param object	_gameTile gameTile object
+	* @param GameTile
 	* @return void
-	* @description Adds gameTile object the chain array
+	* @desc  - Adds gameTile object the chain array
 	**/
-	//addCombo : function(val,location){
 	addCombo : function(_gameTile) {
 
-		//this.chain.push({ val : val, x : location.x, y : location.y});
-		//this.chain.push(new GameTile(location.x,location.y));
-		//this.chain[this.chain.length-1].setValue(val);
 		this.chain.push(_gameTile);
-		//console.info('just added to chain:');
-		//console.info(this.chain[this.chain.length-1].toString());
-
+	
 		if(this.Validate()){
-			//console.info('money changing!');
 			WDAnimation.assignDirection(this.chain);
 			this.startAnimation = true;
+		}
+	},
+	/**
+	* @param GameTile
+	* @return bool 
+	* @desc - tests whether or not this gametile is in a group of 4 reactive tiles (like 4 quarters)
+	*/
+	runBoxCheck : function(_gameTile){
+
+		var searching = true,
+		location = new Location;
+		
+		var transformations = [
+								{ x : 0, y : 0},
+								{ x : 1, y : 0},
+								{ x : 1, y : 1},
+								{ x : 0, y : 1}
+								];
+
+
+		for(var x = 0;x < transformations.length;x++){ //attempt 4 snapshots
+			var counter = x, internalCount = 0;
+			//starting at position 0
+			while(internalCount++ < transformations.length){
+				//console.info('looking at ' + transformations[counter].x + ' ' + transformations[counter].y);
+				var newLocation = {
+					x : _gameTile.getMapLocation().x + transformations[counter].x,
+					y : _gameTile.getMapLocation().y + transformations[counter].y,
+				};
+
+				console.info(newLocation);
+
+
+				if(counter === transformations.length - 1){
+					counter = 0;
+				} else {
+					counter++;
+				}
+			}
+			internalCount = 0;
+			
+			console.info('=========');
 		}
 	},
 	Validate : function(){
