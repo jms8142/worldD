@@ -27,9 +27,9 @@ var _game;
 jQuery(function(){
 	
 	var opts = {
-		gameBoard : sandbox,
-		startingPiece : 3, //[0=1,1=5,2=10,3=25]
-		startingPiecePosition : { x : 3, y : 6 },
+		/*gameBoard : sandbox,*/
+		startingPiece : 0, //[0=1,1=5,2=10,3=25]
+		startingPiecePosition : { x : 4,y : 4 },
 		constantPiece : null,
 		debugWindow : true,
 		debugShow : Game.debugMovement | Game.debugTransition | Game.debugBehavior,
@@ -42,11 +42,13 @@ jQuery(function(){
 
 /**
 next:
-4 quarters in a box should disappear
-first goal - $10 dollars - green squares leading to 10
+4 stack of 25's doesn't resolve properly
 and a dollar sound
 press space bar to hit bottom
+change gameboard to gametiles objects
 figure out why the animation is blocking other sections
+remove xPos/yPos from gameTile constructor - should be calculated
+change mapX to xMap
 after logic is done:
 http://www.createjs.com/#!/EaselJS
 requirejs

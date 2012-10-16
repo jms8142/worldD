@@ -1,12 +1,10 @@
 var Game = Class.create({
 	/** all references to these members need to have a this prefix **/
 	_canvas : null,
-	_canvasContext : null,
 	_canvasBuffer : null,
 	_canvasBufferContext : null,
 	defaultSettings : { 
-						columns : 9,
-						currencyValues : [-1,1,5,10,25],
+						columns : 9,						
 						tileWidth : 50,
 						tileHeight : 50,
 						populatedRows : 2,
@@ -18,7 +16,6 @@ var Game = Class.create({
 	lastgameBoard : [],
 	lastTest : 0,
 	actionTile : null,
-	MoveDirection : { LEFT : 0, DOWN : 1, RIGHT : 2},
 	MoveDescription : ["Left","Down","Right"], //for debugging
 	actionBehavior : null,  //'starter' gametile which represents the newly placed tile with potential to begin a reaction
 	chainMemberIndex : 0,
@@ -30,7 +27,10 @@ var Game = Class.create({
 	startingPiecePositionX : 0,
 	startingPiecePositionY : 0,
 	score : 0,
+	_location : null, //Location object
 	initialize : function (opts){
+
+		this._location = new Location();
 		
 		if(opts && opts.constantPiece)
 			this.constantPiece = opts.constantPiece;
@@ -40,7 +40,7 @@ var Game = Class.create({
 
 		this._canvas = document.getElementById('wdCanvas');
 		if (this._canvas && this._canvas.getContext) {
-			_canvasContext = this._canvas.getContext('2d');
+			_canvasContext = this._canvas.getContext('2d'); //_canvasContext gets attached to window by ref here
 			_canvasBuffer = document.createElement('canvas');
 			_canvasBuffer.width = this._canvas.width;
 			_canvasBuffer.height = this._canvas.height;
@@ -104,7 +104,7 @@ var Game = Class.create({
 	},
 
 	Draw : function(){
-    	_canvasContext.drawImage(_canvasBuffer, 0, 0);
+		_canvasContext.drawImage(_canvasBuffer, 0, 0);
 	},
 	ClearCanvas : function(){
 		_canvasContext.clearRect(0,0,this._canvas.width,this._canvas.height-ScoreTracker.prototype.height); //minus scoreboard
@@ -137,11 +137,11 @@ var Game = Class.create({
 		for(var col = 0; col < this.defaultSettings.columns;col++){
 			for(var row = 0; row < this.defaultSettings.gameRows;row++){
 				if(this.gameBoard[col][row].val > 0){
-					var _gameTile = new GameTile({ x : coordX, y : coordY, mapX : col, mapY : row });
+					var _gameTile = new GameTile({ xPos : coordX, yPos : coordY, mapX : col, mapY : row });
 					_gameTile.setHeight(this.defaultSettings.tileHeight);
 					_gameTile.setWidth(this.defaultSettings.tileWidth);
 					_gameTile.setValue(this.gameBoard[col][row].val);
-					_gameTile.setCurVal(this.defaultSettings.currencyValues[this.gameBoard[col][row].val])
+
 					if(this.gameBoard[col][row].active) {
 						_gameTile.setStroke(this.defaultSettings.actionTileStroke);
 						_gameTile.setFill(this.defaultSettings.actionTileFill);
@@ -166,14 +166,13 @@ var Game = Class.create({
 		if(this.constantPiece)
 			val = this.constantPiece;
 
-		actionTile = new GameTile(this.LocationMapper({ x : x, y : y, mapX : x, mapY : y}));
+		actionTile = new GameTile(this.LocationMapper({ xPos : x, yPos : y, mapX : x, mapY : y}));
 		if(val === undefined) 
-			var singlePieceVal = Math.floor(Math.random()*(this.defaultSettings.currencyValues.length-1));
+			var singlePieceVal = Math.floor(Math.random()*(GameTile.prototype.currencyValues.length-1));
 		else
 			var singlePieceVal = val;
 
 		actionTile.setValue(singlePieceVal+1);	
-		actionTile.setCurVal(this.defaultSettings.currencyValues[singlePieceVal+1]);				
 		this.gameBoard[x][y] = { val : actionTile.getValue(), active : true };
 	},
 	LocationMapper : function(MapCoordinates) {
@@ -186,22 +185,22 @@ var Game = Class.create({
 			var keyID = event.keyCode;
 			switch (keyID) {
 				case 83 : //S
-					this.Move(this.MoveDirection.DOWN);
+					this.Move(this._location.MoveDirection.DOWN);
 				break;
 				case 40: //down arrow
-					this.Move(this.MoveDirection.DOWN);
+					this.Move(this._location.MoveDirection.DOWN);
 				break; 
 				case 65: //A
-					this.Move(this.MoveDirection.LEFT);
+					this.Move(this._location.MoveDirection.LEFT);
 				break;
 				case 37: //left arrow
-					this.Move(this.MoveDirection.LEFT);
+					this.Move(this._location.MoveDirection.LEFT);
 				break;
 				case 68: //D
-					this.Move(this.MoveDirection.RIGHT);
+					this.Move(this._location.MoveDirection.RIGHT);
 				break;
 				case 39: //right arrow
-					this.Move(this.MoveDirection.RIGHT);
+					this.Move(this._location.MoveDirection.RIGHT);
 				break;
 			}
 		}
@@ -224,7 +223,7 @@ var Game = Class.create({
 		
 			this.gameBoard[actionTile.getMapLocation().x][actionTile.getMapLocation().y] = { val : 0, active : false };
 			//console.info('ok to move!')
-			var newLocation = this.TransformLocation(actionTile.getMapLocation(),direction);
+			var newLocation = this._location.TransformLocation(actionTile.getMapLocation(),direction);
 
 			//console.info('new location');
 			//console.info(newLocation);
@@ -253,7 +252,7 @@ var Game = Class.create({
 		
 	},
 	ValidateMove : function(currentLocation,direction){
-		var newLocation = this.TransformLocation(currentLocation,direction);
+		var newLocation = this._location.TransformLocation(currentLocation,direction);
 
 		if(!(this.LegalRealm(newLocation)) ||
 			this.gameBoard[newLocation.x][newLocation.y].val > 0
@@ -271,7 +270,7 @@ var Game = Class.create({
 				coords.y >= 0);
 	},
 	LookAhead : function(currentLocation){
-		var LookAheadLocation = this.TransformLocation(currentLocation,this.MoveDirection.DOWN);
+		var LookAheadLocation = this._location.TransformLocation(currentLocation,this._location.MoveDirection.DOWN);
 		//console.info(LookAheadLocation);
 		//console.info(this.LegalRealm(LookAheadLocation));
 		if(!this.LegalRealm(LookAheadLocation) || this.gameBoard[LookAheadLocation.x][LookAheadLocation.y].val > 0)
@@ -279,36 +278,12 @@ var Game = Class.create({
 
 		return false;
 	},
-	/**		
-	* @param object	coords tilemap coordinates
-	* @param enum MoveDirection enum represention direction to transform to
-	* @return object coords of transformed location
-	**/
-	TransformLocation : function(coords,direction){
-		var _coords = { x : coords.x, y : coords.y }; //make sure the function modifies by value, not ref
-		switch (direction){
-			case this.MoveDirection.UP :
-				_coords.y -= 1;
-				break;
-			case this.MoveDirection.DOWN :
-				_coords.y += 1;
-				break;
-			case this.MoveDirection.LEFT :
-				_coords.x -= 1;
-				break;
-			case this.MoveDirection.RIGHT :
-				_coords.x += 1;
-				break;
-		}
-		//console.info(_coords);
-		return _coords;
-	},
 	Reactive : function(_gameTile){
 		
 		//console.info(_gameTile.toString());
 		//console.clear();
 		//console.info(_gameTile.currentLocation);
-		var searchVectors = Array(this.MoveDirection.LEFT,this.MoveDirection.DOWN,this.MoveDirection.RIGHT);
+		var searchVectors = Array(this._location.MoveDirection.LEFT,this._location.MoveDirection.DOWN,this._location.MoveDirection.RIGHT);
 		//var actionValue = this.gameBoard[_gameTile.getMapLocation().y][_gameTile.getMapLocation().x].val;
 		
 		//console.info('actionValue ' + actionValue);
@@ -324,32 +299,32 @@ var Game = Class.create({
 
 			//Skip looking LEFT if tile is on left most column
 			if((_gameTile.getMapLocation().x == 0) && 
-				searchVectors[i] == this.MoveDirection.LEFT)
+				searchVectors[i] == this._location.MoveDirection.LEFT)
 				i++;
 
 			//Skip looking DOWN if tile is on bottom row
 			if((this.defaultSettings.gameRows-1 == _gameTile.getMapLocation().y) && 
-				searchVectors[i] == this.MoveDirection.DOWN)
+				searchVectors[i] == this._location.MoveDirection.DOWN)
 				i++;
 			
 			//Skip looking RIGHT if tile is on right most column
 			if((_gameTile.getMapLocation().x == this.defaultSettings.columns - 1) && 
-				searchVectors[i] == this.MoveDirection.RIGHT)
+				searchVectors[i] == this._location.MoveDirection.RIGHT)
 				break;
 
 			if(this.debugFlags & Game.debugBehavior)
 				console.info('[BEHAVIOR] Checking:' + this.MoveDescription[searchVectors[i]]);
 
-			var nextLocation = this.TransformLocation(_gameTile.getMapLocation(),searchVectors[i]);
+			var nextLocation = this._location.TransformLocation(_gameTile.getMapLocation(),searchVectors[i]);
 			var nextLocationVal = this.gameBoard[nextLocation.x][nextLocation.y].val;
-			var nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
-			var nextLocationPosition = this.FindPhysicalLocation(nextLocation);
-			var nextTileParams = { x : nextLocationPosition.x,
-									y : nextLocationPosition.y,
+			//var nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
+			var nextLocationPosition = this._location.FindPhysicalLocation(nextLocation);
+			var nextTileParams = { xPos : nextLocationPosition.x,
+									yPos : nextLocationPosition.y,
 									mapX : nextLocation.x,
 									mapY : nextLocation.y,
-									val : nextLocationVal,
-									curVal : nextLocationCurrencyVal
+									val : nextLocationVal
+									//curVal : nextLocationCurrencyVal
 								};
 								
 								
@@ -359,13 +334,13 @@ var Game = Class.create({
 					this.actionBehavior.getAnimationStart() != true) //that next tile didn't start an instant reaction
 				{
 				
-				nextLocation = this.TransformLocation(nextLocation,searchVectors[i]);
+				nextLocation = this._location.TransformLocation(nextLocation,searchVectors[i]);
 				
 				if(this.LegalRealm(nextLocation)) {
 					nextLocationVal = this.gameBoard[nextLocation.x][nextLocation.y].val;
-					nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
-					nextLocationPosition = this.FindPhysicalLocation(nextLocation);
-					nextLocationCurrencyVal = this.defaultSettings.currencyValues[nextLocationVal];
+					nextLocationCurrencyVal = GameTile.prototype.currencyValues[nextLocationVal];
+					nextLocationPosition = this._location.FindPhysicalLocation(nextLocation);
+					nextLocationCurrencyVal = GameTile.prototype.currencyValues[nextLocationVal];
 
 					nextTileParams = { x : nextLocationPosition.x,
 									y : nextLocationPosition.y,
@@ -390,7 +365,8 @@ var Game = Class.create({
 				console.info('[TRANSITION] Starting Transition');
 
 		var tileGroup = this.actionBehavior.getChain();
-		console.info('getting direction:');
+		//console.info(tileGroup[0]);
+		//console.info(tileGroup[0].getMapLocation());
 		
 		//lock keys
 		this.keysLocked = true;
@@ -404,7 +380,6 @@ var Game = Class.create({
 		
 		//console.info(tileGroup.length);
 		for(i = tileGroup.length - 1; i >= 0; i--){
-		//for(i=0;i<tileGroup.length; i++) {
 			//console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
 			this.gameBoard[tileGroup[i].getMapLocation().x][tileGroup[i].getMapLocation().y] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
 		}
@@ -414,41 +389,42 @@ var Game = Class.create({
 		
 		//console.info(tileGroup[0].getMapLocation().x);
 		//this.gameBoard[tileGroup[tileGroup.length-1].getMapLocation().x][tileGroup[tileGroup.length-1].getMapLocation().y] = { val : this.actionBehavior.getUpgradedValue(), active : false };
-		console.info('setting tile index: x ' + tileGroup[0].getMapLocation().x + ' y ' + tileGroup[0].getMapLocation().y + ' to ' + this.actionBehavior.getUpgradedValue());
+		//console.info('setting tile index: x ' + tileGroup[0].getMapLocation().x + ' y ' + tileGroup[0].getMapLocation().y + ' to ' + this.actionBehavior.getUpgradedValue());
 		
 		/**
 		Normally, the first tile in the group (index[0]) will get upgraded, as the remaining tiles in the chain animate into it, but
 		for vertical matches, the last tile in the array should get upgraded, since the first tile will drop to the last tile position
 		**/
 		var tileUpgradeIndex = (tileGroup[1].getDirection() === WDAnimation.DIRECTION.UP) ? tileGroup.length - 1 : 0; 
-		var upgradedValue = 0;
+		
 		if(this.actionBehavior.getUpgradedValue() === 5){
 			this.score += 1;
-			this.scoretracker.updateScore(this.score,this._canvasContext);
+			this.scoretracker.updateScore(this.score,_canvasBufferContext);
+			this.Draw();
 		} else {
 			upgradedValue = this.actionBehavior.getUpgradedValue();
 		}
 
-
-		this.gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : upgradedValue, active : false };
-		
+		if(this.actionBehavior.getUpgradedValue()>0 && this.actionBehavior.getUpgradedValue()<5){
+			this.gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : this.actionBehavior.getUpgradedValue(), active : false };
+		}
 		//this.PrintGameBoardtoConsole();
 		//this.PrintGameBoardtoConsole('clear');
 		//now check for any suspended tiles - right now just deal with the action (this may be all we need)
 		//console.info('lookAhead' + this.LookAhead(actionTile.getMapLocation()));
 		//if(!this.LookAhead(actionTile.getMapLocation())){
-			this.chainMemberIndex = tileGroup.length;
-			
-			document.observe('WD::tileFinished',this.RunChainAnimation.bind(this));
-			document.observe('WD::animationFinished',this.animationFinished.bind(this));
+		this.chainMemberIndex = tileGroup.length;
+		
+		document.observe('WD::tileFinished',this.RunChainAnimation.bind(this));
+		document.observe('WD::animationFinished',this.animationFinished.bind(this));
 
-			if(this.showTransition){
-				this.RunChainAnimation();
-			} else {
-				this.animationFinished();
-				//console.clear();
-			}
-				
+		if(this.showTransition){
+			this.RunChainAnimation();
+		} else {
+			this.animationFinished();
+			//console.clear();
+		}
+			
 		//}
 				
 	} ,
@@ -497,14 +473,6 @@ var Game = Class.create({
 		//this.PrintGameBoardtoConsole();
 		//console.info('animation finished!');
 	},
-	FindPhysicalLocation : function(coords) {
-		var mapX = coords.x;
-		var mapY = coords.y;
-		mapX = coords.x * this.defaultSettings.tileWidth;
-		mapY = coords.y * this.defaultSettings.tileHeight;
-		return { x : mapX, y : mapY };
-
-	},
 	/* */
 	// Debugging and Testing Functions 
 	GenerateTestGrid : function(){
@@ -544,7 +512,7 @@ var Game = Class.create({
 				totalAcross += _gameTile.val;
 
 				if(_gameTile.val===0) { //lookup
-					tileAbove = this.TransformLocation({ x : col, y : row },this.MoveDirection.UP)
+					tileAbove = this._location.TransformLocation({ x : col, y : row },this._location.MoveDirection.UP)
 					
 					if(this.gameBoard[tileAbove.x][tileAbove.y].val>0){ //this is a floating block
 						this.gameBoard[col][row] = this.gameBoard[tileAbove.x][tileAbove.y]; //clone?
@@ -552,7 +520,7 @@ var Game = Class.create({
 					}
 				}
 			}
-			console.info('row' + row + ' total :' + totalAcross);
+			//console.info('row' + row + ' total :' + totalAcross);
 			if(totalAcross===0)
 				break;
 		}
@@ -562,7 +530,7 @@ var Game = Class.create({
 		for(var row = 0; row < this.defaultSettings.gameRows; row++){
 			HTMLout += '<tr>';
 			for(var col = 0;col < this.defaultSettings.columns; col++){
-				var displayVal = (this.gameBoard[col][row].val === 0) ? '-' : this.defaultSettings.currencyValues[this.gameBoard[col][row].val];
+				var displayVal = (this.gameBoard[col][row].val === 0) ? '-' : GameTile.prototype.currencyValues[this.gameBoard[col][row].val];
 				HTMLout += '<td>' + displayVal + '</td>';
 			}
 			HTMLout += '</tr>\n';

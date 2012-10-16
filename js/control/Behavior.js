@@ -111,44 +111,55 @@ var Behavior = Class.create({
 	/**
 	* @param GameTile
 	* @return bool 
-	* @desc - tests whether or not this gametile is in a group of 4 reactive tiles (like 4 quarters)
+	* @desc - tests whether or not this gametile is in a group of 4 reactive tiles (like 4 quarters) - for now this is hardcoded to react against $.25 values
 	*/
 	runBoxCheck : function(_gameTile){
 
 		var searching = true,
-		location = new Location;
-		
-		var transformations = [
-								{ x : 0, y : 0},
-								{ x : 1, y : 0},
-								{ x : 1, y : 1},
-								{ x : 0, y : 1}
-								];
+		location = new Location,
+		thisVal = _gameTile.getValue(),
+		reaction,
+		magicNumber = 3,
+		positionVectors = [
+			[{ x : 1, y : 0},{ x : 1, y : 1},{ x : 0, y : 1}],//top left
+			[{ x : 0, y : 1},{ x : -1, y : +1},{ x : -1, y : 0}],//top right
+			[{ x : -1, y : 0},{ x : -1, y : -1},{ x : 0, y : -1}],//bottom right
+			[{ x : 0, y : -1},{ x : 1, y : -1},{ x : 1, y : 0}]//bottom left
+		];
 
+		this.chain[0] = _gameTile;
 
-		for(var x = 0;x < transformations.length;x++){ //attempt 4 snapshots
-			var counter = x, internalCount = 0;
-			//starting at position 0
-			while(internalCount++ < transformations.length){
-				//console.info('looking at ' + transformations[counter].x + ' ' + transformations[counter].y);
-				var newLocation = {
-					x : _gameTile.getMapLocation().x + transformations[counter].x,
-					y : _gameTile.getMapLocation().y + transformations[counter].y,
-				};
+		for(var x = 0;x < positionVectors.length;x++){ //attempt 4 snapshots
+			reaction = 0;
 
-				console.info(newLocation);
-
-
-				if(counter === transformations.length - 1){
-					counter = 0;
-				} else {
-					counter++;
+			for(var y = 0;y<positionVectors[x].length;y++){
+				tileView = {
+					x : _gameTile.getMapLocation().x + positionVectors[x][y].x,
+					y : _gameTile.getMapLocation().y + positionVectors[x][y].y,
 				}
+
+				//legal realm
+				if(window._game.LegalRealm(tileView)){
+					if(thisVal === window._game.gameBoard[tileView.x][tileView.y].val){
+						this.chain[y+1] = new GameTile({mapX : tileView.x, mapY : tileView.y, val : thisVal});
+						reaction++
+					}
+				} else {
+					break;
+				}
+				
+
 			}
-			internalCount = 0;
+
+			if(reaction === magicNumber){
+				this.upgradedValue = 5;
+				this.startAnimation = true;
+				break;
+			}		
 			
-			console.info('=========');
 		}
+
+		console.info('done!');
 	},
 	Validate : function(){
 		if(this.chain.length >= this.rules.minThreshold && this.chain.length < this.rules.maxSize){
