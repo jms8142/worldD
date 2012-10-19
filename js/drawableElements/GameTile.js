@@ -12,6 +12,8 @@ var GameTile = Class.create(DrawableElement,{
 	quad : false,
 	strokeWidth : 1,
 	colorMap : ['','rgb(183,129,26)','rgb(136,181,180)','rgb(136,181,180)','rgb(136,181,180)'],
+	artwork : ['','onecent.png','fivecent.png','fivecent.png','fivecent.png'],
+	artworkoff : ['','onecent_inactive.png','fivecent_inactive.png','fivecent_inactive.png','fivecent_inactive.png'],
 	tileStroke : 'rgb(43,136,148',
 	tileFill : 'rgb(201,227,230)',
 	textAdjust : [0,4,4,8,8],
@@ -37,8 +39,12 @@ var GameTile = Class.create(DrawableElement,{
 		this.yPos = (opts.yPos===undefined) ? this._location.FindPhysicalLocation({x : this.mapX, y : this.mapX}).y : opts.yPos;
 		this._val = opts.val;
 		this.currencyValue = (opts.curVal===undefined) ? this.currencyValues[this._val] : opts.curVal;
-		this.pennyPic = new Image();
-		this.pennyPic.src = '../assets/onecent.png';
+		console.info(opts.val);
+		this.activePic = new Image();
+		this.activePic.src = '/assets/' + this.artwork[1];
+
+		this.inactivePic = new Image();
+		this.inactivePic.src =  '/assets/' + this.artworkoff[1];;
 
 		//console.info(this.currencyValue);
 
@@ -116,10 +122,14 @@ var GameTile = Class.create(DrawableElement,{
 	setFill : function(color){
 		this.tileFill = color;
 	},
-	render : function(_canvasContext){
-		//if(this._val == 1){ //try penny pic for now
-		//	_canvasContext.drawImage(this.pennyPic,this.xPos,this.yPos);
-		//} else {
+	render : function(_canvasContext,activeState){
+		if(this._val == 1){ //try penny pic for now
+			if(activeState) {
+				_canvasContext.drawImage(this.activePic,this.xPos,this.yPos);
+			} else {
+				_canvasContext.drawImage(this.inactivePic,this.xPos,this.yPos);
+			}
+		} else {
 		//console.info('game tile');
 		//console.info(_canvasContext);
 		//fill
@@ -145,7 +155,7 @@ var GameTile = Class.create(DrawableElement,{
 		//console.info(this.textAdjust[this._val]);
 
 		_canvasContext.fillText(this._text, textX, textY);
-		//}
+		}
 		
 	},
 	toString : function(){

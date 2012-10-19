@@ -147,7 +147,7 @@ var Game = Class.create({
 						_gameTile.setFill(this.defaultSettings.actionTileFill);
 					}
 
-					_gameTile.render(_canvasBufferContext);
+					_gameTile.render(_canvasBufferContext,this.gameBoard[col][row].active);
 				}
 
 				coordY += this.defaultSettings.tileHeight;
