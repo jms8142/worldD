@@ -8,12 +8,15 @@ var GameTile = Class.create(DrawableElement,{
 	_val : 0,
 	_text : '',
 	currencyValue : 0,
-	currencyValues : [-1,1,5,10,25],
 	quad : false,
 	strokeWidth : 1,
 	colorMap : ['','rgb(183,129,26)','rgb(136,181,180)','rgb(136,181,180)','rgb(136,181,180)'],
-	artwork : ['','onecent.png','fivecent.png','fivecent.png','fivecent.png'],
-	artworkoff : ['','onecent_inactive.png','fivecent_inactive.png','fivecent_inactive.png','fivecent_inactive.png'],
+	bgroundOffset : [{},
+						{ xActive : 0, yActive : 0, xinActive : 0, yinActive : 46},  //one cent
+						{ xActive : 46, yActive : 0, xinActive : 46, yinActive : 46},  //five cents
+						{ xActive : 92, yActive : 0, xinActive : 92, yinActive : 46},  //ten cents
+						{ xActive : 138, yActive : 0, xinActive : 138, yinActive : 46}  //two five cents
+						],
 	tileStroke : 'rgb(43,136,148',
 	tileFill : 'rgb(201,227,230)',
 	textAdjust : [0,4,4,8,8],
@@ -31,22 +34,15 @@ var GameTile = Class.create(DrawableElement,{
 	* val int currency value represented in index this.currencyValues[]
 	**/
 	initialize : function(opts){
-		this._location = new Location();
 		
 		this.mapX = opts.mapX;
 		this.mapY = opts.mapY;
-		this.xPos = (opts.xPos===undefined) ? this._location.FindPhysicalLocation({x : this.mapX, y : this.mapX}).x : opts.xPos;
-		this.yPos = (opts.yPos===undefined) ? this._location.FindPhysicalLocation({x : this.mapX, y : this.mapX}).y : opts.yPos;
+		this.xPos = (opts.xPos===undefined) ? Location.FindPhysicalLocation({x : this.mapX, y : this.mapX}).x : opts.xPos;
+		this.yPos = (opts.yPos===undefined) ? Location.FindPhysicalLocation({x : this.mapX, y : this.mapX}).y : opts.yPos;
 		this._val = opts.val;
-		this.currencyValue = (opts.curVal===undefined) ? this.currencyValues[this._val] : opts.curVal;
-		console.info(opts.val);
+		this.currencyValue = (opts.curVal===undefined) ? GameTile.currencyValues[this._val] : opts.curVal;
 		this.activePic = new Image();
-		this.activePic.src = '/assets/' + this.artwork[1];
-
-		this.inactivePic = new Image();
-		this.inactivePic.src =  '/assets/' + this.artworkoff[1];;
-
-		//console.info(this.currencyValue);
+		this.activePic.src = 'assets/coins.png';
 
 	},
 	getQuad : function(){
@@ -76,9 +72,8 @@ var GameTile = Class.create(DrawableElement,{
 	* @description tile currency value as represented as the index of Game.defaultSettings.currencyValues[]
 	**/
 	setValue : function(val){	
-		//console.info('setting setVal:' + val)
 		this._val = val;
-		this.setCurVal(this.currencyValues[this._val]);
+		this.setCurVal(GameTile.currencyValues[this._val]);
 		if(this._val===4){ this.quad = true; }//a coin that can react when in a 2x2 configuration (basically quarters)
 	},
 	getValue : function(){
@@ -122,43 +117,84 @@ var GameTile = Class.create(DrawableElement,{
 	setFill : function(color){
 		this.tileFill = color;
 	},
-	render : function(_canvasContext,activeState){
-		if(this._val == 1){ //try penny pic for now
-			if(activeState) {
-				_canvasContext.drawImage(this.activePic,this.xPos,this.yPos);
+	setInActive : function(){
+		window._game.gameBoard[this.getMapLocation().x][this.getMapLocation().y].active = false;
+	},
+	removeFromBoard : function() {
+		window._game.gameBoard[this.getMapLocation().x][this.getMapLocation().y] = { val : 0, active : false };
+	},
+	addToBoard : function(newlocation) {
+		window._game.gameBoard[newlocation.x][newlocation.y] = { val : this.getValue(), active : true };
+		this.setMapLocation(newlocation);
+	},
+	move : function(direction){
+		window._game.lastgameBoard.push(jQuery.extend(true, {}, window._game.gameBoard));
+		window.debugger.updateSnapshotText(window._game.lastgameBoard.length);
+
+		var newLocation = (direction === Location.MoveDirection.EXPRESS) ? Location.nextBottom(this) : Location.TransformLocation(this.getMapLocation(),direction);
+
+		if(Location.ValidateMove(newLocation)){
+
+			this.removeFromBoard();
+			this.addToBoard(newLocation);
+			window._game.Update();
+			
+			if(window._game.debugFlags & Game.debugMovement)
+				console.info('[MOVEMENT] Action Tile:' + this.toString());
+
+		}
+
+		//if tile has reached another tile (or bottom) - freeze and create a new one
+		this.checkRestingPlace();
+
+	},
+	checkRestingPlace : function(){
+		if(Location.LookAhead(this.getMapLocation())){
+			if(window._game.Reactive(this)){ //A reaction has been detected - start cleaning up tiles
+				window._game.StartBoardTransition();
 			} else {
-				_canvasContext.drawImage(this.inactivePic,this.xPos,this.yPos);
+				this.setInActive();
+				window._game.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
+				window._game.Update();
+			}
+			
+		}
+	},
+	render : function(_canvasContext,activeState){
+
+		if(showSkin){ 
+			if(activeState) {
+				_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xActive,this.bgroundOffset[this._val].yActive,46,46,this.xPos+2,this.yPos+2,46,46);
+			} else {
+				_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xinActive,this.bgroundOffset[this._val].yinActive,46,46,this.xPos+2,this.yPos+2,46,46);
 			}
 		} else {
-		//console.info('game tile');
-		//console.info(_canvasContext);
-		//fill
-		_canvasContext.fillStyle = this.tileFill;
-		_canvasContext.fillRect(this.xPos,this.yPos,this._width,this._height);
+			//fill
+			_canvasContext.fillStyle = this.tileFill;
+			_canvasContext.fillRect(this.xPos,this.yPos,this._width,this._height);
 
-		_canvasContext.strokeStyle = this.tileStroke;
-		_canvasContext.lineWidth = this.strokeWidth;
-		_canvasContext.strokeRect(this.xPos,this.yPos,this._width,this._height);
+			_canvasContext.strokeStyle = this.tileStroke;
+			_canvasContext.lineWidth = this.strokeWidth;
+			_canvasContext.strokeRect(this.xPos,this.yPos,this._width,this._height);
 
-		/* Print Text */
-		
-		if((this.colorMap[this._val] !== undefined))
-			_canvasContext.fillStyle = this.colorMap[this._val];
-		else
-			_canvasContext.fillStyle = this.defaultCoinColor;
+			/* Print Text */			
+			if((this.colorMap[this._val] !== undefined))
+				_canvasContext.fillStyle = this.colorMap[this._val];
+			else
+				_canvasContext.fillStyle = this.defaultCoinColor;
 
-		_canvasContext.font = "bold 14px sans-serif";
-		_canvasContext.textBaseline = 'middle';
-		var textX = this.xPos + ((this._width / 2)-this.textAdjust[this._val]);
-		var textY = this.yPos + (this._height / 2)
-		//console.info(this._text);
-		//console.info(this.textAdjust[this._val]);
+			_canvasContext.font = "bold 14px sans-serif";
+			_canvasContext.textBaseline = 'middle';
+			var textX = this.xPos + ((this._width / 2)-this.textAdjust[this._val]);
+			var textY = this.yPos + (this._height / 2)
 
-		_canvasContext.fillText(this._text, textX, textY);
+			_canvasContext.fillText(this._text, textX, textY);
 		}
 		
 	},
 	toString : function(){
-		return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' mapX: ' + this.mapX + ' mapY: ' + this.mapY + ' |direction: ' + this.getDirection();
+		return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' mapX: ' + this.mapX + ' mapY: ' + this.mapY + ' |direction: ' + Location.MoveDescription[this.getDirection()];
 	}
 });
+//static properties
+GameTile.currencyValues = [-1,1,5,10,25];

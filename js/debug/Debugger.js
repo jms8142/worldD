@@ -26,3 +26,18 @@ var Debugger = Class.create({
 
 });
 
+
+Debugger.PrintGameBoardtoDebugWindow = function(_gameboard){
+		var HTMLout = '';
+		for(var row = 0; row < Game.defaultSettings.gameRows; row++){
+			HTMLout += '<tr>';
+			for(var col = 0;col < Game.defaultSettings.columns; col++){
+				var displayVal = (_gameboard[col][row].val === 0) ? '-' : GameTile.currencyValues[_gameboard[col][row].val];
+				HTMLout += '<td>' + displayVal + '</td>';
+			}
+			HTMLout += '</tr>\n';
+			//console.info(row);
+			jQuery('.debugWindow').html("<table class='gameMap'>" + HTMLout + "</table>");
+		}	
+
+	}/**/

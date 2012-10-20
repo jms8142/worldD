@@ -5,9 +5,12 @@ var ScoreTracker = Class.create(DrawableElement, {
 	activeSquare : 'rgb(33,128,53)',
 	inActiveSquare : 'rgb(106,91,91)',
 	textPosition : { 'x' : 0, 'y' : 0},
+	dollarSign : new Image(),
 	height : 50,
 	canvasEl : null,
 	drawScoreBoard : function(_canvasContext){
+
+		this.dollarSign.src = 'assets/dollar.png';
 		
 		this.canvasEl = document.getElementById('wdCanvas');
 		
@@ -55,8 +58,6 @@ var ScoreTracker = Class.create(DrawableElement, {
 		boxWidth = Math.floor((totalWidth - (num-1) * 5) / num),
 		startX = this.textSpaceWidth,
 		yPos =  this.canvasEl.height - this.height + ((this.height - boxWidth) / 2);
-		
-		
 
 		for(var x=0;x<num;x++){	
 
@@ -66,8 +67,11 @@ var ScoreTracker = Class.create(DrawableElement, {
 				_canvasContext.fillStyle = this.inActiveSquare;
 			}
 
-
 			_canvasContext.fillRect(startX,yPos,boxWidth,boxWidth);
+
+			if(x < score)
+				_canvasContext.drawImage(this.dollarSign,startX + (boxWidth * .25),yPos + (boxWidth * .1));
+			
 			startX += boxWidth + 5;
 		}
 

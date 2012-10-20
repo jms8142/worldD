@@ -38,16 +38,22 @@ canvas {
 	width:18px;
 	text-align:center;
 }
-
+.instructions {
+	width:100%;
+	font-size:.75em;
+	display:block;
+	padding-left:4px;
+	font-style: italic;
+}
 .utilinfo {
 	float:left;
-	padding-left:4px;
-	margin-top:4px;
-	width:650px;
+	padding:4px;
+	width:666px;
+	background:#4d4d4d;
 }
 
 .utilinfo a {
-	color:#FFF;
+	color:#0000FF;
 	font-size:.75em;
 	text-decoration: none;
 	margin:0 4px;

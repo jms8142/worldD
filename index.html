@@ -19,20 +19,22 @@ var _game;
 <script type="text/javascript" src="js/control/Behavior.js"></script>
 <script type="text/javascript" src="js/control/Animation.js"></script>
 <script type="text/javascript" src="js/control/Location.js"></script>
-<script type="text/javascript" src="js/debug/Debugger.js"></script>
 <script type="text/javascript" src="js/control/Game.js"></script>
+<script type="text/javascript" src="js/debug/Debugger.js"></script>
 <script type="text/javascript" src="js/test/testBoards.js"></script>
 
 <script>
+var showSkin = true; //temp
+
 jQuery(function(){
 	
 	var opts = {
 		/*gameBoard : sandbox,*/
 		startingPiece : 0, //[0=1,1=5,2=10,3=25]
-		startingPiecePosition : { x : 4,y : 4 },
+		startingPiecePosition : { x : 4,y : 0 },
 		constantPiece : null,
 		debugWindow : true,
-		debugShow : Game.debugMovement | Game.debugTransition | Game.debugBehavior,
+		debugShow : Game.debugTransition | Game.debugBehavior,
 		showTransition : false,
 		showTestGrid : false
 	}
@@ -42,17 +44,13 @@ jQuery(function(){
 
 /**
 next:
-4 stack of 25's doesn't resolve properly
-change animation methods to static
-and a dollar sound
-press space bar to hit bottom
 change gameboard to gametiles objects
-figure out why the animation is blocking other sections
-remove xPos/yPos from gameTile constructor - should be calculated
 change mapX to xMap
+and a dollar sound
 after logic is done:
 http://www.createjs.com/#!/EaselJS
 requirejs
+game tile not rendered to canvas on initialization unless you refresh - this will go away with a start command	
 **/
 
 });
@@ -66,7 +64,8 @@ requirejs
 Canvas not supported.
 </canvas>
 <div class="debugWindow"></div>
-<div class='utilinfo'><a href='#' id='snapshot'>print snapshot to console [step]</a></div>
+<div class='utilinfo'><span class="instructions">note: refresh if screen is blank</span>
+<a href='#' id='snapshot'>print snapshot to console [step]</a></div>
 
 </body>
 </html>

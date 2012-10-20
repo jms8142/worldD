@@ -56,6 +56,8 @@ var Behavior = Class.create({
 	**/
 	//initialize : function (val,_gameTile){
 	initialize : function(_gameTile) {
+		console.clear();
+
 		if(_game.debugFlags & Game.debugBehavior)
 			console.info("[BEHAVIOR] Chain[0]:" + _gameTile.toString());
 
@@ -69,6 +71,7 @@ var Behavior = Class.create({
 		return this.startAnimation;
 	},
 	getChain : function(){
+		//console.info(this.chain);
 		return this.chain;
 	},
 	getUpgradedValue : function(){
@@ -77,9 +80,8 @@ var Behavior = Class.create({
 	/**		
 	* @param GameTile
 	* @return bool
-	* @description true if gameTile value is in the reactorDefinition of the current 'starter' tile
+	* @description true if gameTile value is in the reactorDefinition of the current 'starter' tile, which is index 0 in this.chain
 	**/
-	//hasReaction : function(val,location){
 	hasReaction : function(_gameTile) {
 		if(_game.debugFlags & Game.debugBehavior)
 				console.info('[BEHAVIOR] Testing against:' + _gameTile.toString());
@@ -100,9 +102,9 @@ var Behavior = Class.create({
 	* @desc  - Adds gameTile object the chain array
 	**/
 	addCombo : function(_gameTile) {
-
+		//console.info('pushing' + _gameTile.toString());
 		this.chain.push(_gameTile);
-	
+		//console.info(this.chain);
 		if(this.Validate()){
 			WDAnimation.assignDirection(this.chain);
 			this.startAnimation = true;
@@ -119,6 +121,7 @@ var Behavior = Class.create({
 		location = new Location,
 		thisVal = _gameTile.getValue(),
 		reaction,
+		tempChain = new Array(),
 		magicNumber = 3,
 		positionVectors = [
 			[{ x : 1, y : 0},{ x : 1, y : 1},{ x : 0, y : 1}],//top left
@@ -127,7 +130,7 @@ var Behavior = Class.create({
 			[{ x : 0, y : -1},{ x : 1, y : -1},{ x : 1, y : 0}]//bottom left
 		];
 
-		this.chain[0] = _gameTile;
+		tempChain[0] = _gameTile;
 
 		for(var x = 0;x < positionVectors.length;x++){ //attempt 4 snapshots
 			reaction = 0;
@@ -139,9 +142,9 @@ var Behavior = Class.create({
 				}
 
 				//legal realm
-				if(window._game.LegalRealm(tileView)){
+				if(Location.LegalRealm(tileView)){
 					if(thisVal === window._game.gameBoard[tileView.x][tileView.y].val){
-						this.chain[y+1] = new GameTile({mapX : tileView.x, mapY : tileView.y, val : thisVal});
+						tempChain[y+1] = new GameTile({mapX : tileView.x, mapY : tileView.y, val : thisVal});
 						reaction++
 					}
 				} else {
@@ -154,12 +157,12 @@ var Behavior = Class.create({
 			if(reaction === magicNumber){
 				this.upgradedValue = 5;
 				this.startAnimation = true;
+				this.chain = tempChain.slice(0,tempChain.length);
 				break;
 			}		
 			
 		}
 
-		console.info('done!');
 	},
 	Validate : function(){
 		if(this.chain.length >= this.rules.minThreshold && this.chain.length < this.rules.maxSize){
