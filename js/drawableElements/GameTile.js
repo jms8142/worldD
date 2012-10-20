@@ -128,9 +128,7 @@ var GameTile = Class.create(DrawableElement,{
 		this.setMapLocation(newlocation);
 	},
 	move : function(direction){
-		window._game.lastgameBoard.push(jQuery.extend(true, {}, window._game.gameBoard));
-		window.debugger.updateSnapshotText(window._game.lastgameBoard.length);
-
+		
 		var newLocation = (direction === Location.MoveDirection.EXPRESS) ? Location.nextBottom(this) : Location.TransformLocation(this.getMapLocation(),direction);
 
 		if(Location.ValidateMove(newLocation)){
@@ -143,6 +141,9 @@ var GameTile = Class.create(DrawableElement,{
 				console.info('[MOVEMENT] Action Tile:' + this.toString());
 
 		}
+
+		window._game.lastgameBoard.push(jQuery.extend(true, {}, window._game.gameBoard));
+		window.debugger.updateSnapshotText(window._game.lastgameBoard.length);
 
 		//if tile has reached another tile (or bottom) - freeze and create a new one
 		this.checkRestingPlace();

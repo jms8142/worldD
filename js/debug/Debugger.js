@@ -3,7 +3,7 @@ var Debugger = Class.create({
 		var _this = this;
 		jQuery('.step').live('click',function(e){
 			var ind = jQuery(this).attr('id') - 1;
-			_this.PrintGameBoardtoConsole(window._game.defaultSettings.gameRows,window._game.defaultSettings.columns,window._game.lastgameBoard[ind]);
+			_this.PrintGameBoardtoConsole(Game.defaultSettings.gameRows,Game.defaultSettings.columns,window._game.lastgameBoard[ind]);
 		});	
 	},
 	PrintGameBoardtoConsole : function(rows,cols,_gameBoard, clr){
