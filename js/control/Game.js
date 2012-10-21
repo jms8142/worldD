@@ -19,12 +19,17 @@ var Game = Class.create({
 	initialize : function (opts){
 		this.settings = opts;
 
+		Event.observe(window,'assetLoader:done',this.startGame.bind(this));
 		
-		if(opts && opts.constantPiece)
-			this.constantPiece = opts.constantPiece;
+		AssetLoader.loadAssets(this);
 
-		if(opts && opts.debugShow)
-			this.debugFlags = opts.debugShow;
+	},
+	startGame : function() {
+		if(this.settings && this.settings.constantPiece)
+			this.constantPiece = this.settings.constantPiece;
+
+		if(this.settings && this.settings.debugShow)
+			this.debugFlags = this.settings.debugShow;
 
 		this._canvas = document.getElementById('wdCanvas');
 		if (this._canvas && this._canvas.getContext) {
@@ -36,29 +41,29 @@ var Game = Class.create({
 		}
 		
 		
-		if(opts && opts.gameBoard)
-			this.gameBoard = opts.gameBoard;
+		if(this.settings && this.settings.gameBoard)
+			this.gameBoard = this.settings.gameBoard;
 		else
 			this.CreateTileMap();
 
 		
 		//debug window
-		if(opts && opts.debugWindow)
+		if(this.settings && this.settings.debugWindow)
 			this.debugWindow = true;
 
 		//show transition - debugging
-		this.showTransition = (opts.showTransition !== undefined) ? opts.showTransition : true;
+		this.showTransition = (this.settings.showTransition !== undefined) ? this.settings.showTransition : true;
 
 		//show test grig
-		this.showTestGrid = (opts.showTestGrid !== undefined) ? opts.showTestGrid : false;
+		this.showTestGrid = (this.settings.showTestGrid !== undefined) ? this.settings.showTestGrid : false;
 
 		if(this.showTestGrid)
 			this.GenerateTestGrid();
 
 		//starting piece
-		var startingPiece = (opts && opts.startingPiece !== undefined) ? opts.startingPiece : 1;
-	 	startingPiecePositionX = (opts && opts.startingPiecePosition) ? opts.startingPiecePosition.x : 4;
-		startingPiecePositionY = (opts && opts.startingPiecePosition) ? opts.startingPiecePosition.y : 2;
+		var startingPiece = (this.settings && this.settings.startingPiece !== undefined) ? this.settings.startingPiece : 1;
+	 	startingPiecePositionX = (this.settings && this.settings.startingPiecePosition) ? this.settings.startingPiecePosition.x : 4;
+		startingPiecePositionY = (this.settings && this.settings.startingPiecePosition) ? this.settings.startingPiecePosition.y : 2;
 		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY,startingPiece);
 		this.DrawGameTiles();
 
@@ -111,13 +116,14 @@ var Game = Class.create({
 			//console.info(gameBoard.length)
 	},
 	DrawGameTiles : function(){
+		
 		var coordX = 0;
 		var coordY = 0;
 
 		for(var col = 0; col < Game.defaultSettings.columns;col++){
 			for(var row = 0; row < Game.defaultSettings.gameRows;row++){
 				if(this.gameBoard[col][row].val > 0){
-					var _gameTile = new GameTile({ xPos : coordX, yPos : coordY, mapX : col, mapY : row });
+					var _gameTile = new GameTile({ mapX : col, mapY : row });
 					_gameTile.setHeight(Game.defaultSettings.tileHeight);
 					_gameTile.setWidth(Game.defaultSettings.tileWidth);
 					_gameTile.setValue(this.gameBoard[col][row].val);
@@ -126,7 +132,7 @@ var Game = Class.create({
 						_gameTile.setStroke(Game.defaultSettings.actionTileStroke);
 						_gameTile.setFill(Game.defaultSettings.actionTileFill);
 					}
-					//console.info('rendering game tile');
+					
 					_gameTile.render(_canvasBufferContext,this.gameBoard[col][row].active);
 				}
 
@@ -145,14 +151,15 @@ var Game = Class.create({
 		if(this.constantPiece)
 			val = this.constantPiece;
 
-		actionTile = new GameTile({ mapX : x, mapY : y});
+		this.actionTile = new GameTile({ mapX : x, mapY : y})
 		if(val === undefined) 
 			var singlePieceVal = Math.floor(Math.random()*(GameTile.currencyValues.length-1));
 		else
 			var singlePieceVal = val;
 
-		actionTile.setValue(singlePieceVal+1);	
-		this.gameBoard[x][y] = { val : actionTile.getValue(), active : true };
+		this.actionTile.setValue(singlePieceVal+1);
+
+		this.gameBoard[x][y] = { val : this.actionTile.getValue(), active : true };
 	},
 	KeyGrab : function(event){
 		if(!this.keysLocked){
@@ -160,25 +167,25 @@ var Game = Class.create({
 			
 			switch (keyID) {
 				case 32 : //Space
-					actionTile.move(Location.MoveDirection.EXPRESS);
+					this.actionTile.move(Location.MoveDirection.EXPRESS);
 				break;
 				case 83 : //S
-					actionTile.move(Location.MoveDirection.DOWN);
+					this.actionTile.move(Location.MoveDirection.DOWN);
 				break;
 				case 40: //down arrow
-					actionTile.move(Location.MoveDirection.DOWN);
+					this.actionTile.move(Location.MoveDirection.DOWN);
 				break; 
 				case 65: //A
-					actionTile.move(Location.MoveDirection.LEFT);
+					this.actionTile.move(Location.MoveDirection.LEFT);
 				break;
 				case 37: //left arrow
-					actionTile.move(Location.MoveDirection.LEFT);
+					this.actionTile.move(Location.MoveDirection.LEFT);
 				break;
 				case 68: //D
-					actionTile.move(Location.MoveDirection.RIGHT);
+					this.actionTile.move(Location.MoveDirection.RIGHT);
 				break;
 				case 39: //right arrow
-					actionTile.move(Location.MoveDirection.RIGHT);
+					this.actionTile.move(Location.MoveDirection.RIGHT);
 				break;
 			}
 		}

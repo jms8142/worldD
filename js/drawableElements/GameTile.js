@@ -37,12 +37,11 @@ var GameTile = Class.create(DrawableElement,{
 		
 		this.mapX = opts.mapX;
 		this.mapY = opts.mapY;
-		this.xPos = (opts.xPos===undefined) ? Location.FindPhysicalLocation({x : this.mapX, y : this.mapX}).x : opts.xPos;
-		this.yPos = (opts.yPos===undefined) ? Location.FindPhysicalLocation({x : this.mapX, y : this.mapX}).y : opts.yPos;
+		this.xPos = (opts.xPos===undefined) ? Location.FindPhysicalLocation({x : this.mapX, y : this.mapY}).x : opts.xPos;
+		this.yPos = (opts.yPos===undefined) ? Location.FindPhysicalLocation({x : this.mapX, y : this.mapY}).y : opts.yPos;
 		this._val = opts.val;
 		this.currencyValue = (opts.curVal===undefined) ? GameTile.currencyValues[this._val] : opts.curVal;
-		this.activePic = new Image();
-		this.activePic.src = 'assets/coins.png';
+		this.activePic = AssetLoader.resources[0];
 
 	},
 	getQuad : function(){
@@ -199,3 +198,6 @@ var GameTile = Class.create(DrawableElement,{
 });
 //static properties
 GameTile.currencyValues = [-1,1,5,10,25];
+GameTile.assetLoader = function(){
+	console.info('loaded');
+}
