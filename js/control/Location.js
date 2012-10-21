@@ -43,11 +43,11 @@ Location.TransformLocation = function(coords,direction){
 * @return object coords of transformed location
 **/
 Location.FindPhysicalLocation = function(coords) {
-		var mapX = coords.x;
-		var mapY = coords.y;
-		mapX = coords.x * Game.defaultSettings.tileWidth;
-		mapY = coords.y * Game.defaultSettings.tileHeight;
-		return { x : mapX, y : mapY };
+		var xMap = coords.x;
+		var yMap = coords.y;
+		xMap = coords.x * Game.defaultSettings.tileWidth;
+		yMap = coords.y * Game.defaultSettings.tileHeight;
+		return { x : xMap, y : yMap };
 }
 
 

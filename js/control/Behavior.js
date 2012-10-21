@@ -150,7 +150,7 @@ var Behavior = Class.create({
 				//legal realm
 				if(Location.LegalRealm(tileView)){
 					if(thisVal === window._game.gameBoard[tileView.x][tileView.y].val){
-						tempChain[y+1] = new GameTile({mapX : tileView.x, mapY : tileView.y, val : thisVal});
+						tempChain[y+1] = new GameTile({xMap : tileView.x, yMap : tileView.y, val : thisVal});
 						reaction++
 					}
 				} else {

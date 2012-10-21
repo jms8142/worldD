@@ -1,5 +1,6 @@
 var Game = Class.create({
 	_canvas : null,
+	_canvasContext : null,
 	_canvasBuffer : null,
 	_canvasBufferContext : null,	
 	gameBoard : null,
@@ -16,6 +17,7 @@ var Game = Class.create({
 	startingPiecePositionY : 0,
 	score : 0,
 	settings : null,
+	timerID : null,
 	initialize : function (opts){
 		this.settings = opts;
 
@@ -33,11 +35,11 @@ var Game = Class.create({
 
 		this._canvas = document.getElementById('wdCanvas');
 		if (this._canvas && this._canvas.getContext) {
-			_canvasContext = this._canvas.getContext('2d'); //_canvasContext gets attached to window by ref here
-			_canvasBuffer = document.createElement('canvas');
-			_canvasBuffer.width = this._canvas.width;
-			_canvasBuffer.height = this._canvas.height;
-			_canvasBufferContext = _canvasBuffer.getContext('2d');
+			this._canvasContext = this._canvas.getContext('2d');
+			this._canvasBuffer = document.createElement('canvas');
+			this._canvasBuffer.width = this._canvas.width;
+			this._canvasBuffer.height = this._canvas.height;
+			this._canvasBufferContext = this._canvasBuffer.getContext('2d');
 		}
 		
 		
@@ -60,6 +62,8 @@ var Game = Class.create({
 		if(this.showTestGrid)
 			this.GenerateTestGrid();
 
+		this.DrawCanvasBackground();
+
 		//starting piece
 		var startingPiece = (this.settings && this.settings.startingPiece !== undefined) ? this.settings.startingPiece : 1;
 	 	startingPiecePositionX = (this.settings && this.settings.startingPiecePosition) ? this.settings.startingPiecePosition.x : 4;
@@ -68,7 +72,7 @@ var Game = Class.create({
 		this.DrawGameTiles();
 
 		this.scoretracker = new ScoreTracker; //temp
-		this.scoretracker.drawScoreBoard(_canvasBufferContext);
+		this.scoretracker.drawScoreBoard(this._canvasBufferContext);
 		
 
 		this.Draw();
@@ -80,11 +84,21 @@ var Game = Class.create({
 		}
 		//register events
 		$(document).observe('keydown',this.KeyGrab.bind(this));
+
+		
+		this.timerID = setInterval(this.AutoMove.bind(this),1000);
 		
 	},
-
+	AutoMove : function(){
+		if(typeof(this.actionTile)==='object'){
+			this.actionTile.move(Location.MoveDirection.DOWN);
+		}
+	},
 	Update : function(){
 		this.ClearCanvas();
+
+		this.DrawCanvasBackground();
+
 		if(this.showTestGrid)
 			this.GenerateTestGrid();
 		
@@ -95,13 +109,21 @@ var Game = Class.create({
 			Debugger.PrintGameBoardtoDebugWindow(this.gameBoard);
 
 	},
-
+	DrawCanvasBackground : function(){
+		var my_gradient = this._canvasBufferContext.createLinearGradient(0,0,0,this._canvas.height-50);
+		my_gradient.addColorStop(0,'rgb(68,134,146)');
+		my_gradient.addColorStop(.75,'rgb(34,128,69)');
+		my_gradient.addColorStop(1,'rgb(92,100,38)');
+		
+		this._canvasBufferContext.fillStyle = my_gradient;//this.backgroundColor;
+		this._canvasBufferContext.fillRect(0,0,this._canvas.width,this._canvas.height-50);
+	},
 	Draw : function(){
-		_canvasContext.drawImage(_canvasBuffer, 0, 0);
+		this._canvasContext.drawImage(this._canvasBuffer, 0, 0);
 	},
 	ClearCanvas : function(){
-		_canvasContext.clearRect(0,0,this._canvas.width,this._canvas.height-ScoreTracker.prototype.height); //minus scoreboard
-		_canvasBufferContext.clearRect(0,0,_canvasBuffer.width,_canvasBuffer.height-ScoreTracker.prototype.height);
+		this._canvasContext.clearRect(0,0,this._canvas.width,this._canvas.height-ScoreTracker.prototype.height); //minus scoreboard
+		this._canvasBufferContext.clearRect(0,0,this._canvasBuffer.width,this._canvasBuffer.height-ScoreTracker.prototype.height);
 	},
 	CreateTileMap : function(){
 			this.gameBoard = new Array(Game.defaultSettings.columns);
@@ -123,7 +145,7 @@ var Game = Class.create({
 		for(var col = 0; col < Game.defaultSettings.columns;col++){
 			for(var row = 0; row < Game.defaultSettings.gameRows;row++){
 				if(this.gameBoard[col][row].val > 0){
-					var _gameTile = new GameTile({ mapX : col, mapY : row });
+					var _gameTile = new GameTile({ xMap : col, yMap : row });
 					_gameTile.setHeight(Game.defaultSettings.tileHeight);
 					_gameTile.setWidth(Game.defaultSettings.tileWidth);
 					_gameTile.setValue(this.gameBoard[col][row].val);
@@ -133,7 +155,7 @@ var Game = Class.create({
 						_gameTile.setFill(Game.defaultSettings.actionTileFill);
 					}
 					
-					_gameTile.render(_canvasBufferContext,this.gameBoard[col][row].active);
+					_gameTile.render(this._canvasBufferContext,this.gameBoard[col][row].active);
 				}
 
 				coordY += Game.defaultSettings.tileHeight;
@@ -151,7 +173,7 @@ var Game = Class.create({
 		if(this.constantPiece)
 			val = this.constantPiece;
 
-		this.actionTile = new GameTile({ mapX : x, mapY : y})
+		this.actionTile = new GameTile({ xMap : x, yMap : y})
 		if(val === undefined) 
 			var singlePieceVal = Math.floor(Math.random()*(GameTile.currencyValues.length-1));
 		else
@@ -163,6 +185,8 @@ var Game = Class.create({
 	},
 	KeyGrab : function(event){
 		if(!this.keysLocked){
+			clearInterval(this.timerID);
+
 			var keyID = event.keyCode;
 			
 			switch (keyID) {
@@ -188,6 +212,9 @@ var Game = Class.create({
 					this.actionTile.move(Location.MoveDirection.RIGHT);
 				break;
 			}
+
+			//start moving again
+			this.timerID = setInterval(this.AutoMove.bind(this),1000);
 		}
 		
 		//console.info(event);
@@ -223,8 +250,8 @@ var Game = Class.create({
 			var nextLocationPosition = Location.FindPhysicalLocation(nextLocation);
 			var nextTileParams = { xPos : nextLocationPosition.x,
 									yPos : nextLocationPosition.y,
-									mapX : nextLocation.x,
-									mapY : nextLocation.y,
+									xMap : nextLocation.x,
+									yMap : nextLocation.y,
 									val : nextLocationVal
 								};
 								
@@ -244,8 +271,8 @@ var Game = Class.create({
 
 					nextTileParams = { x : nextLocationPosition.x,
 									y : nextLocationPosition.y,
-									mapX : nextLocation.x,
-									mapY : nextLocation.y,
+									xMap : nextLocation.x,
+									yMap : nextLocation.y,
 									curVal : nextLocationCurrencyVal
 								};
 				}
@@ -290,7 +317,7 @@ var Game = Class.create({
 		
 		if(this.actionBehavior.getUpgradedValue() === 5){
 			this.score += 1;
-			this.scoretracker.updateScore(this.score,_canvasBufferContext);
+			this.scoretracker.updateScore(this.score,this._canvasBufferContext);
 			this.Draw();
 		} else {
 			upgradedValue = this.actionBehavior.getUpgradedValue();
@@ -364,15 +391,15 @@ var Game = Class.create({
 		var testColor = 'rgb(128,128,128)';
 		for(var i = 0; i < (Game.defaultSettings.gameRows); i++){
 			for(var j = 0;j < Game.defaultSettings.columns; j++){
-				_canvasContext.strokeStyle = testGrid;
-				_canvasContext.lineWidth = 1;
-				_canvasContext.strokeRect(x,y,Game.defaultSettings.tileWidth,Game.defaultSettings.tileHeight);
+				this._canvasContext.strokeStyle = testGrid;
+				this._canvasContext.lineWidth = 1;
+				this._canvasContext.strokeRect(x,y,Game.defaultSettings.tileWidth,Game.defaultSettings.tileHeight);
 
 				//draw coords
-				_canvasContext.fillStyle = testColor;
-				_canvasContext.font = "bold 10px sans-serif";
-				_canvasContext.textBaseline = 'top';
-				_canvasContext.fillText(j + "," + i, x + 3,y + 3);
+				this._canvasContext.fillStyle = testColor;
+				this._canvasContext.font = "bold 10px sans-serif";
+				this._canvasContext.textBaseline = 'top';
+				this._canvasContext.fillText(j + "," + i, x + 3,y + 3);
 
 
 				x += Game.defaultSettings.tileWidth;

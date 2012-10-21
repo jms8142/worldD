@@ -258,8 +258,8 @@ WDAnimation.assignDirection = function(gameTiles){
 
     //if the starter tile is in the middle of a 3 tile pattern
     if(gameTiles.length === 3 &&
-      gameTiles[0].mapX > gameTiles[1].mapX &&
-      gameTiles[0].mapX < gameTiles[2].mapX
+      gameTiles[0].xMap > gameTiles[1].xMap &&
+      gameTiles[0].xMap < gameTiles[2].xMap
       ) {
       console.info('monkey in the middle situation');
       middle = true;

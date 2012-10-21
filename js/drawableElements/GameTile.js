@@ -1,8 +1,8 @@
 var GameTile = Class.create(DrawableElement,{
 	xPos : 0,
 	yPos : 0,
-	mapX : 0,
-	mapY : 0,
+	xMap : 0,
+	yMap : 0,
 	_height : 50,
 	_width : 50,
 	_val : 0,
@@ -29,16 +29,16 @@ var GameTile = Class.create(DrawableElement,{
 	* @description Constructor function - accepts an object containing the following properties:
 	* xPos int 'x' coordinate represented in the actual space of the canvas object
 	* yPos int 'y' coordinate represented in the actual space of the canvas object
-	* mapX Float 'x' coordinate in relation to the tile map - zero based
-	* mapY Float 'y' coordinate in relation to the tile map - zero based
+	* xMap Float 'x' coordinate in relation to the tile map - zero based
+	* yMap Float 'y' coordinate in relation to the tile map - zero based
 	* val int currency value represented in index this.currencyValues[]
 	**/
 	initialize : function(opts){
 		
-		this.mapX = opts.mapX;
-		this.mapY = opts.mapY;
-		this.xPos = (opts.xPos===undefined) ? Location.FindPhysicalLocation({x : this.mapX, y : this.mapY}).x : opts.xPos;
-		this.yPos = (opts.yPos===undefined) ? Location.FindPhysicalLocation({x : this.mapX, y : this.mapY}).y : opts.yPos;
+		this.xMap = opts.xMap;
+		this.yMap = opts.yMap;
+		this.xPos = (opts.xPos===undefined) ? Location.FindPhysicalLocation({x : this.xMap, y : this.yMap}).x : opts.xPos;
+		this.yPos = (opts.yPos===undefined) ? Location.FindPhysicalLocation({x : this.xMap, y : this.yMap}).y : opts.yPos;
 		this._val = opts.val;
 		this.currencyValue = (opts.curVal===undefined) ? GameTile.currencyValues[this._val] : opts.curVal;
 		this.activePic = AssetLoader.resources[0];
@@ -91,14 +91,14 @@ var GameTile = Class.create(DrawableElement,{
 		this._text = text;
 	},
 	getMapLocation : function(){
-		return { x : this.mapX, y : this.mapY };
+		return { x : this.xMap, y : this.yMap };
 	},
 	setMapLocation : function(coords){
-		this.mapX = coords.x;
-		this.mapY = coords.y;		
+		this.xMap = coords.x;
+		this.yMap = coords.y;		
 
 		//update physical location
-		this.setCanvasLocation(this.mapX * this._width, this.mapY * this._height)
+		this.setCanvasLocation(this.xMap * this._width, this.yMap * this._height)
 	},
 	setCanvasLocation : function(x,y){
 		this.xPos = x;
@@ -193,7 +193,7 @@ var GameTile = Class.create(DrawableElement,{
 		
 	},
 	toString : function(){
-		return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' mapX: ' + this.mapX + ' mapY: ' + this.mapY + ' |direction: ' + Location.MoveDescription[this.getDirection()];
+		return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap + ' |direction: ' + Location.MoveDescription[this.getDirection()];
 	}
 });
 //static properties

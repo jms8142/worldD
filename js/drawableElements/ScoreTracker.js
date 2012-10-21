@@ -27,7 +27,6 @@ var ScoreTracker = Class.create(DrawableElement, {
 		//draw money blocks
 		this.drawMoneySquares(10, _canvasContext);
 
-
 	},
 	render : function(){
 		console.info('render this');
