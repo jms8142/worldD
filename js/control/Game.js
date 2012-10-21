@@ -18,6 +18,7 @@ var Game = Class.create({
 	score : 0,
 	settings : null,
 	timerID : null,
+	paused : false,
 	initialize : function (opts){
 		this.settings = opts;
 
@@ -184,9 +185,10 @@ var Game = Class.create({
 		this.gameBoard[x][y] = { val : this.actionTile.getValue(), active : true };
 	},
 	KeyGrab : function(event){
-		if(!this.keysLocked){
+		
+		if(!this.keysLocked && [32,83,40,65,37,68,39].indexOf(event.keyCode) != -1 && !this.paused){
+			
 			clearInterval(this.timerID);
-
 			var keyID = event.keyCode;
 			
 			switch (keyID) {
@@ -215,6 +217,9 @@ var Game = Class.create({
 
 			//start moving again
 			this.timerID = setInterval(this.AutoMove.bind(this),1000);
+		} else if(event.keyCode === 80) {
+			(this.paused) ? this.timerID = setInterval(this.AutoMove.bind(this),1000) : clearInterval(this.timerID);
+			this.paused = !this.paused;
 		}
 		
 		//console.info(event);
