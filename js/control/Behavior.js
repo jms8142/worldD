@@ -62,7 +62,12 @@ var Behavior = Class.create({
 	**/
 	//initialize : function (val,_gameTile){
 	initialize : function(_gameTile) {
-		console.clear();
+		
+		if(window.navigator.userAgent.indexOf('AppleWebKit') === -1) //Chrome doesn't have clear()
+			console.clear();
+
+		//console.info(window.navigator);
+		
 
 		if(_game.debugFlags & Game.debugBehavior)
 			console.info("[BEHAVIOR] Chain[0]:" + _gameTile.toString());
