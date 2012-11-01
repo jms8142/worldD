@@ -41,8 +41,9 @@ var GameTile = Class.create(DrawableElement,{
 		this.yPos = (opts.yPos===undefined) ? Location.FindPhysicalLocation({x : this.xMap, y : this.yMap}).y : opts.yPos;
 		this._val = opts.val;
 		this.currencyValue = (opts.curVal===undefined) ? GameTile.currencyValues[this._val] : opts.curVal;
-		this.activePic = AssetLoader.resources[0];
 
+		this.activePic = AssetLoader.getResource('coins');
+		//console.info(this.activePic);
 	},
 	getQuad : function(){
 		return this.quad;
@@ -149,15 +150,18 @@ var GameTile = Class.create(DrawableElement,{
 
 	},
 	checkRestingPlace : function(){
+		
+		//console.info(Location.LookAhead(this.getMapLocation()));
 		if(Location.LookAhead(this.getMapLocation())){
 			if(window._game.Reactive(this)){ //A reaction has been detected - start cleaning up tiles
 				window._game.StartBoardTransition();
+			} else if(this.getMapLocation().y === 0) { //at the top
+				Event.fire(window,'WD:gameover');
 			} else {
 				this.setInActive();
 				window._game.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
 				window._game.Update();
-			}
-			
+			} 
 		}
 	},
 	render : function(_canvasContext,activeState){

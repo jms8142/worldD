@@ -10,8 +10,7 @@ var ScoreTracker = Class.create(DrawableElement, {
 	canvasEl : null,
 	drawScoreBoard : function(_canvasContext){
 
-		this.dollarSign.src = 'assets/dollar.png';
-		
+		this.dollarSign = AssetLoader.getResource('dollar');
 		this.canvasEl = document.getElementById('wdCanvas');
 		
 		this.setToGradient(_canvasContext);

@@ -21,10 +21,11 @@ var Game = Class.create({
 	paused : false,
 	initialize : function (opts){
 		this.settings = opts;
-
 		Event.observe(window,'assetLoader:done',this.startGame.bind(this));
-		
-		AssetLoader.loadAssets(this);
+		AssetLoader.loadAssets();
+
+		//additional game events
+		Event.observe(window,'WD:gameover',this.endGame.bind(this));
 
 	},
 	startGame : function() {
@@ -63,7 +64,7 @@ var Game = Class.create({
 		if(this.showTestGrid)
 			this.GenerateTestGrid();
 
-		this.DrawCanvasBackground();
+		CanvasManager.DrawCanvasBackground(this._canvasBufferContext);
 
 		//starting piece
 		var startingPiece = (this.settings && this.settings.startingPiece !== undefined) ? this.settings.startingPiece : 1;
@@ -90,15 +91,23 @@ var Game = Class.create({
 		this.timerID = setInterval(this.AutoMove.bind(this),1000);
 		
 	},
+	endGame : function(){
+		clearInterval(this.timerID);
+		CanvasManager.Screen(CanvasManager.SCREENS.GAMEOVER, this._canvasBufferContext);
+	},
 	AutoMove : function(){
 		if(typeof(this.actionTile)==='object'){
 			this.actionTile.move(Location.MoveDirection.DOWN);
 		}
 	},
+	/**
+	* @return void
+	* @description - Completely refreshes and updates the canvas to the current state of the game.  To simply add to the canvas, use Draw()
+	**/
 	Update : function(){
 		this.ClearCanvas();
 
-		this.DrawCanvasBackground();
+		CanvasManager.DrawCanvasBackground(this._canvasBufferContext);
 
 		if(this.showTestGrid)
 			this.GenerateTestGrid();
@@ -119,6 +128,10 @@ var Game = Class.create({
 		this._canvasBufferContext.fillStyle = my_gradient;//this.backgroundColor;
 		this._canvasBufferContext.fillRect(0,0,this._canvas.width,this._canvas.height-50);
 	},
+	/**
+	* @return void
+	* @description - Updates the canvas.  Call this directly when doing additive updates to the canvas and don't need to clear anything, otherwise use Update();
+	**/
 	Draw : function(){
 		this._canvasContext.drawImage(this._canvasBuffer, 0, 0);
 	},
@@ -220,6 +233,14 @@ var Game = Class.create({
 		} else if(event.keyCode === 80) {
 			(this.paused) ? this.timerID = setInterval(this.AutoMove.bind(this),1000) : clearInterval(this.timerID);
 			this.paused = !this.paused;
+
+			if(this.paused){
+				CanvasManager.Screen(CanvasManager.SCREENS.PAUSE,this._canvasBufferContext);
+				this.Draw();
+			} else {
+				this.Update();
+			}
+			
 		}
 		
 		//console.info(event);

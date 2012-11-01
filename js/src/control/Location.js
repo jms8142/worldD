@@ -50,7 +50,11 @@ Location.FindPhysicalLocation = function(coords) {
 		return { x : xMap, y : yMap };
 }
 
-
+/**		
+* @param object	coords tilemap coordinates
+* @return bool 
+* @desc - returns true if the coordinated passed exists in the game field
+**/
 Location.LegalRealm = function(coords){
 		return (coords.x < Game.defaultSettings.columns &&
 				coords.x >= 0 &&
@@ -76,10 +80,8 @@ Location.ValidateMove = function(coords){
 Location.LookAhead = function(coords){
 	var LookAheadLocation = Location.TransformLocation(coords,Location.MoveDirection.DOWN);
 		
-	if(!Location.LegalRealm(LookAheadLocation) || window._game.gameBoard[LookAheadLocation.x][LookAheadLocation.y].val > 0)
-		return true;
+	return !Location.LegalRealm(LookAheadLocation) ||  window._game.gameBoard[LookAheadLocation.x][LookAheadLocation.y].val > 0;
 
-	return false;
 }
 /**		
 * @param object	gametile

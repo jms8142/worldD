@@ -12,15 +12,16 @@
 <script>
 var _game;
 </script>
-<script type="text/javascript" src="js/util/AssetLoader.js"></script>
-<script type="text/javascript" src="js/drawableElements/DrawableElement.js"></script>
-<script type="text/javascript" src="js/drawableElements/GameTile.js"></script>
-<script type="text/javascript" src="js/drawableElements/ScoreTracker.js"></script>
-<script type="text/javascript" src="js/control/Behavior.js"></script>
-<script type="text/javascript" src="js/control/Animation.js"></script>
-<script type="text/javascript" src="js/control/Location.js"></script>
-<script type="text/javascript" src="js/control/Game.js"></script>
-<script type="text/javascript" src="js/debug/Debugger.js"></script>
+<script type="text/javascript" src="js/src/util/AssetLoader.js"></script>
+<script type="text/javascript" src="js/src/drawableElements/DrawableElement.js"></script>
+<script type="text/javascript" src="js/src/drawableElements/GameTile.js"></script>
+<script type="text/javascript" src="js/src/drawableElements/ScoreTracker.js"></script>
+<script type="text/javascript" src="js/src/control/Behavior.js"></script>
+<script type="text/javascript" src="js/src/control/Animation.js"></script>
+<script type="text/javascript" src="js/src/control/Location.js"></script>
+<script type="text/javascript" src="js/src/view/CanvasManager.js"></script>
+<script type="text/javascript" src="js/src/control/Game.js"></script>
+<script type="text/javascript" src="js/src/debug/Debugger.js"></script>
 <script type="text/javascript" src="js/test/testBoards.js"></script>
 
 <script>
@@ -44,14 +45,17 @@ jQuery(function(){
 
 /**
 next:
-Game over when it reaches top
+game over screen needs link to start again
+should events be bound to the window or document?
 2nd level reactions are ineffective
 make 5 a little smaller
 and a dollar sound
 script for compiling to /dist
 after logic is done:
-http://www.createjs.com/#!/EaselJS
-requirejs
+add sliding (spacebar) with http://www.createjs.com/#!/EaselJS
+phonegap to ios
+Requirejs
+websocket/node.js
 **/
 
 });
