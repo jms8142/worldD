@@ -3,7 +3,8 @@ var AssetLoader = Class.create({});
 AssetLoader.assets = [{ name : 'coins', src : 'assets/coins.png' },
 					  { name : 'dollar', src : 'assets/dollar.png' },
 					  { name : 'paused', src : 'assets/paused.png' },
-					  { name : 'gameover', src : 'assets/gameover.png' }];
+					  { name : 'gameover', src : 'assets/gameover.png' },
+					  { name : 'title', src : 'assets/title.png' }];
 AssetLoader.resources = []; //better as hashmap
 
 AssetLoader.loadAssets = function(){

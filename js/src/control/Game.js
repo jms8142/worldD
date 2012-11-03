@@ -16,19 +16,14 @@ var Game = Class.create({
 	startingPiecePositionX : 0,
 	startingPiecePositionY : 0,
 	score : 0,
+	currentScreen : null,
+	inLink : false, //temp global
 	settings : null,
 	timerID : null,
 	paused : false,
 	initialize : function (opts){
 		this.settings = opts;
-		Event.observe(window,'assetLoader:done',this.startGame.bind(this));
-		AssetLoader.loadAssets();
 
-		//additional game events
-		Event.observe(window,'WD:gameover',this.endGame.bind(this));
-
-	},
-	startGame : function() {
 		if(this.settings && this.settings.constantPiece)
 			this.constantPiece = this.settings.constantPiece;
 
@@ -43,7 +38,46 @@ var Game = Class.create({
 			this._canvasBuffer.height = this._canvas.height;
 			this._canvasBufferContext = this._canvasBuffer.getContext('2d');
 		}
+
+		Event.observe(window,'assetLoader:done',this.loadTitleScreen.bind(this));
+		AssetLoader.loadAssets();
+
+		//additional game events
+		Event.observe(window,'WD:gameover',this.endGame.bind(this));
+    	$(this._canvas).observe('mousemove',this.mouseMoveHandler.bind(this));
+    	$(this._canvas).observe('click',this.mouseClickHandler.bind(this));
+
+	},
+	mouseMoveHandler : function(ev){
 		
+		 var x, y;
+
+		  // Get the mouse position relative to the canvas element.
+		  if (ev.layerX || ev.layerX == 0) { //for firefox
+    		x = ev.layerX;
+    		y = ev.layerY;
+  		  }
+  		  x-=this._canvas.offsetLeft;
+  		  y-=this._canvas.offsetTop;
+
+  		  if(CanvasManager.MouseReact(x,y,this.currentScreen,this)){
+      			document.body.style.cursor = "pointer";
+      			this.inLink=true;
+  			} else {
+      			document.body.style.cursor = "";
+      			this.inLink=false;
+  			}
+		//console.info('x: ' + x + ' y ' + y);
+	},
+	mouseClickHandler : function(){
+		if(this.inLink){
+			this.startGame();
+		}
+	},
+	loadTitleScreen : function(){
+		this.currentScreen = CanvasManager.Screen(CanvasManager.SCREENS.TITLE, this);
+	},
+	startGame : function() {
 		
 		if(this.settings && this.settings.gameBoard)
 			this.gameBoard = this.settings.gameBoard;
@@ -78,6 +112,7 @@ var Game = Class.create({
 		
 
 		this.Draw();
+
 		//this.PrintGameBoardtoConsole();
 		if(this.debugWindow) {
 			var _this = this;
@@ -93,7 +128,7 @@ var Game = Class.create({
 	},
 	endGame : function(){
 		clearInterval(this.timerID);
-		CanvasManager.Screen(CanvasManager.SCREENS.GAMEOVER, this._canvasBufferContext);
+		CanvasManager.Screen(CanvasManager.SCREENS.GAMEOVER, this);
 	},
 	AutoMove : function(){
 		if(typeof(this.actionTile)==='object'){
@@ -235,7 +270,7 @@ var Game = Class.create({
 			this.paused = !this.paused;
 
 			if(this.paused){
-				CanvasManager.Screen(CanvasManager.SCREENS.PAUSE,this._canvasBufferContext);
+				CanvasManager.Screen(CanvasManager.SCREENS.PAUSE,this);
 				this.Draw();
 			} else {
 				this.Update();

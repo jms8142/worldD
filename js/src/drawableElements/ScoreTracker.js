@@ -37,6 +37,7 @@ var ScoreTracker = Class.create(DrawableElement, {
 		
 		var score = score.toFixed(2);
 		_canvasContext.fillStyle = this.textColor;
+		_canvasContext.font ='12px verdana, arial, sans-serif';
 		_canvasContext.fillText("Total: $" + score, this.textPosition.x, this.textPosition.y);
 
 		this.drawMoneySquares(10,_canvasContext,score)
@@ -45,7 +46,7 @@ var ScoreTracker = Class.create(DrawableElement, {
 		//draw background
 		var my_gradient = _canvasContext.createLinearGradient(0,this.canvasEl.height-this.height,0, this.canvasEl.height);
 		my_gradient.addColorStop(0,"rgb(140,131,130)");
-		my_gradient.addColorStop(1,'rgb(28,24,24)');
+		my_gradient.addColorStop(1,"rgb(28,24,24)");
 		_canvasContext.fillStyle = my_gradient;//this.backgroundColor;
 	},
 	drawMoneySquares : function(num,_canvasContext,score){
