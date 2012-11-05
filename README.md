@@ -1,6 +1,10 @@
 tetris style game - HTML 5
+==========================
 
-rules - consolidate the currency! 
+Rules
+-----
+
+Consolidate the currency! 
 
 
 see test on 
@@ -12,6 +16,8 @@ Compatability:
 FF - OK
 
 
-Chrome - funny color borders
+Chrome:
+funny color borders
 
-below IE 9 - no!
+< IE 9:
+no!
