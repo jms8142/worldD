@@ -1,4 +1,4 @@
-tetris style game - HTML 5
+World Denomination (HTML5)
 ==========================
 
 Rules
