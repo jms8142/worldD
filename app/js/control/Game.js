@@ -43,7 +43,9 @@ var Game = Class.create({
 		AssetLoader.loadAssets();
 
 		//additional game events
+		
 		Event.observe(window,'WD:gameover',this.endGame.bind(this));
+    	//$(this._canvas).observe('mousemove',this.mouseMoveHandler.bind(this));
     	$(this._canvas).observe('mousemove',this.mouseMoveHandler.bind(this));
     	$(this._canvas).observe('click',this.mouseClickHandler.bind(this));
 

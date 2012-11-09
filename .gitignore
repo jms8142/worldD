@@ -6,6 +6,7 @@
 *.exe
 *.o
 *.so
+app-build/*
 
 # Packages #
 ############
@@ -36,3 +37,4 @@
 Icon?
 ehthumbs.db
 Thumbs.db
+
