@@ -17,6 +17,7 @@ FF - OK
 
 
 Chrome:
+currently not working - stay tuned
 funny color borders
 
 < IE 9:
