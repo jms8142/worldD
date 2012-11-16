@@ -1,4 +1,4 @@
-var ScoreTracker = Class.create(DrawableElement, {
+var ScoreTracker = Class.create({
 	backgroundColor : 'rgb(77,77,77)',
 	textColor : 'rgb(255,255,255)',
 	textSpaceWidth : 100,

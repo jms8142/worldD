@@ -1,3 +1,12 @@
+define(['util/AssetLoader',
+		'drawableElements/GameTile',
+		'drawableElements/ScoreTracker',
+		'control/Behavior',
+		'control/Animation',
+		'control/Location',
+		'view/CanvasManager',
+		],function(){});
+
 var Game = Class.create({
 	_canvas : null,
 	_canvasContext : null,
@@ -23,6 +32,7 @@ var Game = Class.create({
 	paused : false,
 	initialize : function (opts){
 		this.settings = opts;
+		//
 
 		if(this.settings && this.settings.constantPiece)
 			this.constantPiece = this.settings.constantPiece;

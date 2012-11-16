@@ -1,4 +1,4 @@
-var GameTile = Class.create(DrawableElement,{
+var GameTile = Class.create({
 	xPos : 0,
 	yPos : 0,
 	xMap : 0,

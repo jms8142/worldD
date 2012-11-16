@@ -1,7 +1,4 @@
-var Location = Class.create({
-	
-
-});
+var Location = Class.create({});
 
 Location.MoveDirection = { LEFT : 0, DOWN : 1, RIGHT : 2, EXPRESS : 3};
 Location.MoveDescription = ["Left","Down","Right"];
