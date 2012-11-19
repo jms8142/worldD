@@ -1,4 +1,8 @@
-var GameTile = Class.create({
+define(['lib/prototype'],function(){
+
+window.WD || ( window.WD = {} ) //application namespace
+
+WD.GameTile = Class.create({
 	xPos : 0,
 	yPos : 0,
 	xMap : 0,
@@ -37,12 +41,12 @@ var GameTile = Class.create({
 		
 		this.xMap = opts.xMap;
 		this.yMap = opts.yMap;
-		this.xPos = (opts.xPos===undefined) ? Location.FindPhysicalLocation({x : this.xMap, y : this.yMap}).x : opts.xPos;
-		this.yPos = (opts.yPos===undefined) ? Location.FindPhysicalLocation({x : this.xMap, y : this.yMap}).y : opts.yPos;
+		this.xPos = (opts.xPos===undefined) ? WD.Location.FindPhysicalLocation({x : this.xMap, y : this.yMap}).x : opts.xPos;
+		this.yPos = (opts.yPos===undefined) ? WD.Location.FindPhysicalLocation({x : this.xMap, y : this.yMap}).y : opts.yPos;
 		this._val = opts.val;
-		this.currencyValue = (opts.curVal===undefined) ? GameTile.currencyValues[this._val] : opts.curVal;
+		this.currencyValue = (opts.curVal===undefined) ? WD.GameTile.currencyValues[this._val] : opts.curVal;
 
-		this.activePic = AssetLoader.getResource('coins');
+		this.activePic = WD.AssetLoader.getResource('coins');
 		//console.info(this.activePic);
 	},
 	getQuad : function(){
@@ -73,7 +77,7 @@ var GameTile = Class.create({
 	**/
 	setValue : function(val){	
 		this._val = val;
-		this.setCurVal(GameTile.currencyValues[this._val]);
+		this.setCurVal(WD.GameTile.currencyValues[this._val]);
 		if(this._val===4){ this.quad = true; }//a coin that can react when in a 2x2 configuration (basically quarters)
 	},
 	getValue : function(){
@@ -129,15 +133,15 @@ var GameTile = Class.create({
 	},
 	move : function(direction){
 		
-		var newLocation = (direction === Location.MoveDirection.EXPRESS) ? Location.nextBottom(this) : Location.TransformLocation(this.getMapLocation(),direction);
+		var newLocation = (direction === WD.Location.MoveDirection.EXPRESS) ? WD.Location.nextBottom(this) : WD.Location.TransformLocation(this.getMapLocation(),direction);
 
-		if(Location.ValidateMove(newLocation)){
+		if(WD.Location.ValidateMove(newLocation)){
 
 			this.removeFromBoard();
 			this.addToBoard(newLocation);
 			window._game.Update();
 			
-			if(window._game.debugFlags & Game.debugMovement)
+			if(window._game.debugFlags & WD.Game.debugMovement)
 				console.info('[MOVEMENT] Action Tile:' + this.toString());
 
 		}
@@ -151,8 +155,8 @@ var GameTile = Class.create({
 	},
 	checkRestingPlace : function(){
 		
-		//console.info(Location.LookAhead(this.getMapLocation()));
-		if(Location.LookAhead(this.getMapLocation())){
+		//console.info(WD.Location.LookAhead(this.getMapLocation()));
+		if(WD.Location.LookAhead(this.getMapLocation())){
 			if(window._game.Reactive(this)){ //A reaction has been detected - start cleaning up tiles
 				window._game.StartBoardTransition();
 			} else if(this.getMapLocation().y === 0) { //at the top
@@ -197,11 +201,11 @@ var GameTile = Class.create({
 		
 	},
 	toString : function(){
-		return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap + ' |direction: ' + Location.MoveDescription[this.getDirection()];
+		return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap + ' |direction: ' + WD.Location.MoveDescription[this.getDirection()];
 	}
 });
-//static properties
-GameTile.currencyValues = [-1,1,5,10,25];
-GameTile.assetLoader = function(){
-	console.info('loaded');
-}
+	//static properties
+	WD.GameTile.currencyValues = [-1,1,5,10,25];
+	
+
+});

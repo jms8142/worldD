@@ -1,34 +1,38 @@
-var AssetLoader = Class.create({});
+define(['lib/prototype'],function(){
 
-AssetLoader.assets = [{ name : 'coins', src : 'assets/coins.png' },
+window.WD || ( window.WD = {} ) //application namespace
+
+WD.AssetLoader = Class.create({});
+
+WD.AssetLoader.assets = [{ name : 'coins', src : 'assets/coins.png' },
 					  { name : 'dollar', src : 'assets/dollar.png' },
 					  { name : 'paused', src : 'assets/paused.png' },
 					  { name : 'gameover', src : 'assets/gameover.png' },
 					  { name : 'title', src : 'assets/title.png' }];
-AssetLoader.resources = []; //better as hashmap
+WD.AssetLoader.resources = []; //better as hashmap
 
-AssetLoader.loadAssets = function(){
-	AssetLoader.assets.each(function(asset){
+WD.AssetLoader.loadAssets = function(){
+	WD.AssetLoader.assets.each(function(asset){
 		var img = new Image();
 		img.src = asset.src;
 		img.onload = function(e){
-			AssetLoader.resources.push({ assetName : asset.name, img : img });
-			AssetLoader.checkProgress();
+			WD.AssetLoader.resources.push({ assetName : asset.name, img : img });
+			WD.AssetLoader.checkProgress();
 		}
 	});
 }
 
 
-AssetLoader.checkProgress = function(){
-	if(AssetLoader.resources.length === AssetLoader.assets.length){
+WD.AssetLoader.checkProgress = function(){
+	if(WD.AssetLoader.resources.length === WD.AssetLoader.assets.length){
 		Event.fire(window,'assetLoader:done');
 	}
 }
 
-AssetLoader.getResource = function(resourceName){
+WD.AssetLoader.getResource = function(resourceName){
 	var assetImg;
 
-	AssetLoader.resources.each(function(resource){
+	WD.AssetLoader.resources.each(function(resource){
 		if(resource.assetName===resourceName) {
 			assetImg = resource.img;
 			//needs to break here
@@ -37,3 +41,5 @@ AssetLoader.getResource = function(resourceName){
 
 	return assetImg;
 }
+
+});

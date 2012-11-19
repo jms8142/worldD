@@ -1,9 +1,13 @@
-var Debugger = Class.create({
+define(['lib/prototype'],function(){
+
+window.WD || ( window.WD = {} ) //application namespace
+
+WD.Debugger = Class.create({
 	initialize : function(){	
 		var _this = this;
 		jQuery('.step').live('click',function(e){
 			var ind = jQuery(this).attr('id') - 1;
-			_this.PrintGameBoardtoConsole(Game.defaultSettings.gameRows,Game.defaultSettings.columns,window._game.lastgameBoard[ind]);
+			_this.PrintGameBoardtoConsole(WD.Game.defaultSettings.gameRows,WD.Game.defaultSettings.columns,window._game.lastgameBoard[ind]);
 		});	
 	},
 	PrintGameBoardtoConsole : function(rows,cols,_gameBoard, clr){
@@ -27,12 +31,12 @@ var Debugger = Class.create({
 });
 
 
-Debugger.PrintGameBoardtoDebugWindow = function(_gameboard){
+WD.Debugger.PrintGameBoardtoDebugWindow = function(_gameboard){
 		var HTMLout = '';
-		for(var row = 0; row < Game.defaultSettings.gameRows; row++){
+		for(var row = 0; row < WD.Game.defaultSettings.gameRows; row++){
 			HTMLout += '<tr>';
-			for(var col = 0;col < Game.defaultSettings.columns; col++){
-				var displayVal = (_gameboard[col][row].val === 0) ? '-' : GameTile.currencyValues[_gameboard[col][row].val];
+			for(var col = 0;col < WD.Game.defaultSettings.columns; col++){
+				var displayVal = (_gameboard[col][row].val === 0) ? '-' : WD.GameTile.currencyValues[_gameboard[col][row].val];
 				HTMLout += '<td>' + displayVal + '</td>';
 			}
 			HTMLout += '</tr>\n';
@@ -41,3 +45,6 @@ Debugger.PrintGameBoardtoDebugWindow = function(_gameboard){
 		}	
 
 	}/**/
+
+
+});

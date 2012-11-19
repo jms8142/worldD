@@ -1,7 +1,11 @@
-var Location = Class.create({});
+define(['lib/prototype'],function(){
 
-Location.MoveDirection = { LEFT : 0, DOWN : 1, RIGHT : 2, EXPRESS : 3};
-Location.MoveDescription = ["Left","Down","Right"];
+window.WD || ( window.WD = {} ) //application namespace
+
+WD.Location = Class.create({});
+
+WD.Location.MoveDirection = { LEFT : 0, DOWN : 1, RIGHT : 2, EXPRESS : 3};
+WD.Location.MoveDescription = ["Left","Down","Right"];
 
 
 /**		
@@ -10,25 +14,25 @@ Location.MoveDescription = ["Left","Down","Right"];
 * @desc - returns coordinates of a new location based on direction passed
 * @return object|boolean - coords of transformed location or false if it's not legal
 **/
-Location.TransformLocation = function(coords,direction){
+WD.Location.TransformLocation = function(coords,direction){
 		var _coords = { x : coords.x, y : coords.y }; //make sure the function modifies by value, not ref
 		switch (direction){
-			case Location.MoveDirection.UP :
+			case WD.Location.MoveDirection.UP :
 				_coords.y -= 1;
 				break;
-			case Location.MoveDirection.DOWN :
+			case WD.Location.MoveDirection.DOWN :
 				_coords.y += 1;
 				break;
-			case Location.MoveDirection.LEFT :
+			case WD.Location.MoveDirection.LEFT :
 				_coords.x -= 1;
 				break;
-			case Location.MoveDirection.RIGHT :
+			case WD.Location.MoveDirection.RIGHT :
 				_coords.x += 1;
 				break;
 		}
 		//console.info(_coords);
 
-		if(Location.LegalRealm(_coords))
+		if(WD.Location.LegalRealm(_coords))
 			return _coords;
 		else
 			return false;
@@ -39,11 +43,11 @@ Location.TransformLocation = function(coords,direction){
 * @desc - returns physical coordinates of object in field
 * @return object coords of transformed location
 **/
-Location.FindPhysicalLocation = function(coords) {
+WD.Location.FindPhysicalLocation = function(coords) {
 		var xMap = coords.x;
 		var yMap = coords.y;
-		xMap = coords.x * Game.defaultSettings.tileWidth;
-		yMap = coords.y * Game.defaultSettings.tileHeight;
+		xMap = coords.x * WD.Game.defaultSettings.tileWidth;
+		yMap = coords.y * WD.Game.defaultSettings.tileHeight;
 		return { x : xMap, y : yMap };
 }
 
@@ -52,16 +56,16 @@ Location.FindPhysicalLocation = function(coords) {
 * @return bool 
 * @desc - returns true if the coordinated passed exists in the game field
 **/
-Location.LegalRealm = function(coords){
-		return (coords.x < Game.defaultSettings.columns &&
+WD.Location.LegalRealm = function(coords){
+		return (coords.x < WD.Game.defaultSettings.columns &&
 				coords.x >= 0 &&
-				coords.y < Game.defaultSettings.gameRows &&
+				coords.y < WD.Game.defaultSettings.gameRows &&
 				coords.y >= 0);
 }
 
-Location.ValidateMove = function(coords){
+WD.Location.ValidateMove = function(coords){
 
-	if(!(Location.LegalRealm(coords)) ||
+	if(!(WD.Location.LegalRealm(coords)) ||
 		window._game.gameBoard[coords.x][coords.y].val > 0
 		) {
 		return false;
@@ -74,10 +78,10 @@ Location.ValidateMove = function(coords){
 * @return bool 
 * @desc - returns true if the next space down is another tile or the floor
 **/
-Location.LookAhead = function(coords){
-	var LookAheadLocation = Location.TransformLocation(coords,Location.MoveDirection.DOWN);
+WD.Location.LookAhead = function(coords){
+	var LookAheadLocation = WD.Location.TransformLocation(coords,WD.Location.MoveDirection.DOWN);
 		
-	return !Location.LegalRealm(LookAheadLocation) ||  window._game.gameBoard[LookAheadLocation.x][LookAheadLocation.y].val > 0;
+	return !WD.Location.LegalRealm(LookAheadLocation) ||  window._game.gameBoard[LookAheadLocation.x][LookAheadLocation.y].val > 0;
 
 }
 /**		
@@ -85,10 +89,10 @@ Location.LookAhead = function(coords){
 * @return object coords 
 * @desc - returns coordinates of the furthest open space directly below the coordinates of the gametile given
 **/
-Location.nextBottom = function(_gametile){
+WD.Location.nextBottom = function(_gametile){
 	var nextspace = _gametile.getMapLocation(), lastSpace;
 
-	while(nextspace = Location.TransformLocation(nextspace,Location.MoveDirection.DOWN)) {
+	while(nextspace = WD.Location.TransformLocation(nextspace,WD.Location.MoveDirection.DOWN)) {
 			if(window._game.gameBoard[nextspace.x][nextspace.y].val === 0)
 				lastSpace = nextspace;
 			
@@ -97,3 +101,5 @@ Location.nextBottom = function(_gametile){
 	return lastSpace;
 
 }
+
+});

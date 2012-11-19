@@ -1,4 +1,9 @@
-var Behavior = Class.create({
+define(['lib/prototype'],function(){
+
+window.WD || ( window.WD = {} ) //application namespace
+
+
+WD.Behavior = Class.create({
 
 	name : null,
 	value : null,
@@ -56,9 +61,9 @@ var Behavior = Class.create({
 		25 : [25]
 	},
 	/**
-	* @param GameTile
+	* @param WD.Game.Tile
 	* @return void
-	* @description Constructor function - accepts a GameTile object
+	* @description Constructor function - accepts a WD.Game.Tile object
 	**/
 	//initialize : function (val,_gameTile){
 	initialize : function(_gameTile) {
@@ -69,7 +74,7 @@ var Behavior = Class.create({
 		//console.info(window.navigator);
 		
 
-		if(_game.debugFlags & Game.debugBehavior)
+		if(_game.debugFlags & WD.Game.debugBehavior)
 			console.info("[BEHAVIOR] Chain[0]:" + _gameTile.toString());
 
 		this.chain = new Array();
@@ -94,7 +99,7 @@ var Behavior = Class.create({
 	* @description true if gameTile value is in the reactorDefinition of the current 'starter' tile, which is index 0 in this.chain
 	**/
 	hasReaction : function(_gameTile) {
-		if(_game.debugFlags & Game.debugBehavior)
+		if(_game.debugFlags & WD.Game.debugBehavior)
 				console.info('[BEHAVIOR] Testing against:' + _gameTile.toString());
 
 		for(var i = 0; i < this.reactorDefinition[this.chain[0].getCurVal()].length; i++){
@@ -117,7 +122,7 @@ var Behavior = Class.create({
 		this.chain.push(_gameTile);
 		//console.info(this.chain);
 		if(this.Validate()){
-			WDAnimation.assignDirection(this.chain);
+			WD.Animation.assignDirection(this.chain);
 			this.startAnimation = true;
 		}
 	},
@@ -129,7 +134,7 @@ var Behavior = Class.create({
 	runBoxCheck : function(_gameTile){
 
 		var searching = true,
-		location = new Location,
+		location = new WD.Location,
 		thisVal = _gameTile.getValue(),
 		reaction,
 		tempChain = new Array(),
@@ -153,9 +158,9 @@ var Behavior = Class.create({
 				}
 
 				//legal realm
-				if(Location.LegalRealm(tileView)){
+				if(WD.Location.LegalRealm(tileView)){
 					if(thisVal === window._game.gameBoard[tileView.x][tileView.y].val){
-						tempChain[y+1] = new GameTile({xMap : tileView.x, yMap : tileView.y, val : thisVal});
+						tempChain[y+1] = new WD.GameTile({xMap : tileView.x, yMap : tileView.y, val : thisVal});
 						reaction++
 					}
 				} else {
@@ -184,14 +189,14 @@ var Behavior = Class.create({
 			}
 
 			
-			if(_game.debugFlags & Game.debugBehavior)
+			if(_game.debugFlags & WD.Game.debugBehavior)
 			console.info("[BEHAVIOR] Starting Pattern Search:" + _string);
 
 			for(i = 0;i < this.patternMatrix.length; i++){
 				//console.info('trying' + this.patternMatrix[i].pattern);
 				var patt= this.patternMatrix[i].pattern; 
 				if(patt.test(_string)){
-					if(_game.debugFlags & Game.debugBehavior)
+					if(_game.debugFlags & WD.Game.debugBehavior)
 						console.info("[BEHAVIOR] Tested positive pattern:" + patt);
 
 					this.upgradedValue = this.patternMatrix[i].newVal;
@@ -204,4 +209,6 @@ var Behavior = Class.create({
 	}
 
 	
+});
+
 });

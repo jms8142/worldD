@@ -12,8 +12,11 @@ window.requestAnimFrame = (function(callback){
     };
 })();
 
+define(['lib/prototype'],function(){
 
-WDAnimation = Class.create({
+window.WD || ( window.WD = {} ) //application namespace
+
+WD.Animation = Class.create({
     _options : { 
                             pixelSpeed : 100,
                             IncrementDistance : 250,
@@ -69,7 +72,7 @@ WDAnimation = Class.create({
        }
      
      
-      WDAnimation.animate(new Date().getTime(),block.getPosition(),this);
+      WD.Animation.animate(new Date().getTime(),block.getPosition(),this);
 
     },
     clearArea : function(rect){
@@ -79,12 +82,12 @@ WDAnimation = Class.create({
 
 });
 
-WDAnimation.DIRECTION = { UP : 0, DOWN : 1, LEFT : 2, RIGHT : 4};
-WDAnimation.TYPE = { SLIDE : 0, MOVE : 1};
+WD.Animation.DIRECTION = { UP : 0, DOWN : 1, LEFT : 2, RIGHT : 4};
+WD.Animation.TYPE = { SLIDE : 0, MOVE : 1};
 
-WDAnimation.animate = function(lastTime,_rect,animateObj){
+WD.Animation.animate = function(lastTime,_rect,animateObj){
   if(animateObj.animateOn && animateObj._options.animationType !== undefined){
-      //if(animateObj._options.animationType == WDAnimation.TYPE.MOVE)
+      //if(animateObj._options.animationType == WD.Animation.TYPE.MOVE)
          // console.info('ANIMATION PASS: ' + (++animateObj.debug_Counter));
 
       var date = new Date();
@@ -95,15 +98,15 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
 
       //console.info(JSON.stringify(_rect));
       animateObj.clearArea(_rect);
-      if(animateObj._options.animationType == WDAnimation.TYPE.MOVE) {
+      if(animateObj._options.animationType == WD.Animation.TYPE.MOVE) {
           //console.info('clear: ' + JSON.stringify(_rect));
         }
 
-      //if(animateObj._options.animationType == WDAnimation.TYPE.MOVE)
+      //if(animateObj._options.animationType == WD.Animation.TYPE.MOVE)
       //console.info(JSON.stringify(animateObj._options));
 
       switch (animateObj._options.animationType){
-          case WDAnimation.TYPE.SLIDE :
+          case WD.Animation.TYPE.SLIDE :
           
             if(animateObj._options.NewSectionSlice > animateObj.sourceImage.height){
                 animateObj.animateOn = false;
@@ -118,13 +121,13 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
                   return;
      
                 var NewCaptureArea = {};
-                NewCaptureArea = WDAnimation.slide(animateObj); //calculate the new dimensions of what to copy from the original image
+                NewCaptureArea = WD.Animation.slide(animateObj); //calculate the new dimensions of what to copy from the original image
                
             }
 
 
           break;
-          case WDAnimation.TYPE.MOVE :
+          case WD.Animation.TYPE.MOVE :
             
             //console.info(animateObj._options.newY);
             //console.info((_rect.y +  animateObj._options.newY));
@@ -150,14 +153,14 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
                  lastTime = time;
 
                  var NewCaptureArea = {};
-                 NewCaptureArea = WDAnimation.move(animateObj); //calculate the new dimensions of what to copy from the original image
+                 NewCaptureArea = WD.Animation.move(animateObj); //calculate the new dimensions of what to copy from the original image
                
                  //adjust clear area for next frame
                  _rect = { x : NewCaptureArea.xPlacement, y : NewCaptureArea.yPlacement, width : NewCaptureArea.width, height : NewCaptureArea.height};
             }
             break;
       }
-      //if(animateObj._options.animationType == WDAnimation.TYPE.MOVE)
+      //if(animateObj._options.animationType == WD.Animation.TYPE.MOVE)
       //  console.info(JSON.stringify(NewCaptureArea));
 
       if(animateObj.animateOn) {
@@ -182,7 +185,7 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
         }
    
          requestAnimFrame(function(){
-              WDAnimation.animate(lastTime,_rect,animateObj);
+              WD.Animation.animate(lastTime,_rect,animateObj);
           });
     
         }
@@ -190,10 +193,10 @@ WDAnimation.animate = function(lastTime,_rect,animateObj){
 
 }
 
-WDAnimation.slide = function(animateObj){
+WD.Animation.slide = function(animateObj){
     var NewCaptureArea = {};
 
-    if(animateObj._options.direction === WDAnimation.DIRECTION.UP || animateObj._options.direction === WDAnimation.DIRECTION.DOWN){
+    if(animateObj._options.direction === WD.Animation.DIRECTION.UP || animateObj._options.direction === WD.Animation.DIRECTION.DOWN){
         NewCaptureArea.xPlacement = animateObj._gameTile.getCanvasLocation().x - 1;
         NewCaptureArea.width = animateObj.sourceImage.width;
         NewCaptureArea.x = 0;       
@@ -204,22 +207,22 @@ WDAnimation.slide = function(animateObj){
     }
               
     switch (animateObj._options.direction){
-        case WDAnimation.DIRECTION.UP :    
+        case WD.Animation.DIRECTION.UP :    
             NewCaptureArea.yPlacement = animateObj._gameTile.getCanvasLocation().y  - animateObj._options.NewSectionSlice;         
             NewCaptureArea.height = animateObj.sourceImage.height - animateObj._options.NewSectionSlice;
             NewCaptureArea.y = animateObj._options.NewSectionSlice;
             break;
-        case WDAnimation.DIRECTION.DOWN :
+        case WD.Animation.DIRECTION.DOWN :
             NewCaptureArea.yPlacement = animateObj._gameTile.getCanvasLocation().y + animateObj._options.NewSectionSlice;
             NewCaptureArea.height = animateObj.sourceImage.height - animateObj._options.NewSectionSlice;
             NewCaptureArea.y = 0;       
             break;
-        case WDAnimation.DIRECTION.LEFT :      
+        case WD.Animation.DIRECTION.LEFT :      
             NewCaptureArea.xPlacement = animateObj._gameTile.getCanvasLocation().x - animateObj._options.NewSectionSlice;
             NewCaptureArea.width = animateObj.sourceImage.width - animateObj._options.NewSectionSlice;
             NewCaptureArea.x = animateObj._options.NewSectionSlice;
             break;
-        case WDAnimation.DIRECTION.RIGHT :     
+        case WD.Animation.DIRECTION.RIGHT :     
             NewCaptureArea.xPlacement = animateObj._gameTile.getCanvasLocation().x + animateObj._options.NewSectionSlice;
             NewCaptureArea.width = animateObj.sourceImage.width - animateObj._options.NewSectionSlice;
             NewCaptureArea.x = 0;   
@@ -229,8 +232,8 @@ WDAnimation.slide = function(animateObj){
     return NewCaptureArea;
 }
 
-WDAnimation.move = function(animateObj){
-  //console.info('in WDAnimation.move')
+WD.Animation.move = function(animateObj){
+  //console.info('in WD.Animation.move')
   var NewCaptureArea = {};
   NewCaptureArea.x = 0;
   NewCaptureArea.y = 0;
@@ -247,7 +250,7 @@ WDAnimation.move = function(animateObj){
   * @return void
   * @description Determines animation direction of each tile and assigns it to gametile.setDirection()
   **/
-WDAnimation.assignDirection = function(gameTiles){
+WD.Animation.assignDirection = function(gameTiles){
 
   //console.info(gameTiles);
   //console.info(gameTiles.toString());
@@ -265,9 +268,9 @@ WDAnimation.assignDirection = function(gameTiles){
       middle = true;
     } else {
         if(gameTiles[0].getMapLocation().y == gameTiles[1].getMapLocation().y){
-          direction = (gameTiles[0].getMapLocation().x > gameTiles[1].getMapLocation().x) ? WDAnimation.DIRECTION.RIGHT : WDAnimation.DIRECTION.LEFT;
+          direction = (gameTiles[0].getMapLocation().x > gameTiles[1].getMapLocation().x) ? WD.Animation.DIRECTION.RIGHT : WD.Animation.DIRECTION.LEFT;
         } else {
-          direction = WDAnimation.DIRECTION.UP; //only other possible direction to animate
+          direction = WD.Animation.DIRECTION.UP; //only other possible direction to animate
         }
     }
 
@@ -276,10 +279,10 @@ WDAnimation.assignDirection = function(gameTiles){
     for(x = 1; x < gameTiles.length; x++){
       if(middle){
         if(x === 1){
-          console.info(WDAnimation.DIRECTION.RIGHT);
-          gameTiles[x].setDirection(WDAnimation.DIRECTION.RIGHT);
+          console.info(WD.Animation.DIRECTION.RIGHT);
+          gameTiles[x].setDirection(WD.Animation.DIRECTION.RIGHT);
         } else {
-          gameTiles[x].setDirection(WDAnimation.DIRECTION.LEFT);
+          gameTiles[x].setDirection(WD.Animation.DIRECTION.LEFT);
         }
       } else {
         gameTiles[x].setDirection(direction);
@@ -290,3 +293,5 @@ WDAnimation.assignDirection = function(gameTiles){
    
   }
 }
+
+});

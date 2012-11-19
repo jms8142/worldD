@@ -1,13 +1,16 @@
-define(['util/AssetLoader',
+define(['lib/prototype',
+		'util/AssetLoader',
 		'drawableElements/GameTile',
 		'drawableElements/ScoreTracker',
 		'control/Behavior',
 		'control/Animation',
 		'control/Location',
 		'view/CanvasManager',
-		],function(){});
+		],function(){
 
-var Game = Class.create({
+	window.WD || ( window.WD = {} ) //application namespace
+
+	WD.Game = Class.create({
 	_canvas : null,
 	_canvasContext : null,
 	_canvasBuffer : null,
@@ -50,7 +53,7 @@ var Game = Class.create({
 		}
 
 		Event.observe(window,'assetLoader:done',this.loadTitleScreen.bind(this));
-		AssetLoader.loadAssets();
+		WD.AssetLoader.loadAssets();
 
 		//additional game events
 		
@@ -72,7 +75,7 @@ var Game = Class.create({
   		  x-=this._canvas.offsetLeft;
   		  y-=this._canvas.offsetTop;
 
-  		  if(CanvasManager.MouseReact(x,y,this.currentScreen,this)){
+  		  if(WD.CanvasManager.MouseReact(x,y,this.currentScreen,this)){
       			document.body.style.cursor = "pointer";
       			this.inLink=true;
   			} else {
@@ -87,7 +90,7 @@ var Game = Class.create({
 		}
 	},
 	loadTitleScreen : function(){
-		this.currentScreen = CanvasManager.Screen(CanvasManager.SCREENS.TITLE, this);
+		this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.TITLE, this);
 	},
 	startGame : function() {
 		
@@ -110,7 +113,7 @@ var Game = Class.create({
 		if(this.showTestGrid)
 			this.GenerateTestGrid();
 
-		CanvasManager.DrawCanvasBackground(this._canvasBufferContext);
+		WD.CanvasManager.DrawCanvasBackground(this._canvasBufferContext);
 
 		//starting piece
 		var startingPiece = (this.settings && this.settings.startingPiece !== undefined) ? this.settings.startingPiece : 1;
@@ -119,7 +122,7 @@ var Game = Class.create({
 		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY,startingPiece);
 		this.DrawGameTiles();
 
-		this.scoretracker = new ScoreTracker; //temp
+		this.scoretracker = new WD.ScoreTracker; //temp
 		this.scoretracker.drawScoreBoard(this._canvasBufferContext);
 		
 
@@ -128,8 +131,8 @@ var Game = Class.create({
 		//this.PrintGameBoardtoConsole();
 		if(this.debugWindow) {
 			var _this = this;
-			Debugger.PrintGameBoardtoDebugWindow(this.gameBoard);
-			window.debugger = new Debugger();
+			WD.Debugger.PrintGameBoardtoDebugWindow(this.gameBoard);
+			window.debugger = new WD.Debugger();
 		}
 		//register events
 		$(document).observe('keydown',this.KeyGrab.bind(this));
@@ -140,11 +143,11 @@ var Game = Class.create({
 	},
 	endGame : function(){
 		clearInterval(this.timerID);
-		CanvasManager.Screen(CanvasManager.SCREENS.GAMEOVER, this);
+		WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.GAMEOVER, this);
 	},
 	AutoMove : function(){
 		if(typeof(this.actionTile)==='object'){
-			this.actionTile.move(Location.MoveDirection.DOWN);
+			this.actionTile.move(WD.Location.MoveDirection.DOWN);
 		}
 	},
 	/**
@@ -154,7 +157,7 @@ var Game = Class.create({
 	Update : function(){
 		this.ClearCanvas();
 
-		CanvasManager.DrawCanvasBackground(this._canvasBufferContext);
+		WD.CanvasManager.DrawCanvasBackground(this._canvasBufferContext);
 
 		if(this.showTestGrid)
 			this.GenerateTestGrid();
@@ -163,7 +166,7 @@ var Game = Class.create({
 		this.Draw();	
 
 		if(this.debugWindow)
-			Debugger.PrintGameBoardtoDebugWindow(this.gameBoard);
+			WD.Debugger.PrintGameBoardtoDebugWindow(this.gameBoard);
 
 	},
 	DrawCanvasBackground : function(){
@@ -183,13 +186,13 @@ var Game = Class.create({
 		this._canvasContext.drawImage(this._canvasBuffer, 0, 0);
 	},
 	ClearCanvas : function(){
-		this._canvasContext.clearRect(0,0,this._canvas.width,this._canvas.height-ScoreTracker.prototype.height); //minus scoreboard
-		this._canvasBufferContext.clearRect(0,0,this._canvasBuffer.width,this._canvasBuffer.height-ScoreTracker.prototype.height);
+		this._canvasContext.clearRect(0,0,this._canvas.width,this._canvas.height-WD.ScoreTracker.prototype.height); //minus scoreboard
+		this._canvasBufferContext.clearRect(0,0,this._canvasBuffer.width,this._canvasBuffer.height-WD.ScoreTracker.prototype.height);
 	},
 	CreateTileMap : function(){
-			this.gameBoard = new Array(Game.defaultSettings.columns);
+			this.gameBoard = new Array(WD.Game.defaultSettings.columns);
 			for(var i = 0; i < this.gameBoard.length; i++){
-					this.gameBoard[i] = new Array(Game.defaultSettings.gameRows);
+					this.gameBoard[i] = new Array(WD.Game.defaultSettings.gameRows);
 					for (var j = 0; j < this.gameBoard[i].length; j++){
 						this.gameBoard[i][j] = { val : 0, active : false };
 					}
@@ -203,27 +206,27 @@ var Game = Class.create({
 		var coordX = 0;
 		var coordY = 0;
 
-		for(var col = 0; col < Game.defaultSettings.columns;col++){
-			for(var row = 0; row < Game.defaultSettings.gameRows;row++){
+		for(var col = 0; col < WD.Game.defaultSettings.columns;col++){
+			for(var row = 0; row < WD.Game.defaultSettings.gameRows;row++){
 				if(this.gameBoard[col][row].val > 0){
-					var _gameTile = new GameTile({ xMap : col, yMap : row });
-					_gameTile.setHeight(Game.defaultSettings.tileHeight);
-					_gameTile.setWidth(Game.defaultSettings.tileWidth);
+					var _gameTile = new WD.GameTile({ xMap : col, yMap : row });
+					_gameTile.setHeight(WD.Game.defaultSettings.tileHeight);
+					_gameTile.setWidth(WD.Game.defaultSettings.tileWidth);
 					_gameTile.setValue(this.gameBoard[col][row].val);
 
 					if(this.gameBoard[col][row].active) {
-						_gameTile.setStroke(Game.defaultSettings.actionTileStroke);
-						_gameTile.setFill(Game.defaultSettings.actionTileFill);
+						_gameTile.setStroke(WD.Game.defaultSettings.actionTileStroke);
+						_gameTile.setFill(WD.Game.defaultSettings.actionTileFill);
 					}
 					
 					_gameTile.render(this._canvasBufferContext,this.gameBoard[col][row].active);
 				}
 
-				coordY += Game.defaultSettings.tileHeight;
+				coordY += WD.Game.defaultSettings.tileHeight;
 			}
 
 			coordY = 0;
-			coordX += Game.defaultSettings.tileWidth;
+			coordX += WD.Game.defaultSettings.tileWidth;
 		}
 
 		//update the canvas
@@ -234,9 +237,9 @@ var Game = Class.create({
 		if(this.constantPiece)
 			val = this.constantPiece;
 
-		this.actionTile = new GameTile({ xMap : x, yMap : y})
+		this.actionTile = new WD.GameTile({ xMap : x, yMap : y})
 		if(val === undefined) 
-			var singlePieceVal = Math.floor(Math.random()*(GameTile.currencyValues.length-1));
+			var singlePieceVal = Math.floor(Math.random()*(WD.GameTile.currencyValues.length-1));
 		else
 			var singlePieceVal = val;
 
@@ -253,25 +256,25 @@ var Game = Class.create({
 			
 			switch (keyID) {
 				case 32 : //Space
-					this.actionTile.move(Location.MoveDirection.EXPRESS);
+					this.actionTile.move(WD.Location.MoveDirection.EXPRESS);
 				break;
 				case 83 : //S
-					this.actionTile.move(Location.MoveDirection.DOWN);
+					this.actionTile.move(WD.Location.MoveDirection.DOWN);
 				break;
 				case 40: //down arrow
-					this.actionTile.move(Location.MoveDirection.DOWN);
+					this.actionTile.move(WD.Location.MoveDirection.DOWN);
 				break; 
 				case 65: //A
-					this.actionTile.move(Location.MoveDirection.LEFT);
+					this.actionTile.move(WD.Location.MoveDirection.LEFT);
 				break;
 				case 37: //left arrow
-					this.actionTile.move(Location.MoveDirection.LEFT);
+					this.actionTile.move(WD.Location.MoveDirection.LEFT);
 				break;
 				case 68: //D
-					this.actionTile.move(Location.MoveDirection.RIGHT);
+					this.actionTile.move(WD.Location.MoveDirection.RIGHT);
 				break;
 				case 39: //right arrow
-					this.actionTile.move(Location.MoveDirection.RIGHT);
+					this.actionTile.move(WD.Location.MoveDirection.RIGHT);
 				break;
 			}
 
@@ -282,7 +285,7 @@ var Game = Class.create({
 			this.paused = !this.paused;
 
 			if(this.paused){
-				CanvasManager.Screen(CanvasManager.SCREENS.PAUSE,this);
+				WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.PAUSE,this);
 				this.Draw();
 			} else {
 				this.Update();
@@ -294,33 +297,33 @@ var Game = Class.create({
 	},
 	Reactive : function(_gameTile){
 		
-		var searchVectors = Array(Location.MoveDirection.LEFT,Location.MoveDirection.DOWN,Location.MoveDirection.RIGHT);
+		var searchVectors = Array(WD.Location.MoveDirection.LEFT,WD.Location.MoveDirection.DOWN,WD.Location.MoveDirection.RIGHT);
 		
-		this.actionBehavior = new Behavior(_gameTile);
+		this.actionBehavior = new WD.Behavior(_gameTile);
 		
 		for(var i = 0; i < searchVectors.length; i++){
 
 			//Skip looking LEFT if tile is on left most column
 			if((_gameTile.getMapLocation().x == 0) && 
-				searchVectors[i] == Location.MoveDirection.LEFT)
+				searchVectors[i] == WD.Location.MoveDirection.LEFT)
 				i++;
 
 			//Skip looking DOWN if tile is on bottom row
-			if((Game.defaultSettings.gameRows-1 == _gameTile.getMapLocation().y) && 
-				searchVectors[i] == Location.MoveDirection.DOWN)
+			if((WD.Game.defaultSettings.gameRows-1 == _gameTile.getMapLocation().y) && 
+				searchVectors[i] == WD.Location.MoveDirection.DOWN)
 				i++;
 			
 			//Skip looking RIGHT if tile is on right most column
-			if((_gameTile.getMapLocation().x == Game.defaultSettings.columns - 1) && 
-				searchVectors[i] == Location.MoveDirection.RIGHT)
+			if((_gameTile.getMapLocation().x == WD.Game.defaultSettings.columns - 1) && 
+				searchVectors[i] == WD.Location.MoveDirection.RIGHT)
 				break;
 
-			if(this.debugFlags & Game.debugBehavior)
-				console.info('[BEHAVIOR] Checking:' + Location.MoveDescription[searchVectors[i]]);
+			if(this.debugFlags & WD.Game.debugBehavior)
+				console.info('[BEHAVIOR] Checking:' + WD.Location.MoveDescription[searchVectors[i]]);
 
-			var nextLocation = Location.TransformLocation(_gameTile.getMapLocation(),searchVectors[i]);
+			var nextLocation = WD.Location.TransformLocation(_gameTile.getMapLocation(),searchVectors[i]);
 			var nextLocationVal = this.gameBoard[nextLocation.x][nextLocation.y].val;
-			var nextLocationPosition = Location.FindPhysicalLocation(nextLocation);
+			var nextLocationPosition = WD.Location.FindPhysicalLocation(nextLocation);
 			var nextTileParams = { xPos : nextLocationPosition.x,
 									yPos : nextLocationPosition.y,
 									xMap : nextLocation.x,
@@ -329,18 +332,18 @@ var Game = Class.create({
 								};
 								
 								
-			while(Location.LegalRealm(nextLocation) &&  //next tile is in legal space
+			while(WD.Location.LegalRealm(nextLocation) &&  //next tile is in legal space
 					nextLocationVal > 0 &&  //next tile isn't air
-					this.actionBehavior.hasReaction(new GameTile(nextTileParams)) && //next tile has reaction
+					this.actionBehavior.hasReaction(new WD.GameTile(nextTileParams)) && //next tile has reaction
 					this.actionBehavior.getAnimationStart() != true) //that next tile didn't start an instant reaction
 				{
 				
-				nextLocation = Location.TransformLocation(nextLocation,searchVectors[i]);
+				nextLocation = WD.Location.TransformLocation(nextLocation,searchVectors[i]);
 				
-				if(Location.LegalRealm(nextLocation)) {
+				if(WD.Location.LegalRealm(nextLocation)) {
 					nextLocationVal = this.gameBoard[nextLocation.x][nextLocation.y].val;
-					nextLocationCurrencyVal = GameTile.currencyValues[nextLocationVal];
-					nextLocationPosition = Location.FindPhysicalLocation(nextLocation);
+					nextLocationCurrencyVal = WD.GameTile.currencyValues[nextLocationVal];
+					nextLocationPosition = WD.Location.FindPhysicalLocation(nextLocation);
 
 					nextTileParams = { x : nextLocationPosition.x,
 									y : nextLocationPosition.y,
@@ -362,7 +365,7 @@ var Game = Class.create({
 		return this.actionBehavior.getAnimationStart();
 	},
 	StartBoardTransition : function(){
-		if(this.debugFlags & Game.debugTransition)
+		if(this.debugFlags & WD.Game.debugTransition)
 				console.info('[TRANSITION] Starting Transition');
 
 		var tileGroup = this.actionBehavior.getChain();
@@ -370,7 +373,7 @@ var Game = Class.create({
 		//lock keys
 		this.keysLocked = true;
 
-		if(this.debugFlags & Game.debugTransition) {
+		if(this.debugFlags & WD.Game.debugTransition) {
 			for(var i = 0; i < tileGroup.length; i++){
 				console.info('[TRANSITION] tile ' + i + ' : ' + tileGroup[i].toString());
 			}
@@ -386,7 +389,7 @@ var Game = Class.create({
 		Normally, the first tile in the group (index[0]) will get upgraded, as the remaining tiles in the chain animate into it, but
 		for vertical matches, the last tile in the array should get upgraded, since the first tile will drop to the last tile position
 		**/
-		var tileUpgradeIndex = (tileGroup[1].getDirection() === WDAnimation.DIRECTION.UP) ? tileGroup.length - 1 : 0; 
+		var tileUpgradeIndex = (tileGroup[1].getDirection() === WD.Animation.DIRECTION.UP) ? tileGroup.length - 1 : 0; 
 		
 		if(this.actionBehavior.getUpgradedValue() === 5){
 			this.score += 1;
@@ -417,19 +420,19 @@ var Game = Class.create({
 		console.info('RUNNING CHAIN ANIMATION');
 		var tileGroup = this.actionBehavior.getChain();
 		
-		//console.info(this.chainMemberIndex);
+		//console.info(this.chainMemberIndeLocx);
 		if(this.chainMemberIndex>1){
-			var _options = { animationType : WDAnimation.TYPE.SLIDE, 
+			var _options = { animationType : WD.Animation.TYPE.SLIDE, 
 								direction : tileGroup[--this.chainMemberIndex].getDirection(), 
 								pixelSpeed : 40,  
 								endEvent : 'WD::tileFinished' 
 							};
 
-			var animObject = new WDAnimation(_options);
+			var animObject = new WD.Animation(_options);
 			animObject.animateBlock(tileGroup[this.chainMemberIndex]);
 		} else { 
-			if(tileGroup[0].getMapLocation().y < (Game.defaultSettings.gameRows - 1)){ //move this only if tile is in the air (gravity move)
-					var _options = { animationType : WDAnimation.TYPE.MOVE, 
+			if(tileGroup[0].getMapLocation().y < (WD.Game.defaultSettings.gameRows - 1)){ //move this only if tile is in the air (gravity move)
+					var _options = { animationType : WD.Animation.TYPE.MOVE, 
 								endX : tileGroup[tileGroup.length-1].getCanvasLocation().x, 
 								endY : tileGroup[tileGroup.length-1].getCanvasLocation().y, 
 								speed : 100, 
@@ -438,8 +441,8 @@ var Game = Class.create({
 							};
 
 					//animate action block
-					//var _options = { animationType : WDAnimation.TYPE.MOVE, startX : 0, startY : 0, endX : 0, endY : 0, speed : 100,  endEvent : 'WD::animationFinished' };
-					var animObject = new WDAnimation(_options);
+					//var _options = { animationType : WD.Animation.TYPE.MOVE, startX : 0, startY : 0, endX : 0, endY : 0, speed : 100,  endEvent : 'WD::animationFinished' };
+					var animObject = new WD.Animation(_options);
 
 					animObject.animateBlock(tileGroup[0]);
 			} else {
@@ -462,11 +465,11 @@ var Game = Class.create({
 		var y = 0;
 		var testGrid = 'rgb(234,234,234)';
 		var testColor = 'rgb(128,128,128)';
-		for(var i = 0; i < (Game.defaultSettings.gameRows); i++){
-			for(var j = 0;j < Game.defaultSettings.columns; j++){
+		for(var i = 0; i < (WD.Game.defaultSettings.gameRows); i++){
+			for(var j = 0;j < WD.Game.defaultSettings.columns; j++){
 				this._canvasContext.strokeStyle = testGrid;
 				this._canvasContext.lineWidth = 1;
-				this._canvasContext.strokeRect(x,y,Game.defaultSettings.tileWidth,Game.defaultSettings.tileHeight);
+				this._canvasContext.strokeRect(x,y,WD.Game.defaultSettings.tileWidth,WD.Game.defaultSettings.tileHeight);
 
 				//draw coords
 				this._canvasContext.fillStyle = testColor;
@@ -475,10 +478,10 @@ var Game = Class.create({
 				this._canvasContext.fillText(j + "," + i, x + 3,y + 3);
 
 
-				x += Game.defaultSettings.tileWidth;
+				x += WD.Game.defaultSettings.tileWidth;
 
 			}
-			y += Game.defaultSettings.tileHeight
+			y += WD.Game.defaultSettings.tileHeight
 			x = 0;
 		}
 		
@@ -486,14 +489,14 @@ var Game = Class.create({
 	scanForSpaces : function(){
 		var tileAbove = {};
 		//start with bottom row and move up
-		for(var row = Game.defaultSettings.gameRows - 1; row > -1; row--){
+		for(var row = WD.Game.defaultSettings.gameRows - 1; row > -1; row--){
 			totalAcross = 0;
-			for(var col = 0; col < Game.defaultSettings.columns; col++){
+			for(var col = 0; col < WD.Game.defaultSettings.columns; col++){
 				var _gameTile = this.gameBoard[col][row];
 				totalAcross += _gameTile.val;
 
 				if(_gameTile.val===0) { //lookup
-					tileAbove = Location.TransformLocation({ x : col, y : row },Location.MoveDirection.UP)
+					tileAbove = WD.Location.TransformLocation({ x : col, y : row },WD.Location.MoveDirection.UP)
 					
 					if(this.gameBoard[tileAbove.x][tileAbove.y].val>0){ //this is a floating block
 						this.gameBoard[col][row] = this.gameBoard[tileAbove.x][tileAbove.y]; //clone?
@@ -509,7 +512,7 @@ var Game = Class.create({
 });
 
 
-Game.defaultSettings =  { 
+WD.Game.defaultSettings =  { 
 						columns : 9,						
 						tileWidth : 50,
 						tileHeight : 50,
@@ -519,7 +522,10 @@ Game.defaultSettings =  {
 						actionTileStroke: 'rgb(255,0,0)'
 					}
 
-Game.debugBehavior = 0x1;
-Game.debugMovement = 0x2;
-Game.debugScore = 0x4;
-Game.debugTransition = 0x8;
+WD.Game.debugBehavior = 0x1;
+WD.Game.debugMovement = 0x2;
+WD.Game.debugScore = 0x4;
+WD.Game.debugTransition = 0x8;
+
+
+});

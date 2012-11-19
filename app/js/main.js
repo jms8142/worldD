@@ -1,5 +1,4 @@
-require(["lib/prototype",
-		 "control/Game",
+require(["control/Game",
 		 "debug/Debugger",
 		 "test/testBoards"], function() {
 		 	
@@ -8,11 +7,11 @@ require(["lib/prototype",
 			startingPiecePosition : { x : 4,y : 0 },
 			constantPiece : null,
 			debugWindow : true,
-			debugShow : Game.debugTransition | Game.debugBehavior,
+			debugShow : WD.Game.debugTransition | WD.Game.debugBehavior,
 			showTransition : false,
 			showTestGrid : false
 		}
 	
-		window._game = new window.Game(opts);
+		window._game = new WD.Game(opts);
 		
 });

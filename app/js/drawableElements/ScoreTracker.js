@@ -1,4 +1,9 @@
-var ScoreTracker = Class.create({
+define(['lib/prototype'],function(){
+
+window.WD || ( window.WD = {} ) //application namespace
+
+
+WD.ScoreTracker = Class.create({
 	backgroundColor : 'rgb(77,77,77)',
 	textColor : 'rgb(255,255,255)',
 	textSpaceWidth : 100,
@@ -10,7 +15,7 @@ var ScoreTracker = Class.create({
 	canvasEl : null,
 	drawScoreBoard : function(_canvasContext){
 
-		this.dollarSign = AssetLoader.getResource('dollar');
+		this.dollarSign = WD.AssetLoader.getResource('dollar');
 		this.canvasEl = document.getElementById('wdCanvas');
 		
 		this.setToGradient(_canvasContext);
@@ -76,5 +81,8 @@ var ScoreTracker = Class.create({
 
 
 	}
+
+});
+
 
 });

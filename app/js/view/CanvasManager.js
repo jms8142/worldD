@@ -1,18 +1,22 @@
-CanvasManager = Class.create({});
+define(['lib/prototype'],function(){
+
+window.WD || ( window.WD = {} ) //application namespace
+
+WD.CanvasManager = Class.create({});
 
 
-CanvasManager.SCREENS = { TITLE : 0, PAUSE : 1, GAMEOVER : 2, CREDITS : 3, HOWTO : 4 };
+WD.CanvasManager.SCREENS = { TITLE : 0, PAUSE : 1, GAMEOVER : 2, CREDITS : 3, HOWTO : 4 };
 
-CanvasManager.Screen = function(screen,game){
+WD.CanvasManager.Screen = function(screen,game){
 	switch (screen) {
-		case CanvasManager.SCREENS.PAUSE:
-			var pausedImg = AssetLoader.getResource('paused'),
+		case WD.CanvasManager.SCREENS.PAUSE:
+			var pausedImg = WD.AssetLoader.getResource('paused'),
 			xPos = (game._canvasBufferContext.canvas.width / 2) - (pausedImg.width / 2),
 			yPos = (game._canvasBufferContext.canvas.height / 2) - (pausedImg.height / 2);
 			game._canvasBufferContext.drawImage(pausedImg,xPos,yPos);
 		break;
-		case CanvasManager.SCREENS.TITLE:
-			var titleImg = AssetLoader.getResource('title'),
+		case WD.CanvasManager.SCREENS.TITLE:
+			var titleImg = WD.AssetLoader.getResource('title'),
 			xPos = (game._canvasBufferContext.canvas.width / 2) - (titleImg.width / 2),
 			yPos = (game._canvasBufferContext.canvas.height / 2) - (titleImg.height / 2),
 			linkText = "START";
@@ -23,21 +27,21 @@ CanvasManager.Screen = function(screen,game){
 			game._canvasBufferContext.font='24px verdana, arial, sans-serif';
 			game._canvasBufferContext.fillStyle='#0c753b';
 
-			CanvasManager.linkWidth=game._canvasBufferContext.measureText(linkText).width;
-			CanvasManager.linkHeight = parseInt(game._canvasBufferContext.font);
-			game._canvasBufferContext.fillText(linkText,(game._canvasBufferContext.canvas.width / 2) - (CanvasManager.linkWidth / 2),game._canvasBufferContext.canvas.height / 2 + (CanvasManager.linkHeight / 2));
+			WD.CanvasManager.linkWidth=game._canvasBufferContext.measureText(linkText).width;
+			WD.CanvasManager.linkHeight = parseInt(game._canvasBufferContext.font);
+			game._canvasBufferContext.fillText(linkText,(game._canvasBufferContext.canvas.width / 2) - (WD.CanvasManager.linkWidth / 2),game._canvasBufferContext.canvas.height / 2 + (WD.CanvasManager.linkHeight / 2));
 
 
 
 
 			game.Draw();
 			break;
-		case CanvasManager.SCREENS.GAMEOVER:
-			var gameoverScreen = AssetLoader.getResource('gameover');
+		case WD.CanvasManager.SCREENS.GAMEOVER:
+			var gameoverScreen = WD.AssetLoader.getResource('gameover');
 			game._canvasBufferContext.drawImage(gameoverScreen,0,0);
 			game.Draw();
 		break;
-		case CanvasManager.SCREENS.TITLE:
+		case WD.CanvasManager.SCREENS.TITLE:
 		break;
 
 
@@ -46,7 +50,7 @@ CanvasManager.Screen = function(screen,game){
 	return screen;
 }
 
-CanvasManager.DrawCanvasBackground = function(_canvasBufferContext){
+WD.CanvasManager.DrawCanvasBackground = function(_canvasBufferContext){
 		var my_gradient = _canvasBufferContext.createLinearGradient(0,0,0,_canvasBufferContext.canvas.height-50);
 		my_gradient.addColorStop(0,'rgb(68,134,146)');
 		my_gradient.addColorStop(.75,'rgb(34,128,69)');
@@ -56,14 +60,16 @@ CanvasManager.DrawCanvasBackground = function(_canvasBufferContext){
 		_canvasBufferContext.fillRect(0,0,_canvasBufferContext.canvas.width,_canvasBufferContext.canvas.height-50);
 }
 
-CanvasManager.MouseReact = function(x,y,screen,game){
+WD.CanvasManager.MouseReact = function(x,y,screen,game){
 	switch (screen) {
-		case CanvasManager.SCREENS.TITLE:
+		case WD.CanvasManager.SCREENS.TITLE:
 			
-			var linkX = (game._canvasBufferContext.canvas.width / 2) - (CanvasManager.linkWidth / 2);
-			var linkY = (game._canvasBufferContext.canvas.height / 2) + (CanvasManager.linkHeight / 2)
-		  	return (x>=linkX && x <= (linkX + CanvasManager.linkWidth) && y<=linkY && y<= linkY && y > (linkY - CanvasManager.linkHeight));
+			var linkX = (game._canvasBufferContext.canvas.width / 2) - (WD.CanvasManager.linkWidth / 2);
+			var linkY = (game._canvasBufferContext.canvas.height / 2) + (WD.CanvasManager.linkHeight / 2)
+		  	return (x>=linkX && x <= (linkX + WD.CanvasManager.linkWidth) && y<=linkY && y<= linkY && y > (linkY - WD.CanvasManager.linkHeight));
 			
 		break;
 	}
 }
+
+});
