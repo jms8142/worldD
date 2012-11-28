@@ -6,9 +6,8 @@ WD.AssetLoader = Class.create({});
 
 WD.AssetLoader.assets = [{ name : 'coins', src : 'assets/coins.png' },
 					  { name : 'dollar', src : 'assets/dollar.png' },
-					  { name : 'paused', src : 'assets/paused.png' },
-					  { name : 'gameover', src : 'assets/gameover.png' },
-					  { name : 'title', src : 'assets/title.png' }];
+					  { name : 'text', src : 'assets/text.png' },
+					  { name : 'background', src : 'assets/background.png' }];
 WD.AssetLoader.resources = []; //better as hashmap
 
 WD.AssetLoader.loadAssets = function(){
