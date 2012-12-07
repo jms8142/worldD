@@ -4,8 +4,7 @@ window.WD || ( window.WD = {} ) //application namespace
 
 WD.AssetLoader = Class.create({});
 
-WD.AssetLoader.assets = [{ name : 'coins', src : 'assets/coins.png' },
-					  { name : 'dollar', src : 'assets/dollar.png' },
+WD.AssetLoader.assets = [{ name : 'objects', src : 'assets/objects.png' },
 					  { name : 'text', src : 'assets/text.png' },
 					  { name : 'background', src : 'assets/background.png' }];
 WD.AssetLoader.resources = []; //better as hashmap

@@ -46,7 +46,7 @@ WD.GameTile = Class.create({
 		this._val = opts.val;
 		this.currencyValue = (opts.curVal===undefined) ? WD.GameTile.currencyValues[this._val] : opts.curVal;
 
-		this.activePic = WD.AssetLoader.getResource('coins');
+		this.activePic = WD.AssetLoader.getResource('objects');
 		//console.info(this.activePic);
 	},
 	getQuad : function(){

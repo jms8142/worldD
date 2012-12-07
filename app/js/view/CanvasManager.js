@@ -14,7 +14,6 @@ WD.CanvasManager.Screen = function(screen,game){
 			xPos = (game._canvasBufferContext.canvas.width / 2) - (pausedImg.width / 2),
 			yPos = (game._canvasBufferContext.canvas.height / 2) - (pausedImg.height / 2);
 			game._canvasBufferContext.drawImage(pausedImg,0,0,320,37,xPos,yPos,320,37);
-			console.info(pausedImg);
 		break;
 		case WD.CanvasManager.SCREENS.TITLE:
 			var titleImg = WD.AssetLoader.getResource('background'),
@@ -79,17 +78,10 @@ WD.CanvasManager.DrawCanvasBackground = function(_canvasBufferContext){
 }
 
 WD.CanvasManager.MouseReact = function(x,y,screen,game){
-	switch (screen) {
-		case WD.CanvasManager.SCREENS.TITLE:
-			
+	if (WD.CanvasManager.SCREENS.TITLE || WD.CanvasManager.SCREENS.GAMEOVER) {			
 			var linkX = (game._canvasBufferContext.canvas.width / 2) - (WD.CanvasManager.linkWidth / 2);
 			var linkY = (game._canvasBufferContext.canvas.height / 2) + (WD.CanvasManager.linkHeight / 2)
 		  	return (x>=linkX && x <= (linkX + WD.CanvasManager.linkWidth) && y<=linkY && y<= linkY && y > (linkY - WD.CanvasManager.linkHeight));
-			
-		break;
-
-		//case WD.CanvasManager.SCREENS.GAMEOVER:
-
 	}
 }
 

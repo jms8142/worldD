@@ -15,7 +15,7 @@ WD.ScoreTracker = Class.create({
 	canvasEl : null,
 	drawScoreBoard : function(_canvasContext){
 
-		this.dollarSign = WD.AssetLoader.getResource('dollar');
+		this.dollarSign = WD.AssetLoader.getResource('objects');
 		this.canvasEl = document.getElementById('wdCanvas');
 		
 		this.setToGradient(_canvasContext);
@@ -74,8 +74,7 @@ WD.ScoreTracker = Class.create({
 			_canvasContext.fillRect(startX,yPos,boxWidth,boxWidth);
 
 			if(x < score)
-				_canvasContext.drawImage(this.dollarSign,startX + (boxWidth * .25),yPos + (boxWidth * .1));
-			
+				_canvasContext.drawImage(this.dollarSign,3,96,15,23,startX + (boxWidth * .25),yPos + (boxWidth * .1),15,23);			
 			startX += boxWidth + 5;
 		}
 
