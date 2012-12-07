@@ -8,7 +8,7 @@ Consolidate the currency!
 
 
 see test on 
-http://www.johnplanetorb.com/games/worldd/
+http://www.johnplanetorb.com/games/worldd/app
 
 
 

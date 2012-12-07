@@ -3,9 +3,9 @@ require(["control/Game",
 		 "test/testBoards"], function() {
 		 	
     	var opts = {
-			startingPiece : 3, //[0=1,1=5,2=10,3=25]
+			startingPiece : 0, //[0=1,1=5,2=10,3=25]
 			startingPiecePosition : { x : 4,y : 0 },
-			constantPiece : 3,
+			constantPiece : null,
 			debugWindow : true,
 			debugShow : WD.Game.debugTransition | WD.Game.debugBehavior,
 			showTransition : false,
