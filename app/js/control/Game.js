@@ -52,13 +52,12 @@ define(['lib/prototype',
 			this._canvasBufferContext = this._canvasBuffer.getContext('2d');
 		}
 
-		Event.observe(window,'assetLoader:done',this.loadTitleScreen.bind(this));
+		Event.observe(document,'assetLoader:done',this.loadTitleScreen.bind(this));
 		WD.AssetLoader.loadAssets();
 
 		//additional game events
 		
-		Event.observe(window,'WD:gameover',this.endGame.bind(this));
-    	//$(this._canvas).observe('mousemove',this.mouseMoveHandler.bind(this));
+		Event.observe(document,'WD:gameover',this.endGame.bind(this));
     	$(this._canvas).observe('mousemove',this.mouseMoveHandler.bind(this));
     	$(this._canvas).observe('click',this.mouseClickHandler.bind(this));
 

@@ -23,7 +23,7 @@ WD.AssetLoader.loadAssets = function(){
 
 WD.AssetLoader.checkProgress = function(){
 	if(WD.AssetLoader.resources.length === WD.AssetLoader.assets.length){
-		Event.fire(window,'assetLoader:done');
+		Event.fire(document,'assetLoader:done');
 	}
 }
 

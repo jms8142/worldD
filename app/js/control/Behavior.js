@@ -45,13 +45,14 @@ WD.Behavior = Class.create({
 			name : "4 quarters to a dollar",
 			lookahead : false,
 			newVal : 5
-		}/*,
+		},
 		{
 			pattern : /^(10){5}$/,
 			name : "5 dimes to a quarter",
 			lookahead : false,
-			newVal : 5
-		}*/]
+			newVal : [5,5]
+		}
+		]
 
 	,
 	reactorDefinition : {

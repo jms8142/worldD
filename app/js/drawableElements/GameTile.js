@@ -160,7 +160,7 @@ WD.GameTile = Class.create({
 			if(window._game.Reactive(this)){ //A reaction has been detected - start cleaning up tiles
 				window._game.StartBoardTransition();
 			} else if(this.getMapLocation().y === 0) { //at the top
-				Event.fire(window,'WD:gameover');
+				Event.fire(document,'WD:gameover');
 			} else {
 				this.setInActive();
 				window._game.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
