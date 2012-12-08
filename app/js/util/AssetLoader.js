@@ -41,3 +41,27 @@ WD.AssetLoader.getResource = function(resourceName){
 }
 
 });
+
+/*
+finish this
+window.WD || ( window.WD = {} ) //application namespace
+
+WD.AssetLoader = (function(WD){
+	var _self = {};
+	_self.loadAssets = function(){
+		_self.assets.each(function(asset){
+			var img = new Image();
+			img.src = asset.src;
+			img.onload = function(e){
+				WD.AssetLoader.resources.push({ assetName : asset.name, img : img });
+				WD.AssetLoader.checkProgress();
+			}
+		});
+	}
+
+	return _self;
+
+}(WD));
+
+console.info(window.WD);
+*/

@@ -16,5 +16,17 @@
         {
             name: "main"
         }
-    ]
+    ],
+    optimize : "uglify"
 })
+/**
+cd app/js
+node ../../r.js -o app.build.js
+
+node ../../r.js -o name=main excludeShallow=two out=../../app-build/js/require.js baseUrl=.
+
+//just the main
+node ../../r.js -o name=main out=../../app-build/js/main.js baseUrl=.
+
+
+*/
