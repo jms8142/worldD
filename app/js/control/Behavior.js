@@ -10,7 +10,7 @@ WD.Behavior = Class.create({
 	reactors : [],
 	chain: null, //arraylist of gameTile objects
 	startAnimation : false,
-	children : [], //array of upgraded tiles which may start their own reactions
+	nextReactor : null, //array of upgraded tiles which may start their own reactions
 	rules : {
 		minThreshold : 2 //when to start looking for patterns
 		,maxSize : 8
@@ -73,15 +73,14 @@ WD.Behavior = Class.create({
 		
 		if(window.navigator.userAgent.indexOf('AppleWebKit') === -1) //Chrome doesn't have clear()
 			console.clear();
-
-		//console.info(window.navigator);
 		
 
 		if(_game.debugFlags & WD.Game.debugBehavior)
 			console.info("[BEHAVIOR] Chain[0]:" + _gameTile.toString());
 
 		this.chain = new Array();
-		this.chain[0] = _gameTile;
+		this.nextReactor = new Array();
+		this.chain[0] = _gameTile;		
 	},
 	addReactors : function(reactors){
 		this.reactors = reactors;
@@ -96,13 +95,21 @@ WD.Behavior = Class.create({
 	getUpgradedValue : function(){
 		return this.upgradedValue;
 	},
-	addChild : function(gameTile){
-		this.children.push(gameTile)
+	addChild : function(_gameTile){
+		//console.info(typeof _gameTile);
+		//console.info(typeof this.nextReactor);
+		//console.info(this.nextReactor);
+		//console.info(this.chain);
+		//console.info(_gameTile2);
+		(this.nextReactor.length === 0) ? this.nextReactor[0] = _gameTile : this.nextReactor.push(_gameTile);
+		//this.nextReactor[0] = _gameTile;//_gameTile;
+		//this.nextReactor.push({ name : "random object"});
+		//this.nextReactor.push(_gameTile2);
+
+		//console.info(this.nextReactor);
 	},
 	getChildren : function(){
-		console.info('children:');
-		console.info(this.children);
-		return this.children;
+		return this.nextReactor;
 	},
 	/**		
 	* @param GameTile

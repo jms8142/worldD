@@ -393,11 +393,16 @@ define(['lib/prototype',
 		for(x=0;x<upgradedValue.length;x++){ //more than one tile will be upgraded
 			this.gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : upgradedValue[x], active : false };
 			//opts = { xMap : tileGroup[tileUpgradeIndex].getMapLocation().x, yMap : tileGroup[tileUpgradeIndex].getMapLocation().y }
-			opts = { xMap : tileGroup[tileUpgradeIndex].getMapLocation().x, yMap : tileGroup[tileUpgradeIndex].getMapLocation().y, val : 3 }
-			console.info(opts);
-			console.info('just showd u opts');
-			//this.actionBehavior.addChild(new WD.GameTile(opts));
-			console.info(this.actionBehavior.getChildren())
+			//opts = { xMap : tileGroup[tileUpgradeIndex].getMapLocation().x, yMap : tileGroup[tileUpgradeIndex].getMapLocation().y, val : 3 }
+			var opts = { xPos :  tileGroup[tileUpgradeIndex].getPosition().x,
+									yPos : tileGroup[tileUpgradeIndex].getPosition().y,
+									xMap : tileGroup[tileUpgradeIndex].getMapLocation().x,
+									yMap : tileGroup[tileUpgradeIndex].getMapLocation().y,
+									val : 2
+								};
+			//console.info(opts);
+			this.actionBehavior.addChild(new WD.GameTile(opts));
+			//console.info(this.actionBehavior.getChildren())
 			tileUpgradeIndex--;
 		}
 		
@@ -455,10 +460,10 @@ define(['lib/prototype',
 		console.info('animation Finished!');
 		//if there's another reaction, return
 		var children = this.actionBehavior.getChildren();
-		console.info(children);
+		
 		for(x=0;x<children.length;x++){
-			console.info('checking resting place');
 			children[x].checkRestingPlace();
+			console.info(children[x]);
 		}
 
 		this.keysLocked = false;
