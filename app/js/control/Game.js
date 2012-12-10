@@ -89,7 +89,8 @@ define(['lib/prototype',
 		}
 	},
 	loadTitleScreen : function(){
-		this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.TITLE, this);
+		this.startGame();
+		//this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.TITLE, this);
 		//this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.GAMEOVER, this);
 	},
 	startGame : function() {
@@ -168,15 +169,6 @@ define(['lib/prototype',
 		if(this.debugWindow)
 			WD.Debugger.PrintGameBoardtoDebugWindow(this.gameBoard);
 
-	},
-	DrawCanvasBackground : function(){
-		var my_gradient = this._canvasBufferContext.createLinearGradient(0,0,0,this._canvas.height-50);
-		my_gradient.addColorStop(0,'rgb(68,134,146)');
-		my_gradient.addColorStop(.75,'rgb(34,128,69)');
-		my_gradient.addColorStop(1,'rgb(92,100,38)');
-		
-		this._canvasBufferContext.fillStyle = my_gradient;//this.backgroundColor;
-		this._canvasBufferContext.fillRect(0,0,this._canvas.width,this._canvas.height-50);
 	},
 	/**
 	* @return void
@@ -389,19 +381,26 @@ define(['lib/prototype',
 		Normally, the first tile in the group (index[0]) will get upgraded, as the remaining tiles in the chain animate into it, but
 		for vertical matches, the last tile in the array should get upgraded, since the first tile will drop to the last tile position
 		**/
-		var tileUpgradeIndex = (tileGroup[1].getDirection() === WD.Animation.DIRECTION.UP) ? tileGroup.length - 1 : 0; 
+		var tileUpgradeIndex = (tileGroup[1].getDirection() === WD.Animation.DIRECTION.UP) ? tileGroup.length - 1 : 0,
+		upgradedValue = this.actionBehavior.getUpgradedValue();
 		
-		if(this.actionBehavior.getUpgradedValue() === 5){
+		if(upgradedValue.length===1 && upgradedValue[0] === 5){ //we just made a dollar
 			this.score += 1;
 			this.scoretracker.updateScore(this.score,this._canvasBufferContext);
 			this.Draw();
-		} else {
-			upgradedValue = this.actionBehavior.getUpgradedValue();
 		}
 
-		if(this.actionBehavior.getUpgradedValue()>0 && this.actionBehavior.getUpgradedValue()<5){
-			this.gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : this.actionBehavior.getUpgradedValue(), active : false };
+		for(x=0;x<upgradedValue.length;x++){ //more than one tile will be upgraded
+			this.gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : upgradedValue[x], active : false };
+			//opts = { xMap : tileGroup[tileUpgradeIndex].getMapLocation().x, yMap : tileGroup[tileUpgradeIndex].getMapLocation().y }
+			opts = { xMap : tileGroup[tileUpgradeIndex].getMapLocation().x, yMap : tileGroup[tileUpgradeIndex].getMapLocation().y, val : 3 }
+			console.info(opts);
+			console.info('just showd u opts');
+			//this.actionBehavior.addChild(new WD.GameTile(opts));
+			console.info(this.actionBehavior.getChildren())
+			tileUpgradeIndex--;
 		}
+		
 	
 		this.chainMemberIndex = tileGroup.length;
 		
@@ -453,6 +452,15 @@ define(['lib/prototype',
 		}
 	},
 	animationFinished : function(){
+		console.info('animation Finished!');
+		//if there's another reaction, return
+		var children = this.actionBehavior.getChildren();
+		console.info(children);
+		for(x=0;x<children.length;x++){
+			console.info('checking resting place');
+			children[x].checkRestingPlace();
+		}
+
 		this.keysLocked = false;
 		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
 		this.scanForSpaces();

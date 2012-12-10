@@ -68,13 +68,15 @@ WD.CanvasManager.Screen = function(screen,game){
 }
 
 WD.CanvasManager.DrawCanvasBackground = function(_canvasBufferContext){
-		var my_gradient = _canvasBufferContext.createLinearGradient(0,0,0,_canvasBufferContext.canvas.height-50);
-		my_gradient.addColorStop(0,'rgb(68,134,146)');
-		my_gradient.addColorStop(.75,'rgb(34,128,69)');
-		my_gradient.addColorStop(1,'rgb(92,100,38)');
-		
-		_canvasBufferContext.fillStyle = my_gradient;//this.backgroundColor;
-		_canvasBufferContext.fillRect(0,0,_canvasBufferContext.canvas.width,_canvasBufferContext.canvas.height-50);
+		if(!_game.settings.showTestGrid){
+			var my_gradient = _canvasBufferContext.createLinearGradient(0,0,0,_canvasBufferContext.canvas.height-50);
+			my_gradient.addColorStop(0,'rgb(68,134,146)');
+			my_gradient.addColorStop(.75,'rgb(34,128,69)');
+			my_gradient.addColorStop(1,'rgb(92,100,38)');
+			
+			_canvasBufferContext.fillStyle = my_gradient;//this.backgroundColor;
+			_canvasBufferContext.fillRect(0,0,_canvasBufferContext.canvas.width,_canvasBufferContext.canvas.height-50);
+		}
 }
 
 WD.CanvasManager.MouseReact = function(x,y,screen,game){

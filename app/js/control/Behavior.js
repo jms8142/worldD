@@ -10,48 +10,50 @@ WD.Behavior = Class.create({
 	reactors : [],
 	chain: null, //arraylist of gameTile objects
 	startAnimation : false,
+	children : [], //array of upgraded tiles which may start their own reactions
 	rules : {
 		minThreshold : 2 //when to start looking for patterns
 		,maxSize : 8
 	},
 	upgradedValue : 0,
 	patternMatrix : 
-		[{
-			pattern : /^1{5}$/,
-			name : "penny to nickel",
-			lookahead: false,
-			newVal : 2
-		},
-		{
-			pattern : /^5{2}$/,
-			name : "nickel to dime",
-			lookahead : true,
-			newVal : 3
-		},
-		{
-			pattern : /^5{5}$/,
-			name : "nickel to quarter",
-			lookahead : false,
-			newVal : 4
-		},
-		{
-			pattern : /^(10105|51010|10510)$/,
-			name : "2 dimes and a nickel to quarter",
-			lookahead : false,
-			newVal : 4
-		},
-		{
-			pattern : /^(25){4}$/,
-			name : "4 quarters to a dollar",
-			lookahead : false,
-			newVal : 5
-		},
-		{
-			pattern : /^(10){5}$/,
-			name : "5 dimes to a quarter",
-			lookahead : false,
-			newVal : [5,5]
-		}
+		[
+			{
+				pattern : /^1{5}$/,
+				name : "penny to nickel",
+				lookahead: false,
+				newVal : [2]
+			},
+			{
+				pattern : /^5{2}$/,
+				name : "nickel to dime",
+				lookahead : true,
+				newVal : [3]
+			},
+			{
+				pattern : /^5{5}$/,
+				name : "nickel to quarter",
+				lookahead : false,
+				newVal : [4]
+			},
+			{
+				pattern : /^(10105|51010|10510)$/,
+				name : "2 dimes and a nickel to quarter",
+				lookahead : false,
+				newVal : [4]
+			},
+			{
+				pattern : /^(25){4}$/,
+				name : "4 quarters to a dollar",
+				lookahead : false,
+				newVal : [5]
+			},
+			{
+				pattern : /^(10){5}$/,
+				name : "5 dimes to a quarter",
+				lookahead : false,
+				newVal : [4,4]
+			}
 		]
 
 	,
@@ -93,6 +95,14 @@ WD.Behavior = Class.create({
 	},
 	getUpgradedValue : function(){
 		return this.upgradedValue;
+	},
+	addChild : function(gameTile){
+		this.children.push(gameTile)
+	},
+	getChildren : function(){
+		console.info('children:');
+		console.info(this.children);
+		return this.children;
 	},
 	/**		
 	* @param GameTile

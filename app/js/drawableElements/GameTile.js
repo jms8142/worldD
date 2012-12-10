@@ -38,7 +38,6 @@ WD.GameTile = Class.create({
 	* val int currency value represented in index this.currencyValues[]
 	**/
 	initialize : function(opts){
-		
 		this.xMap = opts.xMap;
 		this.yMap = opts.yMap;
 		this.xPos = (opts.xPos===undefined) ? WD.Location.FindPhysicalLocation({x : this.xMap, y : this.yMap}).x : opts.xPos;
@@ -47,7 +46,6 @@ WD.GameTile = Class.create({
 		this.currencyValue = (opts.curVal===undefined) ? WD.GameTile.currencyValues[this._val] : opts.curVal;
 
 		this.activePic = WD.AssetLoader.getResource('objects');
-		//console.info(this.activePic);
 	},
 	getQuad : function(){
 		return this.quad;

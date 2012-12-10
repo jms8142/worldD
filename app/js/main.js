@@ -9,7 +9,8 @@ require(["control/Game",
 			debugWindow : true,
 			debugShow : WD.Game.debugTransition | WD.Game.debugBehavior,
 			showTransition : false,
-			showTestGrid : false
+			showTestGrid : true,
+			gameBoard : sandbox
 		}
 	
 		window._game = new WD.Game(opts);
