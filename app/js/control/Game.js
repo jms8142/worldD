@@ -33,6 +33,7 @@ define(['lib/prototype',
 	settings : null,
 	timerID : null,
 	paused : false,
+	dollarSound : null,
 	initialize : function (opts){
 		this.settings = opts;
 		//
@@ -61,6 +62,10 @@ define(['lib/prototype',
     	$(this._canvas).observe('mousemove',this.mouseMoveHandler.bind(this));
     	$(this._canvas).observe('click',this.mouseClickHandler.bind(this));
 
+    	this.dollarSound = new Audio();
+    	//console.info(!!dollarSound.canPlayType('audio/ogg'));
+    	this.dollarSound.setAttribute("src","assets/dollar.oggvorbis.ogg");
+    	this.dollarSound.load();
 	},
 	mouseMoveHandler : function(ev){
 		
@@ -384,7 +389,7 @@ define(['lib/prototype',
 		var tileUpgradeIndex = (tileGroup[1].getDirection() === WD.Animation.DIRECTION.UP) ? tileGroup.length - 1 : 0,
 		upgradedValue = this.actionBehavior.getUpgradedValue();
 		
-		if(upgradedValue.length===1 && upgradedValue[0] === 5){ //we just made a dollar
+		if(typeof upgradedValue==='number' && upgradedValue === 5){ //we just made a dollar
 			this.score += 1;
 			this.scoretracker.updateScore(this.score,this._canvasBufferContext);
 			this.Draw();
@@ -459,12 +464,12 @@ define(['lib/prototype',
 	animationFinished : function(){
 		console.info('animation Finished!');
 		//if there's another reaction, return
-		var children = this.actionBehavior.getChildren();
+		//var children = this.actionBehavior.getChildren();
 		
-		for(x=0;x<children.length;x++){
-			children[x].checkRestingPlace();
-			console.info(children[x]);
-		}
+		//for(x=0;x<children.length;x++){
+		//	children[x].checkRestingPlace();
+		//	console.info(children[x]);
+		//}
 
 		this.keysLocked = false;
 		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);

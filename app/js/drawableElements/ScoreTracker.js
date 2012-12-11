@@ -46,6 +46,10 @@ WD.ScoreTracker = Class.create({
 		_canvasContext.fillText("Total: $" + score, this.textPosition.x, this.textPosition.y);
 
 		this.drawMoneySquares(10,_canvasContext,score)
+
+		if(score>0) {
+			window._game.dollarSound.play();
+		}
 	},
 	setToGradient : function(_canvasContext){
 		//draw background
