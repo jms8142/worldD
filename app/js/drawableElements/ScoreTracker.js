@@ -48,7 +48,7 @@ WD.ScoreTracker = Class.create({
 		this.drawMoneySquares(10,_canvasContext,score)
 
 		if(score>0) {
-			window._game.dollarSound.play();
+			WD.AssetLoader.getResource('dollarSound').play();
 		}
 	},
 	setToGradient : function(_canvasContext){

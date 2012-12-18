@@ -33,7 +33,6 @@ define(['lib/prototype',
 	settings : null,
 	timerID : null,
 	paused : false,
-	dollarSound : null,
 	initialize : function (opts){
 		this.settings = opts;
 		//
@@ -62,10 +61,6 @@ define(['lib/prototype',
     	$(this._canvas).observe('mousemove',this.mouseMoveHandler.bind(this));
     	$(this._canvas).observe('click',this.mouseClickHandler.bind(this));
 
-    	this.dollarSound = new Audio();
-    	//console.info(!!dollarSound.canPlayType('audio/ogg'));
-    	this.dollarSound.setAttribute("src","assets/dollar.oggvorbis.ogg");
-    	this.dollarSound.load();
 	},
 	mouseMoveHandler : function(ev){
 		

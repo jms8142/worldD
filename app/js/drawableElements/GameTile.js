@@ -157,6 +157,7 @@ WD.GameTile = Class.create({
 		if(WD.Location.LookAhead(this.getMapLocation())){
 			if(window._game.Reactive(this)){ //A reaction has been detected - start cleaning up tiles
 				window._game.StartBoardTransition();
+				WD.AssetLoader.getResource('matchSound').play();
 			} else if(this.getMapLocation().y === 0) { //at the top
 				Event.fire(document,'WD:gameover');
 			} else {
