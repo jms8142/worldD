@@ -70,9 +70,11 @@ WD.Behavior = Class.create({
 	**/
 	//initialize : function (val,_gameTile){
 	initialize : function(_gameTile) {
+
+		console.info('Behvaior created');
 		
 		if(window.navigator.userAgent.indexOf('AppleWebKit') === -1) //Chrome doesn't have clear()
-			console.clear();
+			//console.clear();
 		
 
 		if(_game.debugFlags & WD.Game.debugBehavior)
@@ -189,7 +191,7 @@ WD.Behavior = Class.create({
 			}
 
 			if(reaction === magicNumber){
-				this.upgradedValue = 5;
+				this.upgradedValue = [5];
 				this.startAnimation = true;
 				this.chain = tempChain.slice(0,tempChain.length);
 				break;

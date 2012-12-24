@@ -3,14 +3,15 @@ require(["control/Game",
 		 "test/testBoards"], function() {
 		 	
     	var opts = {
-			startingPiece : 1, //[0=1,1=5,2=10,3=25]
-			startingPiecePosition : { x : 4,y : 0 },
+			startingPiece : null, //[0=1,1=5,2=10,3=25]
+			startingPiecePosition : { x : 4,y : 2 },
 			constantPiece : null,
 			debugWindow : true,
-			debugShow : WD.Game.debugTransition | WD.Game.debugBehavior,
+			debugShow : WD.Game.debugBehavior | WD.Game.debugMovement | WD.Game.debugTransition | WD.Game.debugDrawing,
+			//debugShow : WD.Game.debugDrawing,
 			showTransition : false,
-			showTestGrid : false/*,
-			gameBoard : sandbox*/
+			showTestGrid : true,
+			gameBoard : sandbox
 		}
 	
 		window._game = new WD.Game(opts);

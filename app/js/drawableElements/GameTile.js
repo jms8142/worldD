@@ -162,17 +162,17 @@ WD.GameTile = Class.create({
 				Event.fire(document,'WD:gameover');
 			} else {
 				this.setInActive();
-				window._game.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
+				window._game.CreateActionPiece(window._game.startingPiecePositionX,window._game.startingPiecePositionY);
 				window._game.Update();
 			} 
 		}
 	},
 	render : function(_canvasContext,activeState){
-
 		if(showSkin){ 
 			if(activeState) {
 				_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xActive,this.bgroundOffset[this._val].yActive,46,46,this.xPos+2,this.yPos+2,46,46);
 			} else {
+				//console.info(this._val);
 				_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xinActive,this.bgroundOffset[this._val].yinActive,46,46,this.xPos+2,this.yPos+2,46,46);
 			}
 		} else {

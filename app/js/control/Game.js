@@ -118,9 +118,9 @@ define(['lib/prototype',
 
 		//starting piece
 		var startingPiece = (this.settings && this.settings.startingPiece !== undefined) ? this.settings.startingPiece : 1;
-	 	startingPiecePositionX = (this.settings && this.settings.startingPiecePosition) ? this.settings.startingPiecePosition.x : 4;
-		startingPiecePositionY = (this.settings && this.settings.startingPiecePosition) ? this.settings.startingPiecePosition.y : 2;
-		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY,startingPiece);
+	 	this.startingPiecePositionX = (this.settings && this.settings.startingPiecePosition) ? this.settings.startingPiecePosition.x : 4;
+		this.startingPiecePositionY = (this.settings && this.settings.startingPiecePosition) ? this.settings.startingPiecePosition.y : 2;
+		this.CreateActionPiece(this.startingPiecePositionX,this.startingPiecePositionY,startingPiece);
 		this.DrawGameTiles();
 
 		this.scoretracker = new WD.ScoreTracker; //temp
@@ -129,7 +129,6 @@ define(['lib/prototype',
 
 		this.Draw();
 
-		//this.PrintGameBoardtoConsole();
 		if(this.debugWindow) {
 			var _this = this;
 			WD.Debugger.PrintGameBoardtoDebugWindow(this.gameBoard);
@@ -156,6 +155,9 @@ define(['lib/prototype',
 	* @description - Completely refreshes and updates the canvas to the current state of the game.  To simply add to the canvas, use Draw()
 	**/
 	Update : function(){
+		if(this.debugFlags & WD.Game.debugDrawing)
+				console.info('[DRAWING] Updating Canvas');
+
 		this.ClearCanvas();
 
 		WD.CanvasManager.DrawCanvasBackground(this._canvasBufferContext);
@@ -194,6 +196,8 @@ define(['lib/prototype',
 			//console.info(gameBoard.length)
 	},
 	DrawGameTiles : function(){
+		if(this.debugFlags & WD.Game.debugDrawing)
+				console.info('[DRAWING] Drawing Game Tiles');
 		
 		var coordX = 0;
 		var coordY = 0;
@@ -226,6 +230,7 @@ define(['lib/prototype',
 
 	},
 	CreateActionPiece : function(x,y,val) {
+		console.info('createActionpiece' + x + ' ' + y);
 		if(this.constantPiece)
 			val = this.constantPiece;
 
@@ -372,9 +377,11 @@ define(['lib/prototype',
 		}
 		
 		for(i = tileGroup.length - 1; i >= 0; i--){
-			//console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
+			console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
 			this.gameBoard[tileGroup[i].getMapLocation().x][tileGroup[i].getMapLocation().y] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
 		}
+
+		WD.Debugger.PrintGameBoardtoDebugWindow(this.gameBoard);
 
 
 		/**
@@ -384,28 +391,31 @@ define(['lib/prototype',
 		var tileUpgradeIndex = (tileGroup[1].getDirection() === WD.Animation.DIRECTION.UP) ? tileGroup.length - 1 : 0,
 		upgradedValue = this.actionBehavior.getUpgradedValue();
 		
-		if(typeof upgradedValue==='number' && upgradedValue === 5){ //we just made a dollar
+		if(upgradedValue.length ===1 && upgradedValue[0] === 5){ //we just made a dollar - update score and exit the transition
 			this.score += 1;
 			this.scoretracker.updateScore(this.score,this._canvasBufferContext);
 			this.Draw();
-		}
+			this.animationFinished();
+			return;
+		} 
+
+
 
 		for(x=0;x<upgradedValue.length;x++){ //more than one tile will be upgraded
-			this.gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : upgradedValue[x], active : false };
-			//opts = { xMap : tileGroup[tileUpgradeIndex].getMapLocation().x, yMap : tileGroup[tileUpgradeIndex].getMapLocation().y }
-			//opts = { xMap : tileGroup[tileUpgradeIndex].getMapLocation().x, yMap : tileGroup[tileUpgradeIndex].getMapLocation().y, val : 3 }
-			var opts = { xPos :  tileGroup[tileUpgradeIndex].getPosition().x,
-									yPos : tileGroup[tileUpgradeIndex].getPosition().y,
-									xMap : tileGroup[tileUpgradeIndex].getMapLocation().x,
-									yMap : tileGroup[tileUpgradeIndex].getMapLocation().y,
-									val : 2
-								};
-			//console.info(opts);
-			this.actionBehavior.addChild(new WD.GameTile(opts));
-			//console.info(this.actionBehavior.getChildren())
-			tileUpgradeIndex--;
+				this.gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : upgradedValue[x], active : false };
+				//opts = { xMap : tileGroup[tileUpgradeIndex].getMapLocation().x, yMap : tileGroup[tileUpgradeIndex].getMapLocation().y }
+				//opts = { xMap : tileGroup[tileUpgradeIndex].getMapLocation().x, yMap : tileGroup[tileUpgradeIndex].getMapLocation().y, val : 3 }
+				var opts = { xPos :  tileGroup[tileUpgradeIndex].getPosition().x,
+										yPos : tileGroup[tileUpgradeIndex].getPosition().y,
+										xMap : tileGroup[tileUpgradeIndex].getMapLocation().x,
+										yMap : tileGroup[tileUpgradeIndex].getMapLocation().y,
+										val : 2
+									};
+				//console.info(opts);
+				this.actionBehavior.addChild(new WD.GameTile(opts));
+				//console.info(this.actionBehavior.getChildren())
+				tileUpgradeIndex--;
 		}
-		
 	
 		this.chainMemberIndex = tileGroup.length;
 		
@@ -457,19 +467,28 @@ define(['lib/prototype',
 		}
 	},
 	animationFinished : function(){
-		console.info('animation Finished!');
+		if(this.debugFlags & WD.Game.debugDrawing)
+				console.info('[DRAWING] animationFinished()');
+	
+		console.info(this.actionBehavior.getChildren());
 		//if there's another reaction, return
-		//var children = this.actionBehavior.getChildren();
+		var children = this.actionBehavior.getChildren();
 		
-		//for(x=0;x<children.length;x++){
-		//	children[x].checkRestingPlace();
-		//	console.info(children[x]);
-		//}
 
-		this.keysLocked = false;
-		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
-		this.scanForSpaces();
-		this.Update();
+
+		if(children.length>0){
+			for(x=0;x<children.length;x++){
+				console.info('child: ' + children[x].currencyValue);
+				children[x].checkRestingPlace();
+			}
+		} else { //after there are no children left with a reaction - start a new piece
+			console.info('here');
+			/*this.keysLocked = false;
+			this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
+			this.scanForSpaces();
+			this.Update();*/
+		}
+		
 	},
 	// Debugging and Testing Functions 
 	GenerateTestGrid : function(){
@@ -539,6 +558,7 @@ WD.Game.debugBehavior = 0x1;
 WD.Game.debugMovement = 0x2;
 WD.Game.debugScore = 0x4;
 WD.Game.debugTransition = 0x8;
+WD.Game.debugDrawing = 0x10;
 
 
 });
