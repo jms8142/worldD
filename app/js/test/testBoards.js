@@ -98,6 +98,7 @@ five_and_tenMap = [
 
 var five_and_ten = mapToObject(five_and_tenMap);
 
+
 sandboxMap = [
 	[0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0],
@@ -105,11 +106,13 @@ sandboxMap = [
 	[0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,1,0,0,0,0],
-	[0,0,0,0,1,0,0,0,0],
-	[0,0,0,0,1,0,0,0,0],
-	[0,0,0,2,1,0,0,0,0]
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,1,0,2,0,0],
+	[0,0,0,0,3,3,3,3,0]
 ];
+
+
 
 var sandbox = mapToObject(sandboxMap);
 
@@ -123,7 +126,7 @@ function mapToObject (_matrix){
 	for(var col = 0; col < _matrix[0].length; col++){
 		retObj[col] = new Array(_matrix[0].length);
 		for(var row = 0; row < _matrix.length; row++){
-			retObj[col][row] = { val : _matrix[row][col], active : false};
+			retObj[col][row] = { val : _matrix[row][col], active : 0};
 		}
 	}
 	return retObj;

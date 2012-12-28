@@ -94,8 +94,8 @@ define(['lib/prototype',
 		}
 	},
 	loadTitleScreen : function(){
-		//this.startGame();
-		this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.TITLE, this);
+		this.startGame();
+		//this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.TITLE, this);
 		//this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.GAMEOVER, this);
 	},
 	startGame : function() {
@@ -141,7 +141,7 @@ define(['lib/prototype',
 		//register events
 		$(document).observe('keydown',this.KeyGrab.bind(this));
 
-		console.info('setting timer');
+		
 		this.timerID = setInterval(this.AutoMove.bind(this),1000);
 		
 	},
@@ -193,7 +193,7 @@ define(['lib/prototype',
 			for(var i = 0; i < this.gameBoard.length; i++){
 					this.gameBoard[i] = new Array(WD.Game.defaultSettings.gameRows);
 					for (var j = 0; j < this.gameBoard[i].length; j++){
-						this.gameBoard[i][j] = { val : 0, active : false };
+						this.gameBoard[i][j] = { val : 0, active : WD.GameTile.STATE.INACTIVE };
 					}
 
 
@@ -215,7 +215,7 @@ define(['lib/prototype',
 					_gameTile.setWidth(WD.Game.defaultSettings.tileWidth);
 					_gameTile.setValue(this.gameBoard[col][row].val);
 
-					if(this.gameBoard[col][row].active) {
+					if(this.gameBoard[col][row].active === WD.GameTile.STATE.ACTIVE) {
 						_gameTile.setStroke(WD.Game.defaultSettings.actionTileStroke);
 						_gameTile.setFill(WD.Game.defaultSettings.actionTileFill);
 					}
@@ -235,19 +235,19 @@ define(['lib/prototype',
 
 	},
 	CreateActionPiece : function(x,y,val) {
-		//console.info('createActionpiece' + x + ' ' + y);
+		
 		if(this.constantPiece)
 			val = this.constantPiece;
 
 		this.actionTile = new WD.GameTile({ xMap : x, yMap : y})
 		if(val === undefined) 
-			var singlePieceVal = Math.floor(Math.random()*(WD.GameTile.currencyValues.length-1));
+			var singlePieceVal = (Math.floor(Math.random()*(WD.GameTile.currencyValues.length-1))) + 1;
 		else
 			var singlePieceVal = val;
 
-		this.actionTile.setValue(singlePieceVal+1);
+		this.actionTile.setValue(singlePieceVal);
 
-		this.gameBoard[x][y] = { val : this.actionTile.getValue(), active : true };
+		this.gameBoard[x][y] = { val : this.actionTile.getValue(), active : WD.GameTile.STATE.ACTIVE };
 	},
 	KeyGrab : function(event){
 		
@@ -390,8 +390,8 @@ define(['lib/prototype',
 		}
 		
 		for(i = tileGroup.length - 1; i >= 0; i--){
-			console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
-			this.gameBoard[tileGroup[i].getMapLocation().x][tileGroup[i].getMapLocation().y] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
+			//console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
+			this.gameBoard[tileGroup[i].getMapLocation().x][tileGroup[i].getMapLocation().y] = { val : 0, active : WD.GameTile.STATE.INACTIVE }; //for now just make them disappear - we'll add fancy animation later
 		}
 
 		WD.Debugger.PrintGameBoard(this.gameBoard,WD.Debugger.printDebugWindow);
@@ -401,9 +401,16 @@ define(['lib/prototype',
 		Normally, the first tile in the group (index[0]) will get upgraded, as the remaining tiles in the chain animate into it, but
 		for vertical matches, the last tile in the array should get upgraded, since the first tile will drop to the last tile position
 		**/
-		var tileUpgradeIndex = (tileGroup[1].getDirection() === WD.Animation.DIRECTION.UP) ? tileGroup.length - 1 : 0,
+	
+		for(i=0;i<tileGroup.length;i++){
+			console.info(tileGroup[i].toString());
+		}
+		//var tileUpgradeIndex = (tileGroup[1].getDirection() === WD.Animation.DIRECTION.UP) ? tileGroup.length - 1 : 0,
+		var tileUpgradeIndex = tileGroup.length - 1;
 		upgradedValue = this.actionBehavior.getUpgradedValue();
-		
+
+		//console.info(tileUpgradeIndex);
+		//console.info(upgradedValue);
 		if(upgradedValue.length ===1 && upgradedValue[0] === 5){ //we just made a dollar - update score and exit the transition
 			this.score += 1;
 			this.scoretracker.updateScore(this.score,this._canvasBufferContext);
@@ -415,7 +422,7 @@ define(['lib/prototype',
 
 
 		for(x=0;x<upgradedValue.length;x++){ //sometimes more than one tile will be upgraded
-				this.gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : upgradedValue[x], active : false };
+				this.gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : upgradedValue[x], active : WD.GameTile.STATE.INACTIVE };
 				var opts = { xPos :  tileGroup[tileUpgradeIndex].getPosition().x,
 										yPos : tileGroup[tileUpgradeIndex].getPosition().y,
 										xMap : tileGroup[tileUpgradeIndex].getMapLocation().x,
@@ -539,14 +546,17 @@ define(['lib/prototype',
 					tileAbove = WD.Location.TransformLocation({ x : col, y : row },WD.Location.MoveDirection.UP)
 					
 					if(this.gameBoard[tileAbove.x][tileAbove.y].val>0){ //this is a floating block
-						this.gameBoard[col][row] = this.gameBoard[tileAbove.x][tileAbove.y]; //clone?
-						this.gameBoard[tileAbove.x][tileAbove.y] = { val : 0, active : false }
+						//this.gameBoard[col][row] = this.gameBoard[tileAbove.x][tileAbove.y]; //clone?
+						// this.gameBoard[tileAbove.x][tileAbove.y] = { val : 0, active : WD.GameTile.STATE.INACTIVE }
+						this.gameBoard[tileAbove.x][tileAbove.y].active = WD.GameTile.STATE.ANGEL;
 					}
 				}
 			}
-			//console.info('row' + row + ' total :' + totalAcross);
+			
 			if(totalAcross===0)
 				break;
+
+			console.info('row' + row + ' total :' + totalAcross);
 		}
 	}
 });

@@ -33,25 +33,21 @@ WD.Animation = Class.create({
 		initialize : function (opts) {
       this._options.NewSectionSlice = 2;
 
+      var _canvas = document.getElementById('wdCanvas');
 
-      var _canvas = document.getElementById('canvas');
-
-     
       Object.extend(this._options,opts);
 
       if(this.canvasStruct._canvasContext === undefined){
           
           if (_canvas && _canvas.getContext) {
-           //console.info('assigning canvas objects');
+           console.info('assigning canvas objects');
            this.canvasStruct._canvasContext = _canvas.getContext('2d');
-           //console.info(this.canvasStruct._canvasContext);
            this.canvasStruct._canvasBuffer = document.createElement('canvas');
            this.canvasStruct._canvasBuffer.width = _canvas.width;
            this.canvasStruct._canvasBuffer.height = _canvas.height;
            this.canvasStruct._canvasBufferContext = this.canvasStruct._canvasBuffer.getContext('2d');
           }
       }
-
 
     },
     /**   
@@ -64,7 +60,7 @@ WD.Animation = Class.create({
        this._gameTile = block;
 
        if(this.sourceImage === null && block !== null){
-         this.sourceImage = _canvasBufferContext.getImageData(block.getCanvasLocation().x-1,
+         this.sourceImage = this.canvasStruct._canvasBufferContext.getImageData(block.getCanvasLocation().x-1,
                                                                       block.getCanvasLocation().y-1,
                                                                       block.getWidth()+2,
                                                                       block.getHeight()+2
@@ -83,6 +79,7 @@ WD.Animation = Class.create({
 });
 
 WD.Animation.DIRECTION = { UP : 0, DOWN : 1, LEFT : 2, RIGHT : 4};
+WD.Animation.S_DIRECTION = ["up","down","left","","right"];
 WD.Animation.TYPE = { SLIDE : 0, MOVE : 1};
 
 WD.Animation.animate = function(lastTime,_rect,animateObj){
@@ -273,8 +270,6 @@ WD.Animation.assignDirection = function(gameTiles){
           direction = WD.Animation.DIRECTION.UP; //only other possible direction to animate
         }
     }
-
-
 
     for(x = 1; x < gameTiles.length; x++){
       if(middle){

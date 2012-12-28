@@ -14,12 +14,20 @@ WD.GameTile = Class.create({
 	quad : false,
 	strokeWidth : 1,
 	colorMap : ['','rgb(183,129,26)','rgb(136,181,180)','rgb(136,181,180)','rgb(136,181,180)'],
-	bgroundOffset : [{},
-						{ xActive : 0, yActive : 0, xinActive : 0, yinActive : 46},  //one cent
-						{ xActive : 46, yActive : 0, xinActive : 46, yinActive : 46},  //five cents
-						{ xActive : 92, yActive : 0, xinActive : 92, yinActive : 46},  //ten cents
-						{ xActive : 138, yActive : 0, xinActive : 138, yinActive : 46}  //two five cents
+	bgroundOffset : [[],
+						[  //one cent
+								{ x : 0, y : 46 } , { x : 0, y : 0 } , { x : 0, y : 92 }
+							],  
+						[ //five cents
+								{ x : 46, y : 46 }, { x : 46, y : 0 } , { x : 46, y : 92}  
+							],
+						[ //ten cents
+								{ x : 92, y : 46 }, { x : 92, y : 0 } , { x : 92, y : 92}
 						],
+						[  
+								{ x : 138,y : 46 }, { x : 138, y : 0 }, { x : 138, y : 92}  //two five cents
+						]
+					],
 	tileStroke : 'rgb(43,136,148)',
 	tileFill : 'rgb(201,227,230)',
 	textAdjust : [0,4,4,8,8],
@@ -119,10 +127,10 @@ WD.GameTile = Class.create({
 		this.tileFill = color;
 	},
 	setInActive : function(){
-		window._game.gameBoard[this.getMapLocation().x][this.getMapLocation().y].active = false;
+		window._game.gameBoard[this.getMapLocation().x][this.getMapLocation().y].active = WD.GameTile.STATE.INACTIVE;
 	},
 	removeFromBoard : function() {
-		window._game.gameBoard[this.getMapLocation().x][this.getMapLocation().y] = { val : 0, active : false };
+		window._game.gameBoard[this.getMapLocation().x][this.getMapLocation().y] = { val : 0, active : WD.GameTile.STATE.INACTIVE };
 	}
 	/**		
 	* places tile into gameboard (currently, a global object)
@@ -130,7 +138,7 @@ WD.GameTile = Class.create({
 	* @return void
 	**/
 	,addToBoard : function(newlocation) {
-		window._game.gameBoard[newlocation.x][newlocation.y] = { val : this.getValue(), active : true };
+		window._game.gameBoard[newlocation.x][newlocation.y] = { val : this.getValue(), active : WD.GameTile.STATE.ACTIVE };
 		this.setMapLocation(newlocation);
 	},
 	move : function(direction){
@@ -180,12 +188,11 @@ WD.GameTile = Class.create({
 	},
 	render : function(_canvasContext,activeState){
 		if(showSkin){ 
-			if(activeState) {
-				_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xActive,this.bgroundOffset[this._val].yActive,46,46,this.xPos+2,this.yPos+2,46,46);
-			} else {
-				//console.info(this._val);
-				_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xinActive,this.bgroundOffset[this._val].yinActive,46,46,this.xPos+2,this.yPos+2,46,46);
-			}
+			//console.info(this.bgroundOffset[this._val][activeState]);
+			_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val][activeState].x,this.bgroundOffset[this._val][activeState].y,46,46,this.xPos+2,this.yPos+2,46,46);
+
+
+			
 		} else {
 			//fill
 			_canvasContext.fillStyle = this.tileFill;
@@ -211,12 +218,13 @@ WD.GameTile = Class.create({
 		
 	},
 	toString : function(){
-		return '[curVal: $.' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap;
+		return '[x:' + this.xMap + '] ' + this.xPos + 'px, [y:' + this.yMap + '] ' + this.yPos + 'px, dir: ' + WD.Animation.S_DIRECTION[this.direction];
 	}
 });
 
 //static properties
 WD.GameTile.currencyValues = [-1,1,5,10,25];
-	
+WD.GameTile.STATE = { INACTIVE : 0, ACTIVE : 1, ANGEL : 2};
+
 
 });

@@ -71,7 +71,7 @@ WD.Behavior = Class.create({
 	//initialize : function (val,_gameTile){
 	initialize : function(_gameTile) {
 
-		console.info('Behavior created');
+		//console.info('Behavior created');
 		
 		if(window.navigator.userAgent.indexOf('AppleWebKit') === -1) //Chrome doesn't have clear()
 			//console.clear();

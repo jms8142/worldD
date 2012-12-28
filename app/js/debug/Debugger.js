@@ -7,7 +7,7 @@ WD.Debugger = Class.create({
 		var _this = this;
 		jQuery('.step').live('click',function(e){
 			var ind = jQuery(this).attr('id') - 1;
-			WD.Debugger.PrintGameBoardtoConsole(WD.Game.defaultSettings.gameRows,WD.Game.defaultSettings.columns,window._game.lastgameBoard[ind]);
+			WD.Debugger.PrintGameBoard(window._game.lastgameBoard[ind],WD.Debugger.printConsole);
 		});	
 	},
 	updateSnapshotText : function(step){
