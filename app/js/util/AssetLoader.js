@@ -4,13 +4,13 @@ window.WD || ( window.WD = {} ) //application namespace
 
 WD.AssetLoader = Class.create({});
 
-WD.AssetLoader.ImageAssets = [{ name : 'objects', src : '/app/assets/objects.png', type : 'image/png' },
-					  { name : 'text', src : '/app/assets/text.png', type : 'image/png' },
-					  { name : 'background', src : '/app/assets/background.png', type : 'image/png' }];
+WD.AssetLoader.ImageAssets = [{ name : 'objects', src : 'assets/objects.png', type : 'image/png' },
+					  { name : 'text', src : 'assets/text.png', type : 'image/png' },
+					  { name : 'background', src : 'assets/background.png', type : 'image/png' }];
 
 //audio loading is a little different from Image() so for now we'll seperate them and load after the images
-WD.AssetLoader.AudioAssets =  [{ name : 'dollarSound', src : '/app/assets/dollar.oggvorbis.ogg', type : 'audio/ogg'},
-								{ name : 'matchSound', src : '/app/assets/match.oggvorbis.ogg', type : 'audio/ogg'}];
+WD.AssetLoader.AudioAssets =  [{ name : 'dollarSound', src : 'assets/dollar.oggvorbis.ogg', type : 'audio/ogg'},
+								{ name : 'matchSound', src : 'assets/match.oggvorbis.ogg', type : 'audio/ogg'}];
 
 
 
