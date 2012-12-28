@@ -10,10 +10,18 @@ require(["control/Game",
 			debugShow : WD.Game.debugBehavior | WD.Game.debugMovement | WD.Game.debugTransition | WD.Game.debugDrawing,
 			//debugShow : WD.Game.debugDrawing,
 			showTransition : false,
-			showTestGrid : true,
-			gameBoard : sandbox
+			showTestGrid : false/*,
+			gameBoard : sandbox*/
 		}
 	
-		window._game = new WD.Game(opts);
+		
+
+		if(window.location.pathname.indexOf("test")>-1){
+			opts.testing = true;
+			window._game = new WD.Game(opts);
+			startTest();
+		} else{
+			window._game = new WD.Game(opts);
+		}
 		
 });

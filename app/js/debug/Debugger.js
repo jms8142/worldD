@@ -16,37 +16,31 @@ WD.Debugger = Class.create({
 
 });
 
+WD.Debugger.PrintGameBoard = function(_gameboard, output){
 
-WD.Debugger.PrintGameBoardtoDebugWindow = function(_gameboard){
-		var HTMLout = '';
-		for(var row = 0; row < WD.Game.defaultSettings.gameRows; row++){
-			HTMLout += '<tr>';
-			for(var col = 0;col < WD.Game.defaultSettings.columns; col++){
-				var displayVal = (_gameboard[col][row].val === 0) ? '-' : WD.GameTile.currencyValues[_gameboard[col][row].val];
-				HTMLout += '<td>' + displayVal + '</td>';
-			}
-			HTMLout += '</tr>\n';
-			//console.info(row);
-			jQuery('.debugWindow').html("<table class='gameMap'>" + HTMLout + "</table>");
-		}	
+	var HTMLout = '', lineout = '';
+	for(var row = 0; row < WD.Game.defaultSettings.gameRows; row++){
 
-}
-
-WD.Debugger.PrintGameBoardtoConsole = function(rows,cols,_gameBoard, clr){
-	if(clr)
-		console.clear();
-
-	console.info('---------------------------------');
-
-	for(var row = 0; row < rows; row++){
-		var lineout = '';
-		for(var col = 0; col < cols; col++){
-			lineout += _gameBoard[col][row].val + '|';
+		HTMLout += '<tr>';
+		lineout = '';
+		for(var col = 0;col < WD.Game.defaultSettings.columns; col++){
+			var displayVal = (_gameboard[col][row].val === 0) ? '-' : WD.GameTile.currencyValues[_gameboard[col][row].val];
+			HTMLout += '<td>' + displayVal + '</td>';
+			lineout += _gameboard[col][row].val + '|';
 		}
-		console.info('[row ' + (row + 1) + '] \t' +  lineout.substr(0,lineout.length-1));
+		HTMLout += '</tr>\n';
+
+		if(output===WD.Debugger.printDebugWindow) {
+			jQuery('.debugWindow').html("<table class='gameMap'>" + HTMLout + "</table>");
+		} else if(output === WD.Debugger.printConsole){
+			console.info('[row ' + (row + 1) + '] \t' +  lineout.substr(0,lineout.length-1));
+		} 
 	}
 }
 
+
+WD.Debugger.printDebugWindow = 0x1;
+WD.Debugger.printConsole = 0x2;
 
 
 }); //require.js

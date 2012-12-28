@@ -10,7 +10,7 @@ WD.Location.MoveDescription = ["Left","Down","Right"];
 
 /**		
 * @param object	coords tilemap coordinates
-* @param enum MoveDirection enum represention direction to transform to
+* @param enum MoveDirection enum represention of direction to transform to
 * @desc - returns coordinates of a new location based on direction passed
 * @return object|boolean - coords of transformed location or false if it's not legal
 **/
@@ -74,9 +74,9 @@ WD.Location.ValidateMove = function(coords){
 	return true;
 }
 /**		
+* returns true if the next space down is another tile or the floor
 * @param object	coords tilemap coordinates
 * @return bool 
-* @desc - returns true if the next space down is another tile or the floor
 **/
 WD.Location.LookAhead = function(coords){
 	var LookAheadLocation = WD.Location.TransformLocation(coords,WD.Location.MoveDirection.DOWN);

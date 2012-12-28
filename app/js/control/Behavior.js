@@ -71,11 +71,10 @@ WD.Behavior = Class.create({
 	//initialize : function (val,_gameTile){
 	initialize : function(_gameTile) {
 
-		console.info('Behvaior created');
+		console.info('Behavior created');
 		
 		if(window.navigator.userAgent.indexOf('AppleWebKit') === -1) //Chrome doesn't have clear()
 			//console.clear();
-		
 
 		if(_game.debugFlags & WD.Game.debugBehavior)
 			console.info("[BEHAVIOR] Chain[0]:" + _gameTile.toString());
@@ -114,16 +113,15 @@ WD.Behavior = Class.create({
 		return this.nextReactor;
 	},
 	/**		
-	* @param GameTile
+	* True if gameTile value is in the reactorDefinition of the current 'starter' tile, which is index 0 in this.chain
+	* @param object GameTile The game tile we're comparing against
 	* @return bool
-	* @description true if gameTile value is in the reactorDefinition of the current 'starter' tile, which is index 0 in this.chain
 	**/
 	hasReaction : function(_gameTile) {
 		if(_game.debugFlags & WD.Game.debugBehavior)
 				console.info('[BEHAVIOR] Testing against:' + _gameTile.toString());
 
 		for(var i = 0; i < this.reactorDefinition[this.chain[0].getCurVal()].length; i++){
-			//console.info('looking at ' + this.reactorDefinition[this.chain[0].getCurVal()][i]);
 			if(_gameTile.getCurVal() === this.reactorDefinition[this.chain[0].getCurVal()][i]) {
 				this.addCombo(_gameTile);
 				return true;
@@ -200,6 +198,10 @@ WD.Behavior = Class.create({
 		}
 
 	},
+	/**
+	* returns true if a pattern is matched against the chain[]
+	* @return bool
+	*/
 	Validate : function(){
 		if(this.chain.length >= this.rules.minThreshold && this.chain.length < this.rules.maxSize){
 			//console.info(this.chain);

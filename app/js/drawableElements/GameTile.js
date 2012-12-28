@@ -1,5 +1,4 @@
 define(['lib/prototype'],function(){
-
 window.WD || ( window.WD = {} ) //application namespace
 
 WD.GameTile = Class.create({
@@ -21,7 +20,7 @@ WD.GameTile = Class.create({
 						{ xActive : 92, yActive : 0, xinActive : 92, yinActive : 46},  //ten cents
 						{ xActive : 138, yActive : 0, xinActive : 138, yinActive : 46}  //two five cents
 						],
-	tileStroke : 'rgb(43,136,148',
+	tileStroke : 'rgb(43,136,148)',
 	tileFill : 'rgb(201,227,230)',
 	textAdjust : [0,4,4,8,8],
 	defaultCoinColor : 'rgb(136,181,180)',
@@ -31,11 +30,11 @@ WD.GameTile = Class.create({
 	* @param Object coords
 	* @return void
 	* @description Constructor function - accepts an object containing the following properties:
-	* xPos int 'x' coordinate represented in the actual space of the canvas object
-	* yPos int 'y' coordinate represented in the actual space of the canvas object
-	* xMap Float 'x' coordinate in relation to the tile map - zero based
-	* yMap Float 'y' coordinate in relation to the tile map - zero based
-	* val int currency value represented in index this.currencyValues[]
+	* xPos int 'x' coordinate represented in the actual space of the canvas object in pixels
+	* yPos int 'y' coordinate represented in the actual space of the canvas object in pixels
+	* xMap int 'x' coordinate in relation to the tile map - zero based
+	* yMap int 'y' coordinate in relation to the tile map - zero based
+	* val int currency value represented in index WD.GameTile.currencyValues[]
 	**/
 	initialize : function(opts){
 		this.xMap = opts.xMap;
@@ -71,7 +70,7 @@ WD.GameTile = Class.create({
 	/**		
 	* @param int val
 	* @return void
-	* @description tile currency value as represented as the index of Game.defaultSettings.currencyValues[]
+	* @description tile currency value as represented as the index val of WD.GameTile.currencyValues[]
 	**/
 	setValue : function(val){	
 		this._val = val;
@@ -124,8 +123,13 @@ WD.GameTile = Class.create({
 	},
 	removeFromBoard : function() {
 		window._game.gameBoard[this.getMapLocation().x][this.getMapLocation().y] = { val : 0, active : false };
-	},
-	addToBoard : function(newlocation) {
+	}
+	/**		
+	* places tile into gameboard (currently, a global object)
+	* @param object newlocation - location of new tile placement
+	* @return void
+	**/
+	,addToBoard : function(newlocation) {
 		window._game.gameBoard[newlocation.x][newlocation.y] = { val : this.getValue(), active : true };
 		this.setMapLocation(newlocation);
 	},
@@ -137,7 +141,7 @@ WD.GameTile = Class.create({
 
 			this.removeFromBoard();
 			this.addToBoard(newLocation);
-			window._game.Update();
+			window._game.UpdateView();
 			
 			if(window._game.debugFlags & WD.Game.debugMovement)
 				console.info('[MOVEMENT] Action Tile:' + this.toString());
@@ -150,20 +154,27 @@ WD.GameTile = Class.create({
 		//if tile has reached another tile (or bottom) - freeze and create a new one
 		this.checkRestingPlace();
 
-	},
-	checkRestingPlace : function(){
+	}
+	/**		
+	* checks reaction potention of resting place for this tile
+	* @return void
+	**/
+	,checkRestingPlace : function(){
 		
-		//console.info(WD.Location.LookAhead(this.getMapLocation()));
 		if(WD.Location.LookAhead(this.getMapLocation())){
 			if(window._game.Reactive(this)){ //A reaction has been detected - start cleaning up tiles
 				window._game.StartBoardTransition();
-				WD.AssetLoader.getResource('matchSound').play();
+				if(!window._game.settings.testing)
+					WD.AssetLoader.getResource('matchSound').play();
 			} else if(this.getMapLocation().y === 0) { //at the top
 				Event.fire(document,'WD:gameover');
 			} else {
 				this.setInActive();
-				window._game.CreateActionPiece(window._game.startingPiecePositionX,window._game.startingPiecePositionY);
-				window._game.Update();
+				window._game.keysLocked = false;
+				if(!window._game.settings.testing)
+					window._game.CreateActionPiece(window._game.startingPiecePositionX,window._game.startingPiecePositionY);
+				window._game.scanForSpaces();
+				window._game.UpdateView();
 			} 
 		}
 	},
@@ -200,11 +211,12 @@ WD.GameTile = Class.create({
 		
 	},
 	toString : function(){
-		return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap + ' |direction: ' + WD.Location.MoveDescription[this.getDirection()];
+		return '[curVal: $.' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap;
 	}
 });
-	//static properties
-	WD.GameTile.currencyValues = [-1,1,5,10,25];
+
+//static properties
+WD.GameTile.currencyValues = [-1,1,5,10,25];
 	
 
 });
