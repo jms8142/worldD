@@ -165,9 +165,10 @@ WD.GameTile = Class.create({
 	}
 	/**		
 	* checks reaction potention of resting place for this tile
+	* @param bool recursive - set to true if you're calling from any child tile reactions
 	* @return void
 	**/
-	,checkRestingPlace : function(){
+	,checkRestingPlace : function(recursive){
 		
 		if(WD.Location.LookAhead(this.getMapLocation())){
 			if(window._game.Reactive(this)){ //A reaction has been detected - start cleaning up tiles
@@ -179,20 +180,23 @@ WD.GameTile = Class.create({
 			} else {
 				this.setInActive();
 				window._game.keysLocked = false;
-				if(!window._game.settings.testing)
+				//console.info('calling scan from checkRestingPlace()');
+				//window._game.scanForSpaces();
+
+				if(!window._game.settings.testing && !recursive) {
 					window._game.CreateActionPiece(window._game.startingPiecePositionX,window._game.startingPiecePositionY);
-				window._game.scanForSpaces();
-				window._game.UpdateView();
+				}
 			} 
 		}
-	},
-	render : function(_canvasContext,activeState){
+	}
+	,render : function(_canvasContext,activeState){
 		if(showSkin){ 
-			//console.info(this.bgroundOffset[this._val][activeState]);
+			if(activeState===WD.GameTile.STATE.ANGEL) {
+				_canvasContext.globalAlpha = .5;
+			}
 			_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val][activeState].x,this.bgroundOffset[this._val][activeState].y,46,46,this.xPos+2,this.yPos+2,46,46);
-
-
 			
+			_canvasContext.globalAlpha = 1;
 		} else {
 			//fill
 			_canvasContext.fillStyle = this.tileFill;

@@ -9,9 +9,9 @@ WD.Location.MoveDescription = ["Left","Down","Right"];
 
 
 /**		
+* Returns coordinates of a new location based on direction passed
 * @param object	coords tilemap coordinates
 * @param enum MoveDirection enum represention of direction to transform to
-* @desc - returns coordinates of a new location based on direction passed
 * @return object|boolean - coords of transformed location or false if it's not legal
 **/
 WD.Location.TransformLocation = function(coords,direction){

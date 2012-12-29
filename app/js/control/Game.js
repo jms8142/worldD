@@ -94,8 +94,8 @@ define(['lib/prototype',
 		}
 	},
 	loadTitleScreen : function(){
-		this.startGame();
-		//this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.TITLE, this);
+		//this.startGame();
+		this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.TITLE, this);
 		//this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.GAMEOVER, this);
 	},
 	startGame : function() {
@@ -159,6 +159,7 @@ define(['lib/prototype',
 	* @description - Completely refreshes and updates the canvas to the current state of the game.  To simply add to the canvas, use Draw()
 	**/
 	UpdateView : function(){
+
 		if(!this.settings.testing) {
 			if(this.debugFlags & WD.Game.debugDrawing)
 					console.info('[DRAWING] Updating Canvas');
@@ -248,6 +249,10 @@ define(['lib/prototype',
 		this.actionTile.setValue(singlePieceVal);
 
 		this.gameBoard[x][y] = { val : this.actionTile.getValue(), active : WD.GameTile.STATE.ACTIVE };
+
+		//console.info('create action piece');
+		this.scanForSpaces();
+		this.UpdateView();
 	},
 	KeyGrab : function(event){
 		
@@ -439,6 +444,8 @@ define(['lib/prototype',
 		document.observe('WD::tileFinished',this.RunChainAnimation.bind(this));
 		document.observe('WD::animationFinished',this.animationFinished.bind(this));
 
+		//this.scanForSpaces();
+
 		if(this.showTransition){
 			this.RunChainAnimation();
 		} else {
@@ -487,7 +494,6 @@ define(['lib/prototype',
 		if(this.debugFlags & WD.Game.debugDrawing)
 				console.info('[DRAWING] animationFinished()');
 	
-		console.info(this.actionBehavior.getChildren().toString());
 		//if there's another reaction, return
 		var children = this.actionBehavior.getChildren();
 		
@@ -495,14 +501,13 @@ define(['lib/prototype',
 
 		if(children.length>0){
 			for(x=0;x<children.length;x++){
-				children[x].checkRestingPlace();
+				children[x].checkRestingPlace(true);
 			}
-		} else { //after there are no children left with a reaction - start a new piece
-			this.keysLocked = false;
-			this.CreateActionPiece(this.startingPiecePositionX,this.startingPiecePositionY);
-			this.scanForSpaces();
-			this.UpdateView();
 		}
+		
+		this.keysLocked = false;
+		this.CreateActionPiece(this.startingPiecePositionX,this.startingPiecePositionY);		
+		this.UpdateView();
 		
 	},
 	// Debugging and Testing Functions 
@@ -546,9 +551,23 @@ define(['lib/prototype',
 					tileAbove = WD.Location.TransformLocation({ x : col, y : row },WD.Location.MoveDirection.UP)
 					
 					if(this.gameBoard[tileAbove.x][tileAbove.y].val>0){ //this is a floating block
-						//this.gameBoard[col][row] = this.gameBoard[tileAbove.x][tileAbove.y]; //clone?
-						// this.gameBoard[tileAbove.x][tileAbove.y] = { val : 0, active : WD.GameTile.STATE.INACTIVE }
-						this.gameBoard[tileAbove.x][tileAbove.y].active = WD.GameTile.STATE.ANGEL;
+						//console.info('x: ' + tileAbove.x + ' y: ' + tileAbove.y);
+						//console.info(this.gameBoard[tileAbove.x][tileAbove.y].active);
+						if(this.gameBoard[tileAbove.x][tileAbove.y].active===WD.GameTile.STATE.INACTIVE){
+							this.gameBoard[tileAbove.x][tileAbove.y].active = WD.GameTile.STATE.ANGEL;
+						} else if (this.gameBoard[tileAbove.x][tileAbove.y].active===WD.GameTile.STATE.ANGEL) { //move down one and check reaction
+							//console.info(this.gameBoard[col][row].toString());
+							this.gameBoard[col][row] = this.gameBoard[tileAbove.x][tileAbove.y];
+							this.gameBoard[col][row].active = WD.GameTile.STATE.INACTIVE;
+							this.gameBoard[tileAbove.x][tileAbove.y] = { val : 0, active : WD.GameTile.STATE.INACTIVE }
+						}
+
+						//console.info('x: ' + tileAbove.x + ' y: ' + tileAbove.y);
+						//console.info(this.gameBoard[tileAbove.x][tileAbove.y].active);
+						//console.info('this space:');
+						//console.info('x: ' + col + ' y: ' + row);
+						//console.info(this.gameBoard[col][row]);
+						
 					}
 				}
 			}
@@ -556,7 +575,7 @@ define(['lib/prototype',
 			if(totalAcross===0)
 				break;
 
-			console.info('row' + row + ' total :' + totalAcross);
+			//console.info('row' + row + ' total :' + totalAcross);
 		}
 	}
 });

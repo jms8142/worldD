@@ -30,9 +30,8 @@ require(["control/Game",
 				showTestGrid : true,
 				gameBoard : sandbox
 			}
+			
 			*/
-
-	
 		
 
 		if(window.location.pathname.indexOf("test")>-1){
