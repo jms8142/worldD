@@ -367,8 +367,6 @@ define(['lib/prototype',
 			}
 		}
 
-		//console.info(this.actionBehavior.getChain());
-
 		if(_gameTile.getQuad()){ //check if this is in a box configuration (e.g. 4 quarters)
 			this.actionBehavior.runBoxCheck(_gameTile);
 		}
@@ -407,9 +405,9 @@ define(['lib/prototype',
 		for vertical matches, the last tile in the array should get upgraded, since the first tile will drop to the last tile position
 		**/
 	
-		for(i=0;i<tileGroup.length;i++){
+		/*for(i=0;i<tileGroup.length;i++){
 			console.info(tileGroup[i].toString());
-		}
+		}*/
 		//var tileUpgradeIndex = (tileGroup[1].getDirection() === WD.Animation.DIRECTION.UP) ? tileGroup.length - 1 : 0,
 		var tileUpgradeIndex = tileGroup.length - 1;
 		upgradedValue = this.actionBehavior.getUpgradedValue();
@@ -434,7 +432,8 @@ define(['lib/prototype',
 										yMap : tileGroup[tileUpgradeIndex].getMapLocation().y,
 										val : upgradedValue[x]
 									};
-				
+				//console.info('adding child:');
+				//console.info(opts);
 				this.actionBehavior.addChild(new WD.GameTile(opts));
 				tileUpgradeIndex--;
 		}
@@ -501,6 +500,7 @@ define(['lib/prototype',
 
 		if(children.length>0){
 			for(x=0;x<children.length;x++){
+				//console.info('checking children');
 				children[x].checkRestingPlace(true);
 			}
 		}

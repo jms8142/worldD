@@ -78,7 +78,7 @@ WD.ScoreTracker = Class.create({
 			_canvasContext.fillRect(startX,yPos,boxWidth,boxWidth);
 
 			if(x < score)
-				_canvasContext.drawImage(this.dollarSign,3,96,15,23,startX + (boxWidth * .25),yPos + (boxWidth * .1),15,23);			
+				_canvasContext.drawImage(this.dollarSign,3,144,15,23,startX + (boxWidth * .25),yPos + (boxWidth * .1),15,23);			
 			startX += boxWidth + 5;
 		}
 

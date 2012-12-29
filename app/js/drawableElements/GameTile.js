@@ -49,7 +49,7 @@ WD.GameTile = Class.create({
 		this.yMap = opts.yMap;
 		this.xPos = (opts.xPos===undefined) ? WD.Location.FindPhysicalLocation({x : this.xMap, y : this.yMap}).x : opts.xPos;
 		this.yPos = (opts.yPos===undefined) ? WD.Location.FindPhysicalLocation({x : this.xMap, y : this.yMap}).y : opts.yPos;
-		this._val = opts.val;
+		this.setValue(opts.val);
 		this.currencyValue = (opts.curVal===undefined) ? WD.GameTile.currencyValues[this._val] : opts.curVal;
 
 		this.activePic = WD.AssetLoader.getResource('objects');
@@ -91,7 +91,6 @@ WD.GameTile = Class.create({
 	setCurVal : function(currencyVal){
 		this.currencyValue = currencyVal;
 		this.setText(this.currencyValue);
-		//console.info('setting setCurVal:' + currencyVal)
 	},
 	getCurVal : function(){
 		return this.currencyValue;

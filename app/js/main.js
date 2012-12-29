@@ -21,7 +21,7 @@ require(["control/Game",
 			/*
     		var opts = {
 				startingPiece : 3, //[1=1,2=5,3=10,4=25]
-				startingPiecePosition : { x : 8,y : 3 },
+				startingPiecePosition : { x : 5,y : 3 },
 				constantPiece : null,
 				debugWindow : true,
 				debugShow : WD.Game.debugBehavior | WD.Game.debugTransition,// | WD.Game.debugDrawing,
@@ -32,7 +32,6 @@ require(["control/Game",
 			}
 			
 			*/
-		
 
 		if(window.location.pathname.indexOf("test")>-1){
 			opts.testing = true;
