@@ -69,13 +69,13 @@ WD.CanvasManager.Screen = function(screen,game){
 
 WD.CanvasManager.DrawCanvasBackground = function(_canvasBufferContext){
 		if(!_game.settings.showTestGrid){
-			var my_gradient = _canvasBufferContext.createLinearGradient(0,0,0,_canvasBufferContext.canvas.height-50);
+			var my_gradient = _canvasBufferContext.createLinearGradient(0,0,0,_canvasBufferContext.canvas.height-WD.ScoreTracker.height);
 			my_gradient.addColorStop(0,'rgb(68,134,146)');
 			my_gradient.addColorStop(.75,'rgb(34,128,69)');
 			my_gradient.addColorStop(1,'rgb(92,100,38)');
 			
 			_canvasBufferContext.fillStyle = my_gradient;//this.backgroundColor;
-			_canvasBufferContext.fillRect(0,0,_canvasBufferContext.canvas.width,_canvasBufferContext.canvas.height-50);
+			_canvasBufferContext.fillRect(0,0,_canvasBufferContext.canvas.width,_canvasBufferContext.canvas.height-WD.ScoreTracker.height);
 		}
 }
 

@@ -94,8 +94,8 @@ define(['lib/prototype',
 		}
 	},
 	loadTitleScreen : function(){
-		//this.startGame();
-		this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.TITLE, this);
+		this.startGame();
+		//this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.TITLE, this);
 		//this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.GAMEOVER, this);
 	},
 	startGame : function() {
