@@ -154,10 +154,11 @@ WD.GameTile = Class.create({
 				console.info('[MOVEMENT] Action Tile:' + this.toString());
 
 		}
-
-		window._game.lastgameBoard.push(jQuery.extend(true, {}, window._game.gameBoard));
-		window.debugger.updateSnapshotText(window._game.lastgameBoard.length);
-
+	
+		if(_game.settings.debugWindow){
+			window._game.lastgameBoard.push(jQuery.extend(true, {}, window._game.gameBoard));
+			window.debugger.updateSnapshotText(window._game.lastgameBoard.length);
+		}
 		//if tile has reached another tile (or bottom) - freeze and create a new one
 		this.checkRestingPlace();
 

@@ -17,7 +17,6 @@ WD.Debugger = Class.create({
 });
 
 WD.Debugger.PrintGameBoard = function(_gameboard, output){
-
 	var HTMLout = '', lineout = '';
 	for(var row = 0; row < WD.Game.defaultSettings.gameRows; row++){
 

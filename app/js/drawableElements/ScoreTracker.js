@@ -5,42 +5,46 @@ window.WD || ( window.WD = {} ) //application namespace
 
 WD.ScoreTracker = Class.create({
 	backgroundColor : 'rgb(77,77,77)',
-	textColor : 'rgb(255,255,255)',
+	textColor : '#FFF',
 	textSpaceWidth : 90,
 	activeSquare : 'rgb(33,128,53)',
 	inActiveSquare : 'rgb(106,91,91)',
+	font : '16px Arial Black',
 	textPosition : { 'x' : 0, 'y' : 0},
 	dollarSign : new Image(),
 	canvasEl : null,
 	drawScoreBoard : function(_canvasContext){
-
+		
 		this.dollarSign = WD.AssetLoader.getResource('objects');
 		this.canvasEl = document.getElementById('wdCanvas');
+			
+		//draw score text
+		this.textPosition.x = 10;
+		this.textPosition.y = this.canvasEl.height - WD.ScoreTracker.height  + 80;
+
+		this.updateScore(0,_canvasContext);
+
+	},
+	updateScore : function(score,_canvasContext){
+		
+		var scoreTop = this.canvasEl.height-WD.ScoreTracker.height;
+		//console.info(scoreTop)
+		//clear first
 		
 		this.setToGradient(_canvasContext);
 		_canvasContext.fillRect(0,this.canvasEl.height-WD.ScoreTracker.height,this.canvasEl.width,WD.ScoreTracker.height);
 		
-		//draw score text
-		
-		this.textPosition.x = 10;
-		this.textPosition.y = this.canvasEl.height - WD.ScoreTracker.height  + 30;
-
-		this.updateScore(0,_canvasContext);
-
-		//draw money blocks
-		this.drawMoneySquares(10, _canvasContext);
-
-	},
-	updateScore : function(score,_canvasContext){
-		//clear first
-		this.setToGradient(_canvasContext);
-		_canvasContext.fillRect(0,this.canvasEl.height-WD.ScoreTracker.height,100,50);
-		
 		var score = score.toFixed(2);
-		_canvasContext.fillStyle = this.textColor;
-		_canvasContext.font ='12px verdana, arial, sans-serif bold';
+		_canvasContext.fillStyle = '#e14824';
+		_canvasContext.font = this.font;
 		_canvasContext.fillText("Total: $" + score, this.textPosition.x, this.textPosition.y);
 
+
+		_canvasContext.fillStyle = this.textColor;
+		_canvasContext.font = this.font;
+		_canvasContext.fillText("Level 1 ", this.canvasEl.width-70, this.textPosition.y);
+
+		this.drawOutlines(_canvasContext);
 		this.drawMoneySquares(10,_canvasContext,score)
 
 		if(score>0) {
@@ -50,30 +54,48 @@ WD.ScoreTracker = Class.create({
 	setToGradient : function(_canvasContext){
 		//draw background
 		var my_gradient = _canvasContext.createLinearGradient(0,this.canvasEl.height-WD.ScoreTracker.height,0, this.canvasEl.height);
-		my_gradient.addColorStop(0,"rgb(140,131,130)");
-		my_gradient.addColorStop(1,"rgb(28,24,24)");
+		my_gradient.addColorStop(0,"rgb(96,96,96)");
+		my_gradient.addColorStop(.5,"rgb(88,88,88)");
+		my_gradient.addColorStop(1,"rgb(58,58,58)");
 		_canvasContext.fillStyle = my_gradient;//this.backgroundColor;
+	},
+	drawOutlines : function(_canvasContext){
+		_canvasContext.lineWidth = 1;
+
+		_canvasContext.strokeStyle = "#292929";
+		_canvasContext.beginPath();
+		_canvasContext.moveTo(0,501);
+		_canvasContext.lineTo(_canvasContext.canvas.width,501);
+		_canvasContext.stroke();
+
+		_canvasContext.strokeStyle = "#787878";
+		_canvasContext.beginPath();
+		_canvasContext.moveTo(0,503);
+		_canvasContext.lineTo(_canvasContext.canvas.width,503);
+		_canvasContext.stroke();
 	},
 	drawMoneySquares : function(num,_canvasContext,score){
 		
 		score = (score!==undefined) ? Math.round(score) : score = 0;
 		
 		var totalWidth = this.canvasEl.width - this.textSpaceWidth,
-		boxWidth = Math.floor((totalWidth - (num-1) * 5) / num),
-		startX = this.textSpaceWidth,
-		yPos =  this.canvasEl.height - WD.ScoreTracker.height + 15;
+		boxWidth = 40,
+		boxHeight = 40,
+		startX = 7,
+		gutter = 4,
+		yPos =  this.canvasEl.height - WD.ScoreTracker.height + 10;
 
 		for(var x=0;x<num;x++){	
 			
 
 			if(x < score) {
-				_canvasContext.drawImage(this.dollarSign,34,142,25,25,startX + (boxWidth * .25),yPos + (boxWidth * .1),25,25);	
+				_canvasContext.drawImage(this.dollarSign,50,140,boxWidth,boxHeight,startX,yPos,boxWidth,boxHeight);	
 			} else {
-				_canvasContext.drawImage(this.dollarSign,2,142,25,25,startX + (boxWidth * .25),yPos + (boxWidth * .1),25,25);		
+				_canvasContext.drawImage(this.dollarSign,4,140,boxWidth,boxHeight,startX,yPos,boxWidth,boxHeight);		
 			}
 					
 			
-			startX += boxWidth + 5;
+			startX += boxWidth + gutter;
 		}
 
 

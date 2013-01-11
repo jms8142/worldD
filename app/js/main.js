@@ -9,9 +9,6 @@ require(["control/Game",
 				startingPiece : 1, //[1=1,2=5,3=10,4=25]
 				startingPiecePosition : { x : 4,y : 2 },
 				constantPiece : null,
-				debugWindow : true,
-				debugShow : WD.Game.debugBehavior | WD.Game.debugTransition,// | WD.Game.debugDrawing,
-				//debugShow : WD.Game.debugDrawing,
 				showTransition : false,
 				showTestGrid : false
 			}
@@ -28,7 +25,8 @@ require(["control/Game",
 				//debugShow : WD.Game.debugDrawing,
 				showTransition : false,
 				showTestGrid : false,
-				gameBoard : sandbox
+				gameBoard : sandbox,
+				skipTitle : true
 			}
 			*/
 			

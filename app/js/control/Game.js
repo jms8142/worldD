@@ -35,7 +35,7 @@ define(['lib/prototype',
 	paused : false,
 	testing : false, //set to true to test game without any interface bindings
 	initialize : function (opts){
-
+	
 		this.settings = opts;
 
 		if(this.settings && this.settings.constantPiece)
@@ -94,9 +94,11 @@ define(['lib/prototype',
 		}
 	},
 	loadTitleScreen : function(){
-		this.startGame();
-		//this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.TITLE, this);
-		//this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.GAMEOVER, this);
+		if(this.settings.skipTitle) {
+			this.startGame();
+		} else {
+			this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.TITLE, this);
+		}
 	},
 	startGame : function() {
 		
@@ -109,7 +111,7 @@ define(['lib/prototype',
 		//debug window
 		if(this.settings && this.settings.debugWindow)
 			this.debugWindow = true;
-
+		
 		//show transition - debugging
 		this.showTransition = (this.settings.showTransition !== undefined) ? this.settings.showTransition : true;
 
@@ -396,7 +398,8 @@ define(['lib/prototype',
 			//console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
 			this.gameBoard[tileGroup[i].getMapLocation().x][tileGroup[i].getMapLocation().y] = { val : 0, active : WD.GameTile.STATE.INACTIVE }; //for now just make them disappear - we'll add fancy animation later
 		}
-
+		
+		if(this.debugWindow)
 		WD.Debugger.PrintGameBoard(this.gameBoard,WD.Debugger.printDebugWindow);
 		//WD.Debugger.PrintGameBoard(this.gameBoard,WD.Debugger.printConsole);
 

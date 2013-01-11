@@ -16,7 +16,7 @@ ul, ol, dl, h1, h2, h3, h4, h5, h6, p  {
 }
 
 canvas {
-	background:#FFF;
+	background:#000;
 }
 
 /* Debug Window */
@@ -45,14 +45,15 @@ canvas {
 	padding-left:4px;
 	font-style: italic;
 }
-.utilinfo {
+#utilinfo {
 	float:left;
 	padding:4px;
 	width:666px;
 	background:#4d4d4d;
+	display:none;
 }
 
-.utilinfo a {
+#utilinfo a {
 	color:#0000FF;
 	font-size:.75em;
 	text-decoration: none;
@@ -60,6 +61,6 @@ canvas {
 	float:left;
 }
 
-.utilinfo a:hover {
+#utilinfo a:hover {
 	text-decoration:underline;
 }
