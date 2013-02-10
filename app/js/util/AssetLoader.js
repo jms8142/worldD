@@ -1,88 +1,68 @@
-define(['lib/prototype'],function(){
+/**
+* Responsible for preloading assets
+* Dependencies: 
+* jQuery ($.trigger(),$.each())
+* 
+*/
 
-window.WD || ( window.WD = {} ) //application namespace
+WD.namespace('WD.util.AssetLoader');
 
-WD.AssetLoader = Class.create({});
 
-WD.AssetLoader.ImageAssets = [{ name : 'objects', src : 'assets/objects.png', type : 'image/png' },
+
+WD.util.AssetLoader = (function(wdapp){
+
+	var ImageAssets = [{ name : 'objects', src : 'assets/objects.png', type : 'image/png' },
 					  { name : 'text', src : 'assets/text.png', type : 'image/png' },
-					  { name : 'background', src : 'assets/background.png', type : 'image/png' }];
+					  { name : 'background', src : 'assets/background.png', type : 'image/png' }]
 
-//audio loading is a little different from Image() so for now we'll seperate them and load after the images
-WD.AssetLoader.AudioAssets =  [{ name : 'dollarSound', src : 'assets/dollar.oggvorbis.ogg', type : 'audio/ogg'},
-								{ name : 'matchSound', src : 'assets/match.oggvorbis.ogg', type : 'audio/ogg'}];
+	//audio loading is a little different from Image() so for now we'll seperate them and load after the images
+	,AudioAssets =  [{ name : 'dollarSound', src : 'assets/dollar.oggvorbis.ogg', type : 'audio/ogg'},
+								{ name : 'matchSound', src : 'assets/match.oggvorbis.ogg', type : 'audio/ogg'}]
 
+	,resources = []
 
-
-WD.AssetLoader.resources = []; //better as hashmap
-
-WD.AssetLoader.loadAssets = function(){
-	WD.AssetLoader.ImageAssets.each(function(asset){
-			var img = new Image();
-			img.src = asset.src;
-			img.onload = function(e){
-				WD.AssetLoader.resources.push({ assetName : asset.name, res : img });
-				WD.AssetLoader.checkProgress();
-			}		
-	});
-}
-
-WD.AssetLoader.loadAudioAssets = function(){
-	WD.AssetLoader.AudioAssets.each(function(asset){	
+	,checkProgress = function(){
+		if(resources.length === ImageAssets.length){
+			//chain to load audio assets
+			loadAudioAssets();
+		}
+	}
+	,loadAudioAssets = function(){
+		$.each(AudioAssets,function(index,asset){	
 			var audio = new Audio();
-			if(!!audio.canPlayType(asset.type)) {
-				audio.setAttribute('src',asset.src);
+			if(!!audio.canPlayType(AudioAssets[index].type)) {
+				audio.setAttribute('src',AudioAssets[index].src);
 				audio.load();
-				WD.AssetLoader.resources.push({ assetName : asset.name, res : audio });
+				resources.push({ assetName : AudioAssets[index].name, res : audio });
 			}
 		
-	});
-	Event.fire(document,'assetLoader:done');
-}
+		});
 
-
-WD.AssetLoader.checkProgress = function(){
-	if(WD.AssetLoader.resources.length === WD.AssetLoader.ImageAssets.length){
-		//chain to load audio assets
-		WD.AssetLoader.loadAudioAssets();
+		$(document).trigger("assetLoader_DONE");
 	}
-}
 
-WD.AssetLoader.getResource = function(resourceName){
-	var assetImg;
-
-	WD.AssetLoader.resources.each(function(resource){
-		if(resource.assetName===resourceName) {
-			assetImg = resource.res;
-			//needs to break here
-		}
-	});
-
-	return assetImg;
-}
-
-});
-
-/*
-finish this
-window.WD || ( window.WD = {} ) //application namespace
-
-WD.AssetLoader = (function(WD){
-	var _self = {};
-	_self.loadAssets = function(){
-		_self.assets.each(function(asset){
-			var img = new Image();
-			img.src = asset.src;
-			img.onload = function(e){
-				WD.AssetLoader.resources.push({ assetName : asset.name, img : img });
-				WD.AssetLoader.checkProgress();
+	return {
+		loadAssets : function(){
+			$.each(ImageAssets,function(index,asset){
+				var img = new Image();
+				img.src = ImageAssets[index].src;
+				img.onload = function(e){
+					resources.push({ assetName : ImageAssets[index].name, res : img });
+					checkProgress();
+				}		
+			});
+		},getResource : function(resourceName){
+		var assetImg;
+		
+		$.each(resources,function(index,resource){
+			if(resources[index].assetName===resourceName) {
+				assetImg = resource.res;
+				//needs to break here
 			}
 		});
+
+		return assetImg;
+		}
 	}
 
-	return _self;
-
-}(WD));
-
-console.info(window.WD);
-*/
+})(WD);

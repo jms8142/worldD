@@ -1,38 +1,33 @@
-define(['lib/prototype'],function(){
+/**
+* Score Management Class
+* Dependencies: 
+* 
+*/
 
-window.WD || ( window.WD = {} ) //application namespace
+WD.namespace('WD.drawableElements.ScoreTracker');
 
+WD.drawableElements.ScoreTracker = (function(wdapp){
+	var assetLoader = wdapp.util.AssetLoader,
+	_ScoreTracker = wdapp.drawableElements.ScoreTracker,
+	backgroundColor = 'rgb(77,77,77)',
+	textColor = '#FFF',
+	textSpaceWidth = 90,
+	activeSquare = 'rgb(33,128,53)',
+	inActiveSquare = 'rgb(106,91,91)',
+	font = '16px Arial Black',
+	textPosition = { 'x' : 0, 'y' : 0},
+	dollarSign = new Image(),
+	canvasEl = null,
+	construct;
 
-WD.ScoreTracker = Class.create({
-	backgroundColor : 'rgb(77,77,77)',
-	textColor : '#FFF',
-	textSpaceWidth : 90,
-	activeSquare : 'rgb(33,128,53)',
-	inActiveSquare : 'rgb(106,91,91)',
-	font : '16px Arial Black',
-	textPosition : { 'x' : 0, 'y' : 0},
-	dollarSign : new Image(),
-	canvasEl : null,
-	drawScoreBoard : function(_canvasContext){
-		
-		this.dollarSign = WD.AssetLoader.getResource('objects');
-		this.canvasEl = document.getElementById('wdCanvas');
-			
-		//draw score text
-		this.textPosition.x = 10;
-		this.textPosition.y = this.canvasEl.height - WD.ScoreTracker.height  + 80;
-
-		this.updateScore(0,_canvasContext);
-
-	},
-	updateScore : function(score,_canvasContext){
-		
-		var scoreTop = this.canvasEl.height-WD.ScoreTracker.height;
+	updateScore = function(score,_canvasContext){
+		console.info('updalte');
+		var scoreTop = canvasEl.height-_ScoreTracker.HEIGHT;
 		//console.info(scoreTop)
 		//clear first
 		
-		this.setToGradient(_canvasContext);
-		_canvasContext.fillRect(0,this.canvasEl.height-WD.ScoreTracker.height,this.canvasEl.width,WD.ScoreTracker.height);
+		setToGradient(_canvasContext);
+		_canvasContext.fillRect(0,this.canvasEl.height-_ScoreTracker.height,this.canvasEl.width,_ScoreTracker.height);
 		
 		var score = score.toFixed(2);
 		_canvasContext.fillStyle = '#e14824';
@@ -50,15 +45,49 @@ WD.ScoreTracker = Class.create({
 		if(score>0) {
 			WD.AssetLoader.getResource('dollarSound').play();
 		}
-	},
-	setToGradient : function(_canvasContext){
+	}
+
+	setToGradient = function(_canvasContext){
 		//draw background
-		var my_gradient = _canvasContext.createLinearGradient(0,this.canvasEl.height-WD.ScoreTracker.height,0, this.canvasEl.height);
+		var my_gradient = _canvasContext.createLinearGradient(0,this.canvasEl.height-_ScoreTracker.height,0, this.canvasEl.height);
 		my_gradient.addColorStop(0,"rgb(96,96,96)");
 		my_gradient.addColorStop(.5,"rgb(88,88,88)");
 		my_gradient.addColorStop(1,"rgb(58,58,58)");
 		_canvasContext.fillStyle = my_gradient;//this.backgroundColor;
-	},
+	}
+
+	construct = function(){
+		
+	}
+
+	construct.prototype = {
+		drawScoreBoard : function(_canvasContext){
+		
+			dollarSign = assetLoader.getResource('objects');
+			canvasEl = document.getElementById('wdCanvas');
+				
+			//draw score text
+			textPosition.x = 10;
+			textPosition.y = canvasEl.height - this.getHeight()  + 80;
+
+			updateScore(0,_canvasContext);
+
+		}
+	}
+
+
+
+	return construct;
+
+
+}(WD));
+
+WD.drawableElements.ScoreTracker.HEIGHT = 100;
+/*
+
+WD.ScoreTracker = Class.create({
+	
+	,
 	drawOutlines : function(_canvasContext){
 		_canvasContext.lineWidth = 1;
 
@@ -106,4 +135,4 @@ WD.ScoreTracker = Class.create({
 WD.ScoreTracker.height = 100;
 
 
-});
+});*/

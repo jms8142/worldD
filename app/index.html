@@ -7,7 +7,17 @@
 <link rel="stylesheet" href="css/styles.css" type="text/css"/>
 
 <script>var _game,showSkin = true;</script>
-<script data-main="js/main" src="js/require-jquery.js"></script>
+<!--<script data-main="js/main" src="js/require-jquery.js"></script>-->
+<script src="js/lib/jquery.min.js"></script>
+<script src="js/test/testBoards.js"></script>
+<script src="js/util/namespace.js"></script>
+<script src="js/debug/Debugger.js"></script>
+<script src="js/util/AssetLoader.js"></script>
+<script src="js/drawableElements/ScoreTracker.js"></script>
+<script src="js/view/CanvasManager.js"></script>
+<script src="js/control/Location.js"></script>
+<script src="js/drawableElements/GameTile.js"></script>
+<script src="js/control/Game_new.js"></script>
 
 </head>
 
@@ -18,11 +28,33 @@ Canvas not supported.
 <div class="debugWindow" id="debugger"></div>
 <div id='utilinfo'><div class="instructions"><strong>p</strong> to pause</div>
 <a href='#' id='snapshot'>print snapshot to console [step]</a></div>
+
+<script>
+$(function(){
+	var opts = {
+				startingPiece : 4, //[1=1,2=5,3=10,4=25]
+				startingPiecePosition : { x : 4,y : 3 },
+				constantPiece : null,
+				debugWindow : true,
+				debugFlags : WD.DEBUG.BEHAVIOR | WD.DEBUG.TRANSITION,// | WD.Game.debugDrawing,
+				//debugShow : WD.Game.debugDrawing,
+				showTransition : false,
+				showTestGrid : false,
+				gameBoard : sandbox,
+				skipTitle : true
+			}
+	
+	var _game = new WD.control.main(opts);
+	console.info(_game);
+});
+</script>
 </body>
 </html>
 <!--
 next:
+finish converting code to module pattern - some surgery there
 static children do not react (add a 5 to a created 5) - still trying to recreate it
+http://kineticjs.com/ for animation
 level readout 
 bonus points for clearing board
 bonus points for combining with angel pieces
@@ -33,4 +65,5 @@ add sliding (spacebar) with http://www.createjs.com/#!/EaselJS
 add touch controls (columns and is bottom space?) - drag piece?
 phonegap to ios
 websocket/node.js (easyrtc.com)
+http://thinkpixellab.com/pxloader/
 -->

@@ -1,3 +1,10 @@
+/**
+* Main game controller class
+* Dependencies: 
+*/
+
+
+
 define(['lib/prototype',
 		'util/AssetLoader',
 		'drawableElements/GameTile',
@@ -37,7 +44,7 @@ define(['lib/prototype',
 	initialize : function (opts){
 	
 		this.settings = opts;
-
+		
 		if(this.settings && this.settings.constantPiece)
 			this.constantPiece = this.settings.constantPiece;
 
@@ -69,15 +76,14 @@ define(['lib/prototype',
 	},
 	mouseMoveHandler : function(ev){
 		
-		 var x, y;
+		var x, y;
 
 		  // Get the mouse position relative to the canvas element.
-		  if (ev.layerX || ev.layerX == 0) { //for firefox
-    		x = ev.layerX;
-    		y = ev.layerY;
-  		  }
-  		  x-=this._canvas.offsetLeft;
-  		  y-=this._canvas.offsetTop;
+    	x = ev.clientX;
+    	y = ev.clientY;
+  		  
+  		x-=_canvas.offsetLeft;
+  		y-=_canvas.offsetTop;
 
   		  if(WD.CanvasManager.MouseReact(x,y,this.currentScreen,this)){
       			document.body.style.cursor = "pointer";
@@ -115,7 +121,7 @@ define(['lib/prototype',
 		//show transition - debugging
 		this.showTransition = (this.settings.showTransition !== undefined) ? this.settings.showTransition : true;
 
-		//show test grig
+		//show test grid
 		this.showTestGrid = (this.settings.showTestGrid !== undefined) ? this.settings.showTestGrid : false;
 
 		if(this.showTestGrid)
@@ -514,7 +520,7 @@ define(['lib/prototype',
 		
 	},
 	// Debugging and Testing Functions 
-	GenerateTestGrid : function(){
+	/*GenerateTestGrid : function(){
 
 		var x = 0;
 		var y = 0;
@@ -540,7 +546,7 @@ define(['lib/prototype',
 			x = 0;
 		}
 		
-	},
+	}*/,
 	scanForSpaces : function(){
 		var tileAbove = {};
 		//start with bottom row and move up

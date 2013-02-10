@@ -1,68 +1,90 @@
-define(['lib/prototype'],function(){
+/**
+* Location functions
+* Dependencies: 
+* 
+*/
+
+WD.namespace('WD.control.Location');
+
+WD.control.Location = (function(wdapp){
+
+	//var game = wdapp.control.main;
+	//console.info(wdapp.control.main);
+
+	return {
+		MoveDirection : { LEFT : 0, DOWN : 1, RIGHT : 2, EXPRESS : 3}
+		,MoveDescription : ["Left","Down","Right"]
+		/**		
+		* @param object	coords tilemap coordinates
+		* @desc - returns physical coordinates of object in field
+		* @return object coords of transformed location
+		*/
+		,FindPhysicalLocation : function(coords,width,height) {
+			
+			var xMap = coords.x;
+			var yMap = coords.y;
+			xMap = coords.x * width;
+			yMap = coords.y * height;
+			return { x : xMap, y : yMap };
+		}
+		/**		
+		* Returns coordinates of a new location based on direction passed
+		* @param object	coords tilemap coordinates
+		* @param enum MoveDirection enum represention of direction to transform to
+		* @return object|boolean - coords of transformed location or false if it's not legal
+		*/
+		,TransformLocation : function(coords,direction,gamesettings){
+			var _coords = { x : coords.x, y : coords.y }; //make sure the function modifies by value, not ref
+			switch (direction){
+				case this.MoveDirection.UP :
+					_coords.y -= 1;
+					break;
+				case this.MoveDirection.DOWN :
+					_coords.y += 1;
+					break;
+				case this.MoveDirection.LEFT :
+					_coords.x -= 1;
+					break;
+				case this.MoveDirection.RIGHT :
+					_coords.x += 1;
+					break;
+			}
+		//console.info(_coords);
+
+		if(this.LegalRealm(_coords,gamesettings))
+			return _coords;
+		else
+			return false;
+		}
+		/**		
+		* @param object	coords tilemap coordinates
+		* @return bool 
+		* @desc - returns true if the coordinated passed exists in the game field
+		*/
+		,LegalRealm : function(coords,gamesettings){
+		return (coords.x < gamesettings.columns &&
+				coords.x >= 0 &&
+				coords.y < gamesettings.gameRows &&
+				coords.y >= 0);
+		}
+
+	}
+
+}(WD));
+
+
+/*define(['lib/prototype'],function(){
 
 window.WD || ( window.WD = {} ) //application namespace
 
 WD.Location = Class.create({});
 
-WD.Location.MoveDirection = { LEFT : 0, DOWN : 1, RIGHT : 2, EXPRESS : 3};
-WD.Location.MoveDescription = ["Left","Down","Right"];
 
 
-/**		
-* Returns coordinates of a new location based on direction passed
-* @param object	coords tilemap coordinates
-* @param enum MoveDirection enum represention of direction to transform to
-* @return object|boolean - coords of transformed location or false if it's not legal
-**/
-WD.Location.TransformLocation = function(coords,direction){
-		var _coords = { x : coords.x, y : coords.y }; //make sure the function modifies by value, not ref
-		switch (direction){
-			case WD.Location.MoveDirection.UP :
-				_coords.y -= 1;
-				break;
-			case WD.Location.MoveDirection.DOWN :
-				_coords.y += 1;
-				break;
-			case WD.Location.MoveDirection.LEFT :
-				_coords.x -= 1;
-				break;
-			case WD.Location.MoveDirection.RIGHT :
-				_coords.x += 1;
-				break;
-		}
-		//console.info(_coords);
+*/
 
-		if(WD.Location.LegalRealm(_coords))
-			return _coords;
-		else
-			return false;
-}
 
-/**		
-* @param object	coords tilemap coordinates
-* @desc - returns physical coordinates of object in field
-* @return object coords of transformed location
-**/
-WD.Location.FindPhysicalLocation = function(coords) {
-		var xMap = coords.x;
-		var yMap = coords.y;
-		xMap = coords.x * WD.Game.defaultSettings.tileWidth;
-		yMap = coords.y * WD.Game.defaultSettings.tileHeight;
-		return { x : xMap, y : yMap };
-}
-
-/**		
-* @param object	coords tilemap coordinates
-* @return bool 
-* @desc - returns true if the coordinated passed exists in the game field
-**/
-WD.Location.LegalRealm = function(coords){
-		return (coords.x < WD.Game.defaultSettings.columns &&
-				coords.x >= 0 &&
-				coords.y < WD.Game.defaultSettings.gameRows &&
-				coords.y >= 0);
-}
-
+/*
 WD.Location.ValidateMove = function(coords){
 
 	if(!(WD.Location.LegalRealm(coords)) ||
@@ -73,22 +95,25 @@ WD.Location.ValidateMove = function(coords){
 
 	return true;
 }
+**/
+
 /**		
 * returns true if the next space down is another tile or the floor
 * @param object	coords tilemap coordinates
 * @return bool 
-**/
+
 WD.Location.LookAhead = function(coords){
 	var LookAheadLocation = WD.Location.TransformLocation(coords,WD.Location.MoveDirection.DOWN);
 		
 	return !WD.Location.LegalRealm(LookAheadLocation) ||  window._game.gameBoard[LookAheadLocation.x][LookAheadLocation.y].val > 0;
 
-}
+}**/
 /**		
 * @param object	gametile
 * @return object coords 
 * @desc - returns coordinates of the furthest open space directly below the coordinates of the gametile given
 **/
+/*
 WD.Location.nextBottom = function(_gametile){
 	var nextspace = _gametile.getMapLocation(), lastSpace;
 
@@ -102,4 +127,4 @@ WD.Location.nextBottom = function(_gametile){
 
 }
 
-});
+});*/
