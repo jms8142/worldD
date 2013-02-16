@@ -44,14 +44,15 @@ $(function(){
 				skipTitle : true
 			}
 	
-	var _game = new WD.control.main(opts);
-	console.info(_game);
+	WD.control.main.init(opts);
+	
 });
 </script>
 </body>
 </html>
 <!--
 next:
+need to share gamesettings with gametile elegantly (see Location)
 finish converting code to module pattern - some surgery there
 static children do not react (add a 5 to a created 5) - still trying to recreate it
 http://kineticjs.com/ for animation

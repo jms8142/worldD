@@ -45,7 +45,7 @@ WD.drawableElements.GameTile = (function(wdapp){
 	,_text = ''
 	,tileStroke = 'rgb(43,136,148)'
 	,tileFill = 'rgb(201,227,230)'
-
+	
 	//private methods
 	/**		
 	* @param int val
@@ -66,7 +66,7 @@ WD.drawableElements.GameTile = (function(wdapp){
 	}
 
 
-	construct = function(opts){
+	construct = function(opts,_gameSettings){
 		xMap = opts.xMap;
 		yMap = opts.yMap;
 		_height = (opts.height) ? opts.height : _height;
@@ -78,7 +78,8 @@ WD.drawableElements.GameTile = (function(wdapp){
 		currencyValue = (opts.curVal===undefined) ? currencyValues[_val] : opts.curVal;
 
 		activePic = assetLoader.getResource('objects');
-		
+		//console.info(_gameSettings);
+		gameSettings = _gameSettings;
 	}
 
 	construct.prototype = {
@@ -145,7 +146,59 @@ WD.drawableElements.GameTile = (function(wdapp){
 				_canvasContext.fillText(this._text, textX, textY);
 			}
 		
-	}
+		}
+		,move : function(direction){
+			console.info(gameSettings);
+			var newLocation = (direction === location.MoveDirection.EXPRESS) ? location.nextBottom(this) : location.TransformLocation(this.getMapLocation(),direction,gameSettings);
+
+			if(location.ValidateMove(newLocation,gameSettings)){
+
+				removeFromBoard();
+				addToBoard(newLocation);
+				window._game.UpdateView();
+				
+				if(window._game.debugFlags & WD.Game.debugMovement)
+					console.info('[MOVEMENT] Action Tile:' + this.toString());
+
+			}
+		
+			/*if(gameSettings.debugWindow){
+				window._game.lastgameBoard.push(jQuery.extend(true, {}, window._game.gameBoard));
+				window.debugger.updateSnapshotText(window._game.lastgameBoard.length);
+			}*/
+			//if tile has reached another tile (or bottom) - freeze and create a new one
+			this.checkRestingPlace();
+
+		}
+		,getMapLocation : function(){
+			return { x : this.xMap, y : this.yMap };
+		}
+		/**		
+		* checks reaction potention of resting place for this tile
+		* @param bool recursive - set to true if you're calling from any child tile reactions
+		* @return void
+		**/
+		,checkRestingPlace : function(recursive){
+			
+			if(location.LookAhead(this.getMapLocation())){
+				if(window._game.Reactive(this)){ //A reaction has been detected - start cleaning up tiles
+					window._game.StartBoardTransition();
+					if(!window._game.settings.testing)
+						WD.AssetLoader.getResource('matchSound').play();
+				} else if(this.getMapLocation().y === 0) { //at the top
+					Event.fire(document,'WD:gameover');
+				} else {
+					this.setInActive();
+					window._game.keysLocked = false;
+					//console.info('calling scan from checkRestingPlace()');
+					//window._game.scanForSpaces();
+
+					if(!window._game.settings.testing && !recursive) {
+						window._game.CreateActionPiece(window._game.startingPiecePositionX,window._game.startingPiecePositionY);
+					}
+				} 
+			}
+		}
 	}
 
 	return construct;
@@ -167,21 +220,6 @@ WD.GameTile = Class.create({
 	_text : '',
 	currencyValue : 0,
 	strokeWidth : 1,
-	colorMap : ['','rgb(183,129,26)','rgb(136,181,180)','rgb(136,181,180)','rgb(136,181,180)'],
-	bgroundOffset : [[],
-						[  //one cent
-								{ x : 0, y : 46 } , { x : 0, y : 0 } , { x : 0, y : 92 }
-							],  
-						[ //five cents
-								{ x : 46, y : 46 }, { x : 46, y : 0 } , { x : 46, y : 92}  
-							],
-						[ //ten cents
-								{ x : 92, y : 46 }, { x : 92, y : 0 } , { x : 92, y : 92}
-						],
-						[  
-								{ x : 138,y : 46 }, { x : 138, y : 0 }, { x : 138, y : 92}  //two five cents
-						]
-					],
 	tileStroke : 'rgb(43,136,148)',
 	tileFill : 'rgb(201,227,230)',
 	textAdjust : [0,4,4,8,8],
@@ -217,9 +255,6 @@ WD.GameTile = Class.create({
 	getDirection : function(){
 		return this.direction;
 	},
-	getMapLocation : function(){
-		return { x : this.xMap, y : this.yMap };
-	},
 	setMapLocation : function(coords){
 		this.xMap = coords.x;
 		this.yMap = coords.y;		
@@ -252,55 +287,8 @@ WD.GameTile = Class.create({
 		window._game.gameBoard[newlocation.x][newlocation.y] = { val : this.getValue(), active : WD.GameTile.STATE.ACTIVE };
 		this.setMapLocation(newlocation);
 	},
-	move : function(direction){
-		
-		var newLocation = (direction === WD.Location.MoveDirection.EXPRESS) ? WD.Location.nextBottom(this) : WD.Location.TransformLocation(this.getMapLocation(),direction);
-
-		if(WD.Location.ValidateMove(newLocation)){
-
-			this.removeFromBoard();
-			this.addToBoard(newLocation);
-			window._game.UpdateView();
-			
-			if(window._game.debugFlags & WD.Game.debugMovement)
-				console.info('[MOVEMENT] Action Tile:' + this.toString());
-
-		}
+	*/
 	
-		if(_game.settings.debugWindow){
-			window._game.lastgameBoard.push(jQuery.extend(true, {}, window._game.gameBoard));
-			window.debugger.updateSnapshotText(window._game.lastgameBoard.length);
-		}
-		//if tile has reached another tile (or bottom) - freeze and create a new one
-		this.checkRestingPlace();
-
-	}*/
-	/**		
-	* checks reaction potention of resting place for this tile
-	* @param bool recursive - set to true if you're calling from any child tile reactions
-	* @return void
-	**/
-	/*,checkRestingPlace : function(recursive){
-		
-		if(WD.Location.LookAhead(this.getMapLocation())){
-			if(window._game.Reactive(this)){ //A reaction has been detected - start cleaning up tiles
-				window._game.StartBoardTransition();
-				if(!window._game.settings.testing)
-					WD.AssetLoader.getResource('matchSound').play();
-			} else if(this.getMapLocation().y === 0) { //at the top
-				Event.fire(document,'WD:gameover');
-			} else {
-				this.setInActive();
-				window._game.keysLocked = false;
-				//console.info('calling scan from checkRestingPlace()');
-				//window._game.scanForSpaces();
-
-				if(!window._game.settings.testing && !recursive) {
-					window._game.CreateActionPiece(window._game.startingPiecePositionX,window._game.startingPiecePositionY);
-				}
-			} 
-		}
-	}*/
 
 	/*toString : function(){
 		return '[x:' + this.xMap + '] ' + this.xPos + 'px, [y:' + this.yMap + '] ' + this.yPos + 'px, dir: ' + WD.Animation.S_DIRECTION[this.direction];

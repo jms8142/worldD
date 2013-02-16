@@ -46,7 +46,9 @@ WD.control.main = (function(wdapp,opts){
 	,inLink = false
 	,keyslocked = false
 	,actionTile = null /* the tile in play */
-
+	,keysLocked
+	,paused
+	,timerID
 	//private methods
 	,loadTitleScreen = function(){
 		if(settings.skipTitle) {
@@ -59,8 +61,8 @@ WD.control.main = (function(wdapp,opts){
 		_canvasContext.drawImage(_canvasBuffer, 0, 0);
 	}
 	,ClearCanvas = function(){
-		_canvasContext.clearRect(0,0,_canvas.width,_canvas.height-scoretracker.HEIGHT); //minus scoreboard
-		_canvasBufferContext.clearRect(0,0,_canvasBuffer.width,_canvasBuffer.height-scoretracker.HEIGHT);
+		_canvasContext.clearRect(0,0,_canvas.width,_canvas.height-scoretracker.getHeight()); //minus scoreboard
+		_canvasBufferContext.clearRect(0,0,_canvasBuffer.width,_canvasBuffer.height-scoretracker.getHeight());
 	}
 	,
 	CreateTileMap = function(){
@@ -86,7 +88,7 @@ WD.control.main = (function(wdapp,opts){
 		for(var col = 0; col < settings.columns;col++){
 			for(var row = 0; row < settings.gameRows;row++){
 				if(gameBoard[col][row].val > 0){
-					var _gameTile = new gametile({ xMap : col, yMap : row });
+					var _gameTile = new gametile({ xMap : col, yMap : row },settings);
 					_gameTile.setHeight(settings.tileHeight);
 					_gameTile.setWidth(settings.tileWidth);
 					_gameTile.setValue(gameBoard[col][row].val);
@@ -111,7 +113,7 @@ WD.control.main = (function(wdapp,opts){
 
 	}
 	,endGame = function(){
-		clearInterval(this.timerID);
+		clearInterval(timerID);
 		WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.GAMEOVER, this);
 	}
 	,mouseMoveHandler = function(ev){
@@ -156,16 +158,16 @@ WD.control.main = (function(wdapp,opts){
 		//starting piece
 		CreateActionPiece(settings.startingPiecePosition.x,settings.startingPiecePosition.y,settings.startingPiece);
 		DrawGameTiles();
-		console.info('starting game');
-		console.info(this._scoreTracker);
+		
 		scoretracker.drawScoreBoard(_canvasBufferContext);
-		/*
-
-		this.Draw();
-	*/
-		
 		
 
+		Draw();
+	
+		if(settings.debugWindow)
+			debug.PrintGameBoard(settings,debug.printDebugWindow);
+		
+		$(document).bind("keydown",KeyGrab);
 
 	}
 	,CreateActionPiece = function(x,y,val) {
@@ -173,7 +175,7 @@ WD.control.main = (function(wdapp,opts){
 		if(settings.constantPiece)
 			val = settings.constantPiece;
 
-		actionTile = new gametile({ xMap : x, yMap : y})
+		actionTile = new gametile({ xMap : x, yMap : y},settings)
 
 		
 		if(val === undefined) 
@@ -273,6 +275,130 @@ WD.control.main = (function(wdapp,opts){
 			x = 0;
 		}
 	}
+	,KeyGrab = function(event){
+		//console.info(actionTile);
+		if(!keysLocked && [32,83,40,65,37,68,39].indexOf(event.keyCode) != -1 && !paused){
+			
+			clearInterval(timerID);
+			var keyID = event.keyCode;
+			
+			switch (keyID) {
+				case 32 : //Space
+					actionTile.move(location.MoveDirection.EXPRESS);
+				break;
+				case 83 : //S
+					actionTile.move(location.MoveDirection.DOWN);
+				break;
+				case 40: //down arrow
+					actionTile.move(location.MoveDirection.DOWN);
+				break; 
+				case 65: //A
+					actionTile.move(location.MoveDirection.LEFT);
+				break;
+				case 37: //left arrow
+					actionTile.move(location.MoveDirection.LEFT);
+				break;
+				case 68: //D
+					actionTile.move(location.MoveDirection.RIGHT);
+				break;
+				case 39: //right arrow
+					actionTile.move(location.MoveDirection.RIGHT);
+				break;
+			}
+
+			//start moving again
+			//timerID = setInterval(AutoMove,1000);
+		} else if(event.keyCode === 80) {
+			(paused) ? timerID = setInterval(AutoMove,1000) : clearInterval(timerID);
+			paused = !paused;
+
+			if(paused){
+				WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.PAUSE,this);
+				Draw();
+			} else {
+				UpdateView();
+			}
+			
+		}
+		
+		//console.info(event);
+	}
+	,AutoMove = function(){
+		if(typeof(actionTile)==='object'){
+			actionTile.move(WD.Location.MoveDirection.DOWN);
+		}
+	}
+	/* Searches surrounding tiles and returns true if a transition needs to happen
+	* @param object GameTile The action tile in question
+	* @return bool
+	*/
+	,Reactive = function(_gameTile){
+		
+		var searchVectors = Array(WD.Location.MoveDirection.LEFT,WD.Location.MoveDirection.DOWN,WD.Location.MoveDirection.RIGHT);
+		
+		this.actionBehavior = new WD.Behavior(_gameTile);
+		
+		for(var i = 0; i < searchVectors.length; i++){
+
+			//Skip looking LEFT if tile is on left most column
+			if((_gameTile.getMapLocation().x == 0) && 
+				searchVectors[i] == WD.Location.MoveDirection.LEFT)
+				i++;
+
+			//Skip looking DOWN if tile is on bottom row
+			if((WD.Game.defaultSettings.gameRows-1 == _gameTile.getMapLocation().y) && 
+				searchVectors[i] == WD.Location.MoveDirection.DOWN)
+				i++;
+			
+			//Skip looking RIGHT if tile is on right most column
+			if((_gameTile.getMapLocation().x == WD.Game.defaultSettings.columns - 1) && 
+				searchVectors[i] == WD.Location.MoveDirection.RIGHT)
+				break;
+
+			if(this.debugFlags & WD.Game.debugBehavior)
+				console.info('[BEHAVIOR] Checking:' + WD.Location.MoveDescription[searchVectors[i]]);
+
+			var nextLocation = WD.Location.TransformLocation(_gameTile.getMapLocation(),searchVectors[i]);
+			var nextLocationVal = this.gameBoard[nextLocation.x][nextLocation.y].val;
+			var nextLocationPosition = WD.Location.FindPhysicalLocation(nextLocation);
+			var nextTileParams = { xPos : nextLocationPosition.x,
+									yPos : nextLocationPosition.y,
+									xMap : nextLocation.x,
+									yMap : nextLocation.y,
+									val : nextLocationVal
+								};
+								
+			//start a lookahead for reactive tiles					
+			while(WD.Location.LegalRealm(nextLocation) &&  //next tile is in legal space
+					nextLocationVal > 0 &&  //next tile isn't air
+					this.actionBehavior.hasReaction(new WD.GameTile(nextTileParams)) && //next tile has reaction
+					this.actionBehavior.getAnimationStart() != true) //that next tile didn't start an instant reaction
+				{
+				
+				nextLocation = WD.Location.TransformLocation(nextLocation,searchVectors[i]);
+				
+				if(WD.Location.LegalRealm(nextLocation)) {
+					nextLocationVal = this.gameBoard[nextLocation.x][nextLocation.y].val;
+					nextLocationCurrencyVal = WD.GameTile.currencyValues[nextLocationVal];
+					nextLocationPosition = WD.Location.FindPhysicalLocation(nextLocation);
+
+					nextTileParams = { x : nextLocationPosition.x,
+									y : nextLocationPosition.y,
+									xMap : nextLocation.x,
+									yMap : nextLocation.y,
+									curVal : nextLocationCurrencyVal
+								};
+				}
+				
+			}
+		}
+
+		if(_gameTile.getQuad()){ //check if this is in a box configuration (e.g. 4 quarters)
+			this.actionBehavior.runBoxCheck(_gameTile);
+		}
+
+		return this.actionBehavior.getAnimationStart();
+	}
 
 	
 	wdapp.DEBUG = {
@@ -286,52 +412,42 @@ WD.control.main = (function(wdapp,opts){
 	
 	//init procedures
 	//public API
-	construct = function (opts){
-		$.extend(settings,opts);
+	return {
+		init : function (opts){
+			$.extend(settings,opts);
 
-		_canvas = document.getElementById('wdCanvas');
+			_canvas = document.getElementById('wdCanvas');
 
-		if (_canvas && _canvas.getContext) {
-			_canvasContext = _canvas.getContext('2d');
-			_canvasBuffer = document.createElement('canvas');
-			_canvasBuffer.width = _canvas.width;
-			_canvasBuffer.height = _canvas.height;
-			_canvasBufferContext = _canvasBuffer.getContext('2d');
+			if (_canvas && _canvas.getContext) {
+				_canvasContext = _canvas.getContext('2d');
+				_canvasBuffer = document.createElement('canvas');
+				_canvasBuffer.width = _canvas.width;
+				_canvasBuffer.height = _canvas.height;
+				_canvasBufferContext = _canvasBuffer.getContext('2d');
 
-			canvasData = {
-				_canvasContext : _canvasContext,
-				_canvasBuffer : _canvasBuffer,
-				_canvasBufferContext : _canvasBufferContext
+				canvasData = {
+					_canvasContext : _canvasContext,
+					_canvasBuffer : _canvasBuffer,
+					_canvasBufferContext : _canvasBufferContext
+				}
+
+
+				$(document).bind("assetLoader_DONE",loadTitleScreen);
+				WD.util.AssetLoader.loadAssets();
+
+				//additional game events
+				//Event.observe(document,'WD:gameover',this.endGame.bind(this));
+				$(document).bind("gameover",endGame);
+				$(_canvas).on('mousemove',mouseMoveHandler);
+				$(_canvas).on('click',mouseClickHandler);
+
 			}
-
-
-			$(document).bind("assetLoader_DONE",loadTitleScreen);
-			WD.util.AssetLoader.loadAssets();
-
-			//additional game events
-			//Event.observe(document,'WD:gameover',this.endGame.bind(this));
-			$(document).bind("gameover",endGame);
-			$(_canvas).on('mousemove',mouseMoveHandler);
-			$(_canvas).on('click',mouseClickHandler);
-
-			this._scoreTracker = new scoretracker();
-			console.info(this);
-		}
-
-	}
-
-	construct.prototype = {
-		constructor : WD.control.main,
+		},
 		getSettings : function(){
-			console.info(settings);
+			return settings;
 		}
-		/**
-		* @return void
-		* @description - Updates the canvas.  Call this directly when doing additive updates to the canvas and don't need to clear anything, otherwise use UpdateView();
-		**/
-	}
 
-	return construct;
+	}
 
 
 }(WD));
