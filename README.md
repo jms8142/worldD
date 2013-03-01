@@ -1,9 +1,8 @@
 World Denomination (HTML5)
 ==========================
 
-Rules
------
-
+Game Play
+---------
 Consolidate the currency! 
 
 
@@ -12,14 +11,9 @@ http://www.johnplanetorb.com/games/worldd/app
 
 
 
-Compatability:
-FF - OK
-
-
-Chrome:
-currently not working - stay tuned
-
-funny color borders
-
-< IE 9:
-no!
+###Compatability:
+FF - 19.x
+Chrome 25.x
+IE 9.0.x
+Safari 5.1.x - crashes on unsupported sound
+Opera 12.1x - no
