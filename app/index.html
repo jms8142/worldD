@@ -10,6 +10,7 @@
 <!--<script data-main="js/main" src="js/require-jquery.js"></script>-->
 <script src="js/lib/jquery.min.js"></script>
 <script src="js/test/testBoards.js"></script>
+<script src="js/util/BaseExtensions.js"></script>
 <script src="js/util/namespace.js"></script>
 <script src="js/debug/Debugger.js"></script>
 <script src="js/util/AssetLoader.js"></script>
@@ -40,7 +41,7 @@ $(function(){
 				//debugShow : WD.Game.debugDrawing,
 				showTransition : false,
 				showTestGrid : false,
-				gameBoard : sandbox,
+				gameBoard : null,//sandbox,
 				skipTitle : true
 			}
 	
@@ -54,6 +55,7 @@ $(function(){
 next:
 need to share gamesettings with gametile elegantly (see Location)
 finish converting code to module pattern - some surgery there
+lint everything
 static children do not react (add a 5 to a created 5) - still trying to recreate it
 http://kineticjs.com/ for animation
 level readout 

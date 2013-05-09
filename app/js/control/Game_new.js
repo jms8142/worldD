@@ -1,11 +1,12 @@
 /**
 * Main game controller class
 * Dependencies: 
-* jQuery ($.extend(),$.bind())
+* jQuery ($.extend(),$.bind()), BaseExtensions
 * 
 */
 
 WD.namespace('WD.control.main');
+
 
 
 WD.control.main = (function(wdapp,opts){
@@ -14,7 +15,7 @@ WD.control.main = (function(wdapp,opts){
 	//dependencies
 	var canvasmanager = wdapp.view.CanvasManager
 	,main = wdapp.control.main
-	,gametile = wdapp.drawableElements.GameTile
+	,GameTile = wdapp.drawableElements.GameTile
 	,location = wdapp.control.Location
 	,scoretracker = wdapp.drawableElements.ScoreTracker
 	,debug = wdapp.debug.Debugger
@@ -66,16 +67,7 @@ WD.control.main = (function(wdapp,opts){
 	}
 	,
 	CreateTileMap = function(){
-			gameBoard = new Array(WD.Game.defaultSettings.columns);
-			for(var i = 0; i < gameBoard.length; i++){
-					gameBoard[i] = new Array(WD.Game.defaultSettings.gameRows);
-					for (var j = 0; j < gameBoard[i].length; j++){
-						gameBoard[i][j] = { val : 0, active : WD.GameTile.STATE.INACTIVE };
-					}
-
-
-			}
-			//console.info(gameBoard.length)
+		gameBoard = Array.matrix(settings.columns,settings.gameRows,{ val : 0, active : GameTile.STATE.INACTIVE });
 	},
 	DrawGameTiles = function(){
 		
@@ -88,12 +80,12 @@ WD.control.main = (function(wdapp,opts){
 		for(var col = 0; col < settings.columns;col++){
 			for(var row = 0; row < settings.gameRows;row++){
 				if(gameBoard[col][row].val > 0){
-					var _gameTile = new gametile({ xMap : col, yMap : row },settings);
+					var _gameTile = new GameTile({ xMap : col, yMap : row },settings);
 					_gameTile.setHeight(settings.tileHeight);
 					_gameTile.setWidth(settings.tileWidth);
 					_gameTile.setValue(gameBoard[col][row].val);
 
-					if(gameBoard[col][row].active === _gameTile.STATE.ACTIVE) {
+					if(gameBoard[col][row].active === GameTile.STATE.ACTIVE) {
 						_gameTile.setStroke(settings.actionTileStroke);
 						_gameTile.setFill(settings.actionTileFill);
 					}
@@ -140,7 +132,6 @@ WD.control.main = (function(wdapp,opts){
 		}
 	}
 	,startGame = function(){
-		
 
 		if(settings.gameBoard){
 			gameBoard = settings.gameBoard;
@@ -165,7 +156,7 @@ WD.control.main = (function(wdapp,opts){
 		Draw();
 	
 		if(settings.debugWindow)
-			debug.PrintGameBoard(settings,debug.printDebugWindow);
+			debug.PrintGameBoard(gameBoard,debug.printDebugWindow);
 		
 		$(document).bind("keydown",KeyGrab);
 
@@ -175,7 +166,7 @@ WD.control.main = (function(wdapp,opts){
 		if(settings.constantPiece)
 			val = settings.constantPiece;
 
-		actionTile = new gametile({ xMap : x, yMap : y},settings)
+		actionTile = new GameTile({ xMap : x, yMap : y},settings)
 
 		
 		if(val === undefined) 
@@ -184,7 +175,7 @@ WD.control.main = (function(wdapp,opts){
 			var singlePieceVal = val;
 
 		actionTile.setValue(singlePieceVal);
-		gameBoard[x][y] = { val : actionTile.getValue(), active : actionTile.STATE.ACTIVE };
+		gameBoard[x][y] = { val : actionTile.getValue(), active : GameTile.STATE.ACTIVE };
 
 		//console.info('create action piece');
 		scanForSpaces();
@@ -206,13 +197,13 @@ WD.control.main = (function(wdapp,opts){
 					if(gameBoard[tileAbove.x][tileAbove.y].val>0){ //this is a floating block
 						//console.info('x: ' + tileAbove.x + ' y: ' + tileAbove.y);
 						//console.info(this.gameBoard[tileAbove.x][tileAbove.y].active);
-						if(gameBoard[tileAbove.x][tileAbove.y].active===gametile.STATE.INACTIVE){
-							gameBoard[tileAbove.x][tileAbove.y].active = gametile.STATE.ANGEL;
-						} else if (gameBoard[tileAbove.x][tileAbove.y].active===gametile.STATE.ANGEL) { //move down one and check reaction
+						if(gameBoard[tileAbove.x][tileAbove.y].active===GameTile.STATE.INACTIVE){
+							gameBoard[tileAbove.x][tileAbove.y].active = GameTile.STATE.ANGEL;
+						} else if (gameBoard[tileAbove.x][tileAbove.y].active===GameTile.STATE.ANGEL) { //move down one and check reaction
 							//console.info(this.gameBoard[col][row].toString());
 							gameBoard[col][row] = gameBoard[tileAbove.x][tileAbove.y];
-							gameBoard[col][row].active = gametile.STATE.INACTIVE;
-							gameBoard[tileAbove.x][tileAbove.y] = { val : 0, active : gametile.STATE.INACTIVE }
+							gameBoard[col][row].active = GameTile.STATE.INACTIVE;
+							gameBoard[tileAbove.x][tileAbove.y] = { val : 0, active : GameTile.STATE.INACTIVE }
 						}
 						
 					}
@@ -246,7 +237,7 @@ WD.control.main = (function(wdapp,opts){
 			Draw();	
 
 			if(settings.debugWindow)
-				debug.PrintGameBoard(settings,debug.printDebugWindow);
+				debug.PrintGameBoard(gameBoard,debug.printDebugWindow);
 		}
 	}
 	// Debugging and Testing Functsions 
@@ -351,7 +342,7 @@ WD.control.main = (function(wdapp,opts){
 				i++;
 			
 			//Skip looking RIGHT if tile is on right most column
-			if((_gameTile.getMapLocation().x == WD.Game.defaultSettings.columns - 1) && 
+			if((_gameTile.getMapLocation().x == settings.columns - 1) && 
 				searchVectors[i] == WD.Location.MoveDirection.RIGHT)
 				break;
 

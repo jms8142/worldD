@@ -10,19 +10,21 @@ WD.debug.Debugger = (function(wdapp){
 	return {
 		printDebugWindow : 0x1
 		,printConsole : 0x2
-		,PrintGameBoard : function(gamesettings, output){
+		,PrintGameBoard : function(gameBoard, output){
+
+			
 			var currencyValues = [-1,1,5,10,25];
 			
 
 			var HTMLout = '', lineout = '';
-			for(var row = 0; row < gamesettings.gameRows; row++){
+			for(var row = 0; row < gameBoard[0].length; row++){
 
 				HTMLout += '<tr>';
 				lineout = '';
-				for(var col = 0;col < gamesettings.columns; col++){
-					var displayVal = (gamesettings.gameBoard[col][row].val === 0) ? '-' : currencyValues[gamesettings.gameBoard[col][row].val];
+				for(var col = 0;col < gameBoard.length; col++){
+					var displayVal = (gameBoard[col][row].val === 0) ? '-' : currencyValues[gameBoard[col][row].val];
 					HTMLout += '<td>' + displayVal + '</td>';
-					lineout += gamesettings.gameBoard[col][row].val + '|';
+					lineout += gameBoard[col][row].val + '|';
 				}
 				HTMLout += '</tr>\n';
 

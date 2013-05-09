@@ -67,6 +67,7 @@ WD.drawableElements.GameTile = (function(wdapp){
 
 
 	construct = function(opts,_gameSettings){
+
 		xMap = opts.xMap;
 		yMap = opts.yMap;
 		_height = (opts.height) ? opts.height : _height;
@@ -84,7 +85,6 @@ WD.drawableElements.GameTile = (function(wdapp){
 
 	construct.prototype = {
 		constructor : WD.drawableElements.GameTile,
-		STATE : { INACTIVE : 0, ACTIVE : 1, ANGEL : 2},
 		getCurrencyValues : function(){
 			return currencyValues;
 		},
@@ -117,7 +117,7 @@ WD.drawableElements.GameTile = (function(wdapp){
 		,render : function(_canvasContext,activeState){
 
 			if(showSkin){ 
-				if(activeState===this.STATE.ANGEL) {
+				if(activeState===wdapp.drawableElements.GameTile.STATE.ANGEL) {
 					_canvasContext.globalAlpha = .5;
 				}
 				_canvasContext.drawImage(activePic,bgroundOffset[_val][activeState].x,bgroundOffset[_val][activeState].y,46,46,xPos+2,yPos+2,46,46);
@@ -205,6 +205,9 @@ WD.drawableElements.GameTile = (function(wdapp){
 
 
 }(WD));
+
+WD.drawableElements.GameTile.STATE = { INACTIVE : 0, ACTIVE : 1, ANGEL : 2};
+
 
 /*define(['lib/prototype'],function(){
 window.WD || ( window.WD = {} ) //application namespace
