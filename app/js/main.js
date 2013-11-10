@@ -1,42 +1,25 @@
+requirejs.config({
+    baseUrl: 'js',
+    paths: {
+        prototype: 'lib/prototype'
+    }
+});
+
 require(["control/Game",
 		 "debug/Debugger",
-		 "test/testBoards"], function() {
-
-
-		 	/* Default Starting Options */
+		 "test/testBoards"], function(WDGame) {
 		 	
-		 	var opts = {
-				startingPiece : 1, //[1=1,2=5,3=10,4=25]
-				startingPiecePosition : { x : 4,y : 2 },
-				constantPiece : null,
-				showTransition : false,
-				showTestGrid : false
-			}
-			
-
-			/* test Starting Options */
-			/*
-    		var opts = {
-				startingPiece : 4, //[1=1,2=5,3=10,4=25]
-				startingPiecePosition : { x : 4,y : 3 },
-				constantPiece : null,
-				debugWindow : true,
-				debugShow : WD.Game.debugBehavior | WD.Game.debugTransition,// | WD.Game.debugDrawing,
-				//debugShow : WD.Game.debugDrawing,
-				showTransition : false,
-				showTestGrid : false,
-				gameBoard : sandbox,
-				skipTitle : true
-			}
-			*/
-			
-
-		if(window.location.pathname.indexOf("test")>-1){
-			opts.testing = true;
-			window._game = new WD.Game(opts);
-			startTest();
-		} else{
-			window._game = new WD.Game(opts);
+    	var opts = {
+			startingPiece : null, //[0=1,1=5,2=10,3=25]
+			startingPiecePosition : { x : 4,y : 0 },
+			constantPiece : null,
+			debugWindow : true,
+			debugShow : WDGame.debugDrawing,
+			showTransition : false,
+			showTestGrid : false/*,
+			gameBoard : sandbox*/
 		}
+	
+		window._game = new WDGame(opts);
 		
 });

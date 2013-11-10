@@ -1,11 +1,4 @@
-/**
-* Main game controller class
-* Dependencies: 
-*/
-
-
-
-define(['lib/prototype',
+/*define(['lib/prototype',
 		'util/AssetLoader',
 		'drawableElements/GameTile',
 		'drawableElements/ScoreTracker',
@@ -13,11 +6,14 @@ define(['lib/prototype',
 		'control/Animation',
 		'control/Location',
 		'view/CanvasManager',
-		],function(){
+		],function(){*/
+define(['prototype',
+		'util/AssetLoader',
+		'view/CanvasManager'],function(_,WDAssetLoader,WDCanvasManager){
 
-	window.WD || ( window.WD = {} ) //application namespace
+			console.dir(WDAssetLoader);
 
-	WD.Game = Class.create({
+	var WDGame = Class.create({
 	_canvas : null,
 	_canvasContext : null,
 	_canvasBuffer : null,
@@ -40,52 +36,48 @@ define(['lib/prototype',
 	settings : null,
 	timerID : null,
 	paused : false,
-	testing : false, //set to true to test game without any interface bindings
 	initialize : function (opts){
-	
 		this.settings = opts;
-		
+		//
+		console.info('this fart!');
 		if(this.settings && this.settings.constantPiece)
 			this.constantPiece = this.settings.constantPiece;
 
 		if(this.settings && this.settings.debugShow)
 			this.debugFlags = this.settings.debugShow;
 
-		if(this.settings.testing){ //for testing - bypasses all interface functions and just loads the board into memory
-			this.gameBoard = this.settings.gameBoard;
-		} else {
-			
-			this._canvas = document.getElementById('wdCanvas');
-			if (this._canvas && this._canvas.getContext) {
-				this._canvasContext = this._canvas.getContext('2d');
-				this._canvasBuffer = document.createElement('canvas');
-				this._canvasBuffer.width = this._canvas.width;
-				this._canvasBuffer.height = this._canvas.height;
-				this._canvasBufferContext = this._canvasBuffer.getContext('2d');
-			}
+		this._canvas = document.getElementById('wdCanvas');
+		if (this._canvas && this._canvas.getContext) {
+			this._canvasContext = this._canvas.getContext('2d');
+			this._canvasBuffer = document.createElement('canvas');
+			this._canvasBuffer.width = this._canvas.width;
+			this._canvasBuffer.height = this._canvas.height;
+			this._canvasBufferContext = this._canvasBuffer.getContext('2d');
+		}
 
-			Event.observe(document,'assetLoader:done',this.loadTitleScreen.bind(this));
-			WD.AssetLoader.loadAssets();
+		Event.observe(document,'assetLoader:done',this.loadTitleScreen.bind(this));
+		WDAssetLoader.loadAssets();
 
-			//additional game events
-			
-			Event.observe(document,'WD:gameover',this.endGame.bind(this));
-	    	$(this._canvas).observe('mousemove',this.mouseMoveHandler.bind(this));
-	    	$(this._canvas).observe('click',this.mouseClickHandler.bind(this));
-    	}
+		//additional game events
+		
+		Event.observe(document,'WD:gameover',this.endGame.bind(this));
+    	$(this._canvas).observe('mousemove',this.mouseMoveHandler.bind(this));
+    	$(this._canvas).observe('click',this.mouseClickHandler.bind(this));
+    	console.info('this far!');
 	},
 	mouseMoveHandler : function(ev){
 		
-		var x, y;
+		 var x, y;
 
 		  // Get the mouse position relative to the canvas element.
-    	x = ev.clientX;
-    	y = ev.clientY;
-  		  
-  		x-=_canvas.offsetLeft;
-  		y-=_canvas.offsetTop;
+		  if (ev.layerX || ev.layerX == 0) { //for firefox
+    		x = ev.layerX;
+    		y = ev.layerY;
+  		  }
+  		  x-=this._canvas.offsetLeft;
+  		  y-=this._canvas.offsetTop;
 
-  		  if(WD.CanvasManager.MouseReact(x,y,this.currentScreen,this)){
+  		  if(WDCanvasManager.MouseReact(x,y,this.currentScreen,this)){
       			document.body.style.cursor = "pointer";
       			this.inLink=true;
   			} else {
@@ -100,11 +92,9 @@ define(['lib/prototype',
 		}
 	},
 	loadTitleScreen : function(){
-		if(this.settings.skipTitle) {
-			this.startGame();
-		} else {
-			this.currentScreen = WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.TITLE, this);
-		}
+		this.startGame();
+		//this.currentScreen = WDCanvasManager.Screen(WDCanvasManager.SCREENS.TITLE, this);
+		//this.currentScreen = WDCanvasManager.Screen(WDCanvasManager.SCREENS.GAMEOVER, this);
 	},
 	startGame : function() {
 		
@@ -117,22 +107,23 @@ define(['lib/prototype',
 		//debug window
 		if(this.settings && this.settings.debugWindow)
 			this.debugWindow = true;
-		
+
 		//show transition - debugging
 		this.showTransition = (this.settings.showTransition !== undefined) ? this.settings.showTransition : true;
 
-		//show test grid
+		//show test grig
 		this.showTestGrid = (this.settings.showTestGrid !== undefined) ? this.settings.showTestGrid : false;
 
 		if(this.showTestGrid)
 			this.GenerateTestGrid();
 
-		WD.CanvasManager.DrawCanvasBackground(this._canvasBufferContext);
+		WDCanvasManager.DrawCanvasBackground(this._canvasBufferContext);
+
 		//starting piece
 		var startingPiece = (this.settings && this.settings.startingPiece !== undefined) ? this.settings.startingPiece : 1;
-	 	this.startingPiecePositionX = (this.settings && this.settings.startingPiecePosition) ? this.settings.startingPiecePosition.x : 4;
-		this.startingPiecePositionY = (this.settings && this.settings.startingPiecePosition) ? this.settings.startingPiecePosition.y : 2;
-		this.CreateActionPiece(this.startingPiecePositionX,this.startingPiecePositionY,startingPiece);
+	 	startingPiecePositionX = (this.settings && this.settings.startingPiecePosition) ? this.settings.startingPiecePosition.x : 4;
+		startingPiecePositionY = (this.settings && this.settings.startingPiecePosition) ? this.settings.startingPiecePosition.y : 2;
+		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY,startingPiece);
 		this.DrawGameTiles();
 
 		this.scoretracker = new WD.ScoreTracker; //temp
@@ -143,7 +134,7 @@ define(['lib/prototype',
 
 		if(this.debugWindow) {
 			var _this = this;
-			WD.Debugger.PrintGameBoard(this.gameBoard,WD.Debugger.printDebugWindow);
+			WD.Debugger.PrintGameBoardtoDebugWindow(this.gameBoard);
 			window.debugger = new WD.Debugger();
 		}
 		//register events
@@ -155,7 +146,7 @@ define(['lib/prototype',
 	},
 	endGame : function(){
 		clearInterval(this.timerID);
-		WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.GAMEOVER, this);
+		WDCanvasManager.Screen(WDCanvasManager.SCREENS.GAMEOVER, this);
 	},
 	AutoMove : function(){
 		if(typeof(this.actionTile)==='object'){
@@ -166,29 +157,27 @@ define(['lib/prototype',
 	* @return void
 	* @description - Completely refreshes and updates the canvas to the current state of the game.  To simply add to the canvas, use Draw()
 	**/
-	UpdateView : function(){
+	Update : function(){
+		if(this.debugFlags & WDGame.debugDrawing)
+				console.info('[DRAWING] Updating Canvas');
 
-		if(!this.settings.testing) {
-			if(this.debugFlags & WD.Game.debugDrawing)
-					console.info('[DRAWING] Updating Canvas');
+		this.ClearCanvas();
 
-			this.ClearCanvas();
+		WDCanvasManager.DrawCanvasBackground(this._canvasBufferContext);
 
-			WD.CanvasManager.DrawCanvasBackground(this._canvasBufferContext);
+		if(this.showTestGrid)
+			this.GenerateTestGrid();
+		
+		this.DrawGameTiles();
+		this.Draw();	
 
-			if(this.showTestGrid)
-				this.GenerateTestGrid();
-			
-			this.DrawGameTiles();
-			this.Draw();	
+		if(this.debugWindow)
+			WD.Debugger.PrintGameBoardtoDebugWindow(this.gameBoard);
 
-			if(this.debugWindow)
-				WD.Debugger.PrintGameBoard(this.gameBoard,WD.Debugger.printDebugWindow);
-		}
 	},
 	/**
 	* @return void
-	* @description - Updates the canvas.  Call this directly when doing additive updates to the canvas and don't need to clear anything, otherwise use UpdateView();
+	* @description - Updates the canvas.  Call this directly when doing additive updates to the canvas and don't need to clear anything, otherwise use Update();
 	**/
 	Draw : function(){
 		this._canvasContext.drawImage(this._canvasBuffer, 0, 0);
@@ -198,11 +187,12 @@ define(['lib/prototype',
 		this._canvasBufferContext.clearRect(0,0,this._canvasBuffer.width,this._canvasBuffer.height-WD.ScoreTracker.prototype.height);
 	},
 	CreateTileMap : function(){
-			this.gameBoard = new Array(WD.Game.defaultSettings.columns);
+
+			this.gameBoard = new Array(WDGame.defaultSettings.columns);
 			for(var i = 0; i < this.gameBoard.length; i++){
-					this.gameBoard[i] = new Array(WD.Game.defaultSettings.gameRows);
+					this.gameBoard[i] = new Array(WDGame.defaultSettings.gameRows);
 					for (var j = 0; j < this.gameBoard[i].length; j++){
-						this.gameBoard[i][j] = { val : 0, active : WD.GameTile.STATE.INACTIVE };
+						this.gameBoard[i][j] = { val : 0, active : false };
 					}
 
 
@@ -210,33 +200,33 @@ define(['lib/prototype',
 			//console.info(gameBoard.length)
 	},
 	DrawGameTiles : function(){
-		if(this.debugFlags & WD.Game.debugDrawing)
+		if(this.debugFlags & WDGame.debugDrawing)
 				console.info('[DRAWING] Drawing Game Tiles');
 		
 		var coordX = 0;
 		var coordY = 0;
 
-		for(var col = 0; col < WD.Game.defaultSettings.columns;col++){
-			for(var row = 0; row < WD.Game.defaultSettings.gameRows;row++){
+		for(var col = 0; col < WDGame.defaultSettings.columns;col++){
+			for(var row = 0; row < WDGame.defaultSettings.gameRows;row++){
 				if(this.gameBoard[col][row].val > 0){
-					var _gameTile = new WD.GameTile({ xMap : col, yMap : row });
-					_gameTile.setHeight(WD.Game.defaultSettings.tileHeight);
-					_gameTile.setWidth(WD.Game.defaultSettings.tileWidth);
+					var _gameTile = new WDGameTile({ xMap : col, yMap : row });
+					_gameTile.setHeight(WDGame.defaultSettings.tileHeight);
+					_gameTile.setWidth(WDGame.defaultSettings.tileWidth);
 					_gameTile.setValue(this.gameBoard[col][row].val);
 
-					if(this.gameBoard[col][row].active === WD.GameTile.STATE.ACTIVE) {
-						_gameTile.setStroke(WD.Game.defaultSettings.actionTileStroke);
-						_gameTile.setFill(WD.Game.defaultSettings.actionTileFill);
+					if(this.gameBoard[col][row].active) {
+						_gameTile.setStroke(WDGame.defaultSettings.actionTileStroke);
+						_gameTile.setFill(WDGame.defaultSettings.actionTileFill);
 					}
 					
 					_gameTile.render(this._canvasBufferContext,this.gameBoard[col][row].active);
 				}
 
-				coordY += WD.Game.defaultSettings.tileHeight;
+				coordY += WDGame.defaultSettings.tileHeight;
 			}
 
 			coordY = 0;
-			coordX += WD.Game.defaultSettings.tileWidth;
+			coordX += WDGame.defaultSettings.tileWidth;
 		}
 
 		//update the canvas
@@ -244,23 +234,18 @@ define(['lib/prototype',
 
 	},
 	CreateActionPiece : function(x,y,val) {
-		
 		if(this.constantPiece)
 			val = this.constantPiece;
 
-		this.actionTile = new WD.GameTile({ xMap : x, yMap : y})
+		this.actionTile = new WDGameTile({ xMap : x, yMap : y})
 		if(val === undefined) 
-			var singlePieceVal = (Math.floor(Math.random()*(WD.GameTile.currencyValues.length-1))) + 1;
+			var singlePieceVal = Math.floor(Math.random()*(WDGameTile.currencyValues.length-1));
 		else
 			var singlePieceVal = val;
 
-		this.actionTile.setValue(singlePieceVal);
+		this.actionTile.setValue(singlePieceVal+1);
 
-		this.gameBoard[x][y] = { val : this.actionTile.getValue(), active : WD.GameTile.STATE.ACTIVE };
-
-		//console.info('create action piece');
-		this.scanForSpaces();
-		this.UpdateView();
+		this.gameBoard[x][y] = { val : this.actionTile.getValue(), active : true };
 	},
 	KeyGrab : function(event){
 		
@@ -300,20 +285,16 @@ define(['lib/prototype',
 			this.paused = !this.paused;
 
 			if(this.paused){
-				WD.CanvasManager.Screen(WD.CanvasManager.SCREENS.PAUSE,this);
+				WDCanvasManager.Screen(WDCanvasManager.SCREENS.PAUSE,this);
 				this.Draw();
 			} else {
-				this.UpdateView();
+				this.Update();
 			}
 			
 		}
 		
 		//console.info(event);
 	},
-	/* Searches surrounding tiles and returns true if a transition needs to happen
-	* @param object GameTile The action tile in question
-	* @return bool
-	*/
 	Reactive : function(_gameTile){
 		
 		var searchVectors = Array(WD.Location.MoveDirection.LEFT,WD.Location.MoveDirection.DOWN,WD.Location.MoveDirection.RIGHT);
@@ -328,16 +309,16 @@ define(['lib/prototype',
 				i++;
 
 			//Skip looking DOWN if tile is on bottom row
-			if((WD.Game.defaultSettings.gameRows-1 == _gameTile.getMapLocation().y) && 
+			if((WDGame.defaultSettings.gameRows-1 == _gameTile.getMapLocation().y) && 
 				searchVectors[i] == WD.Location.MoveDirection.DOWN)
 				i++;
 			
 			//Skip looking RIGHT if tile is on right most column
-			if((_gameTile.getMapLocation().x == WD.Game.defaultSettings.columns - 1) && 
+			if((_gameTile.getMapLocation().x == WDGame.defaultSettings.columns - 1) && 
 				searchVectors[i] == WD.Location.MoveDirection.RIGHT)
 				break;
 
-			if(this.debugFlags & WD.Game.debugBehavior)
+			if(this.debugFlags & WDGame.debugBehavior)
 				console.info('[BEHAVIOR] Checking:' + WD.Location.MoveDescription[searchVectors[i]]);
 
 			var nextLocation = WD.Location.TransformLocation(_gameTile.getMapLocation(),searchVectors[i]);
@@ -350,10 +331,10 @@ define(['lib/prototype',
 									val : nextLocationVal
 								};
 								
-			//start a lookahead for reactive tiles					
+								
 			while(WD.Location.LegalRealm(nextLocation) &&  //next tile is in legal space
 					nextLocationVal > 0 &&  //next tile isn't air
-					this.actionBehavior.hasReaction(new WD.GameTile(nextTileParams)) && //next tile has reaction
+					this.actionBehavior.hasReaction(new WDGameTile(nextTileParams)) && //next tile has reaction
 					this.actionBehavior.getAnimationStart() != true) //that next tile didn't start an instant reaction
 				{
 				
@@ -361,7 +342,7 @@ define(['lib/prototype',
 				
 				if(WD.Location.LegalRealm(nextLocation)) {
 					nextLocationVal = this.gameBoard[nextLocation.x][nextLocation.y].val;
-					nextLocationCurrencyVal = WD.GameTile.currencyValues[nextLocationVal];
+					nextLocationCurrencyVal = WDGameTile.currencyValues[nextLocationVal];
 					nextLocationPosition = WD.Location.FindPhysicalLocation(nextLocation);
 
 					nextTileParams = { x : nextLocationPosition.x,
@@ -375,18 +356,16 @@ define(['lib/prototype',
 			}
 		}
 
+		//console.info(this.actionBehavior.getChain());
+
 		if(_gameTile.getQuad()){ //check if this is in a box configuration (e.g. 4 quarters)
 			this.actionBehavior.runBoxCheck(_gameTile);
 		}
 
 		return this.actionBehavior.getAnimationStart();
 	},
-	/**
-	* Zeroes out and upgrades any relevant tiles
-	* @return void
-	*/
 	StartBoardTransition : function(){
-		if(this.debugFlags & WD.Game.debugTransition)
+		if(this.debugFlags & WDGame.debugTransition)
 				console.info('[TRANSITION] Starting Transition');
 
 		var tileGroup = this.actionBehavior.getChain();
@@ -394,35 +373,27 @@ define(['lib/prototype',
 		//lock keys
 		this.keysLocked = true;
 
-		if(this.debugFlags & WD.Game.debugTransition) {
+		if(this.debugFlags & WDGame.debugTransition) {
 			for(var i = 0; i < tileGroup.length; i++){
 				console.info('[TRANSITION] tile ' + i + ' : ' + tileGroup[i].toString());
 			}
 		}
 		
 		for(i = tileGroup.length - 1; i >= 0; i--){
-			//console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
-			this.gameBoard[tileGroup[i].getMapLocation().x][tileGroup[i].getMapLocation().y] = { val : 0, active : WD.GameTile.STATE.INACTIVE }; //for now just make them disappear - we'll add fancy animation later
+			console.info('zeroing out tiles index: x ' + tileGroup[i].getMapLocation().x + ' y ' + tileGroup[i].getMapLocation().y);
+			this.gameBoard[tileGroup[i].getMapLocation().x][tileGroup[i].getMapLocation().y] = { val : 0, active : false }; //for now just make them disappear - we'll add fancy animation later
 		}
-		
-		if(this.debugWindow)
-		WD.Debugger.PrintGameBoard(this.gameBoard,WD.Debugger.printDebugWindow);
-		//WD.Debugger.PrintGameBoard(this.gameBoard,WD.Debugger.printConsole);
+
+		WD.Debugger.PrintGameBoardtoDebugWindow(this.gameBoard);
+
 
 		/**
 		Normally, the first tile in the group (index[0]) will get upgraded, as the remaining tiles in the chain animate into it, but
 		for vertical matches, the last tile in the array should get upgraded, since the first tile will drop to the last tile position
 		**/
-	
-		/*for(i=0;i<tileGroup.length;i++){
-			console.info(tileGroup[i].toString());
-		}*/
-		//var tileUpgradeIndex = (tileGroup[1].getDirection() === WD.Animation.DIRECTION.UP) ? tileGroup.length - 1 : 0,
-		var tileUpgradeIndex = tileGroup.length - 1;
+		var tileUpgradeIndex = (tileGroup[1].getDirection() === WD.Animation.DIRECTION.UP) ? tileGroup.length - 1 : 0,
 		upgradedValue = this.actionBehavior.getUpgradedValue();
-
-		//console.info(tileUpgradeIndex);
-		//console.info(upgradedValue);
+		
 		if(upgradedValue.length ===1 && upgradedValue[0] === 5){ //we just made a dollar - update score and exit the transition
 			this.score += 1;
 			this.scoretracker.updateScore(this.score,this._canvasBufferContext);
@@ -433,26 +404,26 @@ define(['lib/prototype',
 
 
 
-		for(x=0;x<upgradedValue.length;x++){ //sometimes more than one tile will be upgraded
-				this.gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : upgradedValue[x], active : WD.GameTile.STATE.INACTIVE };
+		for(x=0;x<upgradedValue.length;x++){ //more than one tile will be upgraded
+				this.gameBoard[tileGroup[tileUpgradeIndex].getMapLocation().x][tileGroup[tileUpgradeIndex].getMapLocation().y] = { val : upgradedValue[x], active : false };
+				//opts = { xMap : tileGroup[tileUpgradeIndex].getMapLocation().x, yMap : tileGroup[tileUpgradeIndex].getMapLocation().y }
+				//opts = { xMap : tileGroup[tileUpgradeIndex].getMapLocation().x, yMap : tileGroup[tileUpgradeIndex].getMapLocation().y, val : 3 }
 				var opts = { xPos :  tileGroup[tileUpgradeIndex].getPosition().x,
 										yPos : tileGroup[tileUpgradeIndex].getPosition().y,
 										xMap : tileGroup[tileUpgradeIndex].getMapLocation().x,
 										yMap : tileGroup[tileUpgradeIndex].getMapLocation().y,
-										val : upgradedValue[x]
+										val : 2
 									};
-				//console.info('adding child:');
 				//console.info(opts);
-				this.actionBehavior.addChild(new WD.GameTile(opts));
+				this.actionBehavior.addChild(new WDGameTile(opts));
+				//console.info(this.actionBehavior.getChildren())
 				tileUpgradeIndex--;
 		}
-		
+	
 		this.chainMemberIndex = tileGroup.length;
 		
 		document.observe('WD::tileFinished',this.RunChainAnimation.bind(this));
 		document.observe('WD::animationFinished',this.animationFinished.bind(this));
-
-		//this.scanForSpaces();
 
 		if(this.showTransition){
 			this.RunChainAnimation();
@@ -477,7 +448,7 @@ define(['lib/prototype',
 			var animObject = new WD.Animation(_options);
 			animObject.animateBlock(tileGroup[this.chainMemberIndex]);
 		} else { 
-			if(tileGroup[0].getMapLocation().y < (WD.Game.defaultSettings.gameRows - 1)){ //move this only if tile is in the air (gravity move)
+			if(tileGroup[0].getMapLocation().y < (WDGame.defaultSettings.gameRows - 1)){ //move this only if tile is in the air (gravity move)
 					var _options = { animationType : WD.Animation.TYPE.MOVE, 
 								endX : tileGroup[tileGroup.length-1].getCanvasLocation().x, 
 								endY : tileGroup[tileGroup.length-1].getCanvasLocation().y, 
@@ -499,38 +470,34 @@ define(['lib/prototype',
 		}
 	},
 	animationFinished : function(){
-		if(this.debugFlags & WD.Game.debugDrawing)
+		if(this.debugFlags & WDGame.debugDrawing)
 				console.info('[DRAWING] animationFinished()');
 	
 		//if there's another reaction, return
-		var children = this.actionBehavior.getChildren();
+		//var children = this.actionBehavior.getChildren();
 		
+		//for(x=0;x<children.length;x++){
+		//	children[x].checkRestingPlace();
+		//	console.info(children[x]);
+		//}
 
-
-		if(children.length>0){
-			for(x=0;x<children.length;x++){
-				//console.info('checking children');
-				children[x].checkRestingPlace(true);
-			}
-		}
-		
 		this.keysLocked = false;
-		this.CreateActionPiece(this.startingPiecePositionX,this.startingPiecePositionY);		
-		this.UpdateView();
-		
+		this.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
+		this.scanForSpaces();
+		this.Update();
 	},
 	// Debugging and Testing Functions 
-	/*GenerateTestGrid : function(){
+	GenerateTestGrid : function(){
 
 		var x = 0;
 		var y = 0;
 		var testGrid = 'rgb(234,234,234)';
 		var testColor = 'rgb(128,128,128)';
-		for(var i = 0; i < (WD.Game.defaultSettings.gameRows); i++){
-			for(var j = 0;j < WD.Game.defaultSettings.columns; j++){
+		for(var i = 0; i < (WDGame.defaultSettings.gameRows); i++){
+			for(var j = 0;j < WDGame.defaultSettings.columns; j++){
 				this._canvasContext.strokeStyle = testGrid;
 				this._canvasContext.lineWidth = 1;
-				this._canvasContext.strokeRect(x,y,WD.Game.defaultSettings.tileWidth,WD.Game.defaultSettings.tileHeight);
+				this._canvasContext.strokeRect(x,y,WDGame.defaultSettings.tileWidth,WDGame.defaultSettings.tileHeight);
 
 				//draw coords
 				this._canvasContext.fillStyle = testColor;
@@ -539,20 +506,20 @@ define(['lib/prototype',
 				this._canvasContext.fillText(j + "," + i, x + 3,y + 3);
 
 
-				x += WD.Game.defaultSettings.tileWidth;
+				x += WDGame.defaultSettings.tileWidth;
 
 			}
-			y += WD.Game.defaultSettings.tileHeight
+			y += WDGame.defaultSettings.tileHeight
 			x = 0;
 		}
 		
-	}*/,
+	},
 	scanForSpaces : function(){
 		var tileAbove = {};
 		//start with bottom row and move up
-		for(var row = WD.Game.defaultSettings.gameRows - 1; row > -1; row--){
+		for(var row = WDGame.defaultSettings.gameRows - 1; row > -1; row--){
 			totalAcross = 0;
-			for(var col = 0; col < WD.Game.defaultSettings.columns; col++){
+			for(var col = 0; col < WDGame.defaultSettings.columns; col++){
 				var _gameTile = this.gameBoard[col][row];
 				totalAcross += _gameTile.val;
 
@@ -560,37 +527,22 @@ define(['lib/prototype',
 					tileAbove = WD.Location.TransformLocation({ x : col, y : row },WD.Location.MoveDirection.UP)
 					
 					if(this.gameBoard[tileAbove.x][tileAbove.y].val>0){ //this is a floating block
-						//console.info('x: ' + tileAbove.x + ' y: ' + tileAbove.y);
-						//console.info(this.gameBoard[tileAbove.x][tileAbove.y].active);
-						if(this.gameBoard[tileAbove.x][tileAbove.y].active===WD.GameTile.STATE.INACTIVE){
-							this.gameBoard[tileAbove.x][tileAbove.y].active = WD.GameTile.STATE.ANGEL;
-						} else if (this.gameBoard[tileAbove.x][tileAbove.y].active===WD.GameTile.STATE.ANGEL) { //move down one and check reaction
-							//console.info(this.gameBoard[col][row].toString());
-							this.gameBoard[col][row] = this.gameBoard[tileAbove.x][tileAbove.y];
-							this.gameBoard[col][row].active = WD.GameTile.STATE.INACTIVE;
-							this.gameBoard[tileAbove.x][tileAbove.y] = { val : 0, active : WD.GameTile.STATE.INACTIVE }
-						}
-
-						//console.info('x: ' + tileAbove.x + ' y: ' + tileAbove.y);
-						//console.info(this.gameBoard[tileAbove.x][tileAbove.y].active);
-						//console.info('this space:');
-						//console.info('x: ' + col + ' y: ' + row);
-						//console.info(this.gameBoard[col][row]);
-						
+						this.gameBoard[col][row] = this.gameBoard[tileAbove.x][tileAbove.y]; //clone?
+						this.gameBoard[tileAbove.x][tileAbove.y] = { val : 0, active : false }
 					}
 				}
 			}
-			
+			//console.info('row' + row + ' total :' + totalAcross);
 			if(totalAcross===0)
 				break;
-
-			//console.info('row' + row + ' total :' + totalAcross);
 		}
 	}
+
+
 });
 
-
-WD.Game.defaultSettings =  { 
+//some static constants
+WDGame.defaultSettings =  { 
 						columns : 9,						
 						tileWidth : 50,
 						tileHeight : 50,
@@ -600,11 +552,13 @@ WD.Game.defaultSettings =  {
 						actionTileStroke: 'rgb(255,0,0)'
 					}
 
-WD.Game.debugBehavior = 0x1;
-WD.Game.debugMovement = 0x2;
-WD.Game.debugScore = 0x4;
-WD.Game.debugTransition = 0x8;
-WD.Game.debugDrawing = 0x10;
+WDGame.debugBehavior = 0x1;
+WDGame.debugMovement = 0x2;
+WDGame.debugScore = 0x4;
+WDGame.debugTransition = 0x8;
+WDGame.debugDrawing = 0x10;
+
+return WDGame;
 
 
 });
