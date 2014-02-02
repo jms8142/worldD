@@ -8,7 +8,7 @@
 
 <script>var _game,showSkin = true;</script>
 <!--<script data-main="js/main" src="js/require-jquery.js"></script>-->
-<script src="js/lib/jquery.min.js"></script>
+<!--<script src="js/lib/jquery.min.js"></script>
 <script src="js/test/testBoards.js"></script>
 <script src="js/util/BaseExtensions.js"></script>
 <script src="js/util/namespace.js"></script>
@@ -18,8 +18,8 @@
 <script src="js/view/CanvasManager.js"></script>
 <script src="js/control/Location.js"></script>
 <script src="js/drawableElements/GameTile.js"></script>
-<script src="js/control/Game_new.js"></script>
-
+<script src="js/control/Game_new.js"></script>-->
+<script type="text/javascript" data-main="js/main" src="/lib/requirejs/require.js"><jsp:text/></script>
 </head>
 
 <body>
@@ -29,7 +29,7 @@ Canvas not supported.
 <div class="debugWindow" id="debugger"></div>
 <div id='utilinfo'><div class="instructions"><strong>p</strong> to pause</div>
 <a href='#' id='snapshot'>print snapshot to console [step]</a></div>
-
+<!--
 <script>
 $(function(){
 	var opts = {
@@ -48,14 +48,14 @@ $(function(){
 	WD.control.main.init(opts);
 	
 });
-</script>
+</script>-->
 </body>
 </html>
 
 <!--
-	finish converting to AMD
+load new game instead of game
+finish converting to AMD
 need to share gamesettings with gametile elegantly (see Location)
-remove the regular app directory (compare assets first)
 finish converting code to module pattern - some surgery there
 generate docs
 lint everything

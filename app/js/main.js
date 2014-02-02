@@ -1,8 +1,8 @@
 requirejs.config({
-    baseUrl: 'js',
+    baseUrl: 'js'/*,
     paths: {
         prototype: 'lib/prototype'
-    }
+    }*/
 });
 
 require(["control/Game",
@@ -19,6 +19,8 @@ require(["control/Game",
 			showTestGrid : false/*,
 			gameBoard : sandbox*/
 		}
+
+		
 	
 		window._game = new WDGame(opts);
 		

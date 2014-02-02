@@ -1,0 +1,26 @@
+{
+  "name": "World D",
+  "version": "1.0.0",
+  "homepage": "https://github.com/jms8142/worldD",
+  "authors": [
+    "John Skrzypek <jms8142@hotmail.com>"
+  ],
+  "description": "Tetris like currency game",
+  "main": "main.js",
+  "keywords": [
+    "Puzzler"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.0",
+    "requirejs": "~2.1.10"
+  }
+}
