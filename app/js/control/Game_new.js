@@ -4,6 +4,89 @@
 * jQuery ($.extend(),$.bind()), BaseExtensions
 * 
 */
+define(['jquery','control/Location'],function($,Location) {
+
+		//dependencies
+		var canvasmanager = wdapp.view.CanvasManager
+		,main = wdapp.control.main
+		,GameTile = wdapp.drawableElements.GameTile
+		,location = Location
+		,scoretracker = wdapp.drawableElements.ScoreTracker
+		,debug = wdapp.debug.Debugger
+		//private properties
+		,settings = {
+							columns : 9,						
+							tileWidth : 50,
+							tileHeight : 50,
+							populatedRows : 2,
+							gameRows: 10,
+							gameBoard : null,
+							actionTileFill: 'rgb(251,182,182)',
+							actionTileStroke: 'rgb(255,0,0)',
+							constantPiece : null,
+							startingPiece : null,
+							startingPiecePosition : { x : 4,y : 3 },
+							showTestGrid : false,
+							showTransition : false,
+							debugWindow : false,
+							debugFlags : 0x0
+						}
+		,construct //constructor
+		,_canvas = null
+		,_canvasContext = null
+		,_canvasBuffer = null
+		,_canvasBufferContext = null
+		,currentScreen = null
+		,canvasData = {}
+		,inLink = false
+		,keyslocked = false
+		,actionTile = null // the tile in play
+		,keysLocked
+		,paused
+		,timerID;
+
+
+        //return an object to define the "my/shirt" module.
+        return {
+            start : function (opts){
+			$.extend(settings,opts);
+
+			_canvas = document.getElementById('wdCanvas');
+
+				if (_canvas && _canvas.getContext) {
+					_canvasContext = _canvas.getContext('2d');
+					_canvasBuffer = document.createElement('canvas');
+					_canvasBuffer.width = _canvas.width;
+					_canvasBuffer.height = _canvas.height;
+					_canvasBufferContext = _canvasBuffer.getContext('2d');
+
+					canvasData = {
+						_canvasContext : _canvasContext,
+						_canvasBuffer : _canvasBuffer,
+						_canvasBufferContext : _canvasBufferContext
+					}
+
+
+					$(document).bind("assetLoader_DONE",loadTitleScreen);
+					WD.util.AssetLoader.loadAssets();
+
+					//additional game events
+					//Event.observe(document,'WD:gameover',this.endGame.bind(this));
+					$(document).bind("gameover",endGame);
+					$(_canvas).on('mousemove',mouseMoveHandler);
+					$(_canvas).on('click',mouseClickHandler);
+
+				}
+			},
+			getSettings : function(){
+				return settings;
+			}
+        }
+    }
+);
+
+
+/*
 
 WD.namespace('WD.control.main');
 
@@ -12,44 +95,7 @@ WD.namespace('WD.control.main');
 WD.control.main = (function(wdapp,opts){
 
 	
-	//dependencies
-	var canvasmanager = wdapp.view.CanvasManager
-	,main = wdapp.control.main
-	,GameTile = wdapp.drawableElements.GameTile
-	,location = wdapp.control.Location
-	,scoretracker = wdapp.drawableElements.ScoreTracker
-	,debug = wdapp.debug.Debugger
-	//private properties
-	,settings = {
-						columns : 9,						
-						tileWidth : 50,
-						tileHeight : 50,
-						populatedRows : 2,
-						gameRows: 10,
-						gameBoard : null,
-						actionTileFill: 'rgb(251,182,182)',
-						actionTileStroke: 'rgb(255,0,0)',
-						constantPiece : null,
-						startingPiece : null,
-						startingPiecePosition : { x : 4,y : 3 },
-						showTestGrid : false,
-						showTransition : false,
-						debugWindow : false,
-						debugFlags : 0x0
-					}
-	,construct //constructor
-	,_canvas = null
-	,_canvasContext = null
-	,_canvasBuffer = null
-	,_canvasBufferContext = null
-	,currentScreen = null
-	,canvasData = {}
-	,inLink = false
-	,keyslocked = false
-	,actionTile = null /* the tile in play */
-	,keysLocked
-	,paused
-	,timerID
+	
 	//private methods
 	,loadTitleScreen = function(){
 		if(settings.skipTitle) {
@@ -215,11 +261,11 @@ WD.control.main = (function(wdapp,opts){
 
 			//console.info('row' + row + ' total :' + totalAcross);
 		}
-	}
+	}*/
 	/**
 	* @return void
 	* @description - Completely refreshes and updates the canvas to the current state of the game.  To simply add to the canvas, use Draw()
-	**/
+	**/ /*
 	UpdateView = function(){
 		
 		if(!settings.testing) {
@@ -318,11 +364,11 @@ WD.control.main = (function(wdapp,opts){
 		if(typeof(actionTile)==='object'){
 			actionTile.move(WD.Location.MoveDirection.DOWN);
 		}
-	}
+	}*/
 	/* Searches surrounding tiles and returns true if a transition needs to happen
 	* @param object GameTile The action tile in question
 	* @return bool
-	*/
+	*/ /*
 	,Reactive = function(_gameTile){
 		
 		var searchVectors = Array(WD.Location.MoveDirection.LEFT,WD.Location.MoveDirection.DOWN,WD.Location.MoveDirection.RIGHT);
@@ -401,44 +447,6 @@ WD.control.main = (function(wdapp,opts){
 	}
 	
 	
-	//init procedures
-	//public API
-	return {
-		init : function (opts){
-			$.extend(settings,opts);
-
-			_canvas = document.getElementById('wdCanvas');
-
-			if (_canvas && _canvas.getContext) {
-				_canvasContext = _canvas.getContext('2d');
-				_canvasBuffer = document.createElement('canvas');
-				_canvasBuffer.width = _canvas.width;
-				_canvasBuffer.height = _canvas.height;
-				_canvasBufferContext = _canvasBuffer.getContext('2d');
-
-				canvasData = {
-					_canvasContext : _canvasContext,
-					_canvasBuffer : _canvasBuffer,
-					_canvasBufferContext : _canvasBufferContext
-				}
 
 
-				$(document).bind("assetLoader_DONE",loadTitleScreen);
-				WD.util.AssetLoader.loadAssets();
-
-				//additional game events
-				//Event.observe(document,'WD:gameover',this.endGame.bind(this));
-				$(document).bind("gameover",endGame);
-				$(_canvas).on('mousemove',mouseMoveHandler);
-				$(_canvas).on('click',mouseClickHandler);
-
-			}
-		},
-		getSettings : function(){
-			return settings;
-		}
-
-	}
-
-
-}(WD));
+}(WD));*/

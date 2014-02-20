@@ -1,20 +1,18 @@
 requirejs.config({
-    baseUrl: 'js'/*,
+    baseUrl: 'js',
     paths: {
-        prototype: 'lib/prototype'
-    }*/
+        jquery: '/lib/jquery/jquery.min'
+    }
 });
 
-require(["control/Game",
-		 "debug/Debugger",
-		 "test/testBoards"], function(WDGame) {
+require(["control/Game_new"], function(WDGame) {
 		 	
     	var opts = {
 			startingPiece : null, //[0=1,1=5,2=10,3=25]
 			startingPiecePosition : { x : 4,y : 0 },
 			constantPiece : null,
 			debugWindow : true,
-			debugShow : WDGame.debugDrawing,
+			/*debugShow : WDGame.debugDrawing,*/
 			showTransition : false,
 			showTestGrid : false/*,
 			gameBoard : sandbox*/
@@ -22,6 +20,6 @@ require(["control/Game",
 
 		
 	
-		window._game = new WDGame(opts);
+		WDGame.start(opts);
 		
 });

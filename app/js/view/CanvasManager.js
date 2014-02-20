@@ -1,4 +1,4 @@
-define(['prototype'],function(){
+define(function(){
 
 
 	var WDCanvasManager = Class.create({});
