@@ -1,7 +1,7 @@
-define(['prototype'],function(){
+define(function(){
 
 
-		var WDAssetLoader = Class.create({});
+		var WDAssetLoader = {};
 
 		WDAssetLoader.ImageAssets = [{ name : 'objects', src : 'assets/objects.png', type : 'image/png' },
 							  { name : 'text', src : 'assets/text.png', type : 'image/png' },

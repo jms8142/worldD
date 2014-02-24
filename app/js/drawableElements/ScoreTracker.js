@@ -4,9 +4,12 @@
 * 
 */
 
-WD.namespace('WD.drawableElements.ScoreTracker');
+define(function() {
 
-WD.drawableElements.ScoreTracker = (function(wdapp){
+
+
+
+var ScoreTracker = (function(wdapp){
 	var assetLoader = wdapp.util.AssetLoader,
 	backgroundColor = 'rgb(77,77,77)',
 	height = 100,
@@ -118,4 +121,8 @@ WD.drawableElements.ScoreTracker = (function(wdapp){
 		}
 	}
 
-}(WD));
+});
+
+	return ScoreTracker;
+
+});

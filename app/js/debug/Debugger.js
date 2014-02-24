@@ -1,8 +1,12 @@
-define(['prototype'],function(){
+/**
+* @todo - add functions to literal initialization
+* 
+*/
 
-window.WD || ( window.WD = {} ) //application namespace
+define(function(){
 
-WD.Debugger = Class.create({
+
+var Debugger = {
 	initialize : function(){	
 		var _this = this;
 		jQuery('.step').live('click',function(e){
@@ -14,10 +18,10 @@ WD.Debugger = Class.create({
 		jQuery('.utilinfo').append('<a class="step" href="#" id=' + step + '>' + step + '</a>');
 	}
 
-});
+};
 
 
-WD.Debugger.PrintGameBoardtoDebugWindow = function(_gameboard){
+Debugger.PrintGameBoardtoDebugWindow = function(_gameboard){
 		var HTMLout = '';
 		for(var row = 0; row < WD.Game.defaultSettings.gameRows; row++){
 			HTMLout += '<tr>';
@@ -32,7 +36,7 @@ WD.Debugger.PrintGameBoardtoDebugWindow = function(_gameboard){
 
 }
 
-WD.Debugger.PrintGameBoardtoConsole = function(rows,cols,_gameBoard, clr){
+Debugger.PrintGameBoardtoConsole = function(rows,cols,_gameBoard, clr){
 	if(clr)
 		console.clear();
 
@@ -46,6 +50,7 @@ WD.Debugger.PrintGameBoardtoConsole = function(rows,cols,_gameBoard, clr){
 		console.info('[row ' + (row + 1) + '] \t' +  lineout.substr(0,lineout.length-1));
 	}
 }
+
 
 
 

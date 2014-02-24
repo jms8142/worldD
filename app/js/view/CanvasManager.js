@@ -1,7 +1,7 @@
 define(function(){
 
 
-	var WDCanvasManager = Class.create({});
+	var WDCanvasManager = {};
 
 
 	WDCanvasManager.SCREENS = { TITLE : 0, PAUSE : 1, GAMEOVER : 2, CREDITS : 3, HOWTO : 4 };
