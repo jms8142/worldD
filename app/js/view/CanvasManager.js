@@ -1,4 +1,4 @@
-define(function(){
+define(['util/AssetLoader'],function(AssetLoader){
 
 
 	var WDCanvasManager = {};
@@ -6,23 +6,24 @@ define(function(){
 
 	WDCanvasManager.SCREENS = { TITLE : 0, PAUSE : 1, GAMEOVER : 2, CREDITS : 3, HOWTO : 4 };
 
-	WDCanvasManager.Screen = function(screen,game){
+	WDCanvasManager.Screen = function(screen,game,draw){
 		switch (screen) {
 			case WDCanvasManager.SCREENS.PAUSE:
-				var pausedImg = WD.AssetLoader.getResource('text'),
+				var pausedImg = AssetLoader.getResource('text'),
 				xPos = (game._canvasBufferContext.canvas.width / 2) - (pausedImg.width / 2),
 				yPos = (game._canvasBufferContext.canvas.height / 2) - (pausedImg.height / 2);
 				game._canvasBufferContext.drawImage(pausedImg,0,0,320,37,xPos,yPos,320,37);
 			break;
 			case WDCanvasManager.SCREENS.TITLE:
-				var titleImg = WD.AssetLoader.getResource('background'),
-				textImg = WD.AssetLoader.getResource('text'),
+				var titleImg = AssetLoader.getResource('background'),
+				textImg = AssetLoader.getResource('text'),
 				xPos = (game._canvasBufferContext.canvas.width / 2) - (titleImg.width / 2),
 				yPos = (game._canvasBufferContext.canvas.height / 2) - (titleImg.height / 2),
 				linkText = "START";
 
 				game._canvasBufferContext.drawImage(titleImg,xPos,yPos);
 				var xTitle = (game._canvasBufferContext.canvas.width / 2) - 160;
+				//debugger;
 				game._canvasBufferContext.drawImage(textImg,0,40,320,30,xTitle,200,320,30);
 
 				//draw link text
@@ -33,11 +34,11 @@ define(function(){
 				WDCanvasManager.linkHeight = parseInt(game._canvasBufferContext.font);
 				game._canvasBufferContext.fillText(linkText,(game._canvasBufferContext.canvas.width / 2) - (WDCanvasManager.linkWidth / 2),game._canvasBufferContext.canvas.height / 2 + (WDCanvasManager.linkHeight / 2));
 
-				game.Draw();
+				draw();
 				break;
 			case WDCanvasManager.SCREENS.GAMEOVER:
-				var titleImg = WD.AssetLoader.getResource('background'),
-				textImg = WD.AssetLoader.getResource('text'),
+				var titleImg = AssetLoader.getResource('background'),
+				textImg = AssetLoader.getResource('text'),
 				xPos = (game._canvasBufferContext.canvas.width / 2) - (titleImg.width / 2),
 				yPos = (game._canvasBufferContext.canvas.height / 2) - (titleImg.height / 2);
 
@@ -55,7 +56,7 @@ define(function(){
 				game._canvasBufferContext.fillText(linkText,(game._canvasBufferContext.canvas.width / 2) - (WDCanvasManager.linkWidth / 2),game._canvasBufferContext.canvas.height / 2 + (WDCanvasManager.linkHeight / 2));
 
 
-				game.Draw();
+				draw();
 			break;
 			case WDCanvasManager.SCREENS.TITLE:
 			break;

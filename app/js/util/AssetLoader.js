@@ -15,47 +15,72 @@ define(function(){
 
 		WDAssetLoader.resources = []; //better as hashmap
 
+
 		WDAssetLoader.loadAssets = function(){
-			WDAssetLoader.ImageAssets.each(function(asset){
+			//console.info('loadAssets');
+			
+			//for(var i = 0; i < WDAssetLoader.ImageAssets.length; i++){
+			//for(var asset in WDAssetLoader.ImageAssets) {
+
+			//	if (WDAssetLoader.ImageAssets.hasOwnProperty(asset)) {
+				
+				 WDAssetLoader.ImageAssets.forEach(function(_asset){
+
+
 					var img = new Image();
-					img.src = asset.src;
+					//_asset = WDAssetLoader.ImageAssets[asset];
+					//console.info(_asset);
+					img.src = _asset.src;
+					
 					img.onload = function(e){
-						WDAssetLoader.resources.push({ assetName : asset.name, res : img });
+						//console.info(e);
+						//console.info({ assetName : _asset.name, res : img });
+						WDAssetLoader.resources.push({ assetName : _asset.name, res : img });
 						WDAssetLoader.checkProgress();
-					}		
-			});
+					}	
+				});
+				//}
+			//}
 		}
 
 		WDAssetLoader.loadAudioAssets = function(){
-			WDAssetLoader.AudioAssets.each(function(asset){	
-					var audio = new Audio();
+
+			for(var i = 0; i < WDAssetLoader.AudioAssets.length; i++){
+				var audio = new Audio(),
+				asset = WDAssetLoader.AudioAssets[i];
+
 					if(!!audio.canPlayType(asset.type)) {
 						audio.setAttribute('src',asset.src);
 						audio.load();
 						WDAssetLoader.resources.push({ assetName : asset.name, res : audio });
 					}
-				
-			});
-			Event.fire(document,'assetLoader:done');
+
+			}
+
+			$(document).trigger('assetLoader_DONE');
 		}
 
 
 		WDAssetLoader.checkProgress = function(){
 			if(WDAssetLoader.resources.length === WDAssetLoader.ImageAssets.length){
 				//chain to load audio assets
+				//debugger;
 				WDAssetLoader.loadAudioAssets();
 			}
 		}
 
 		WDAssetLoader.getResource = function(resourceName){
 			var assetImg;
-
-			WDAssetLoader.resources.each(function(resource){
+			//debugger;
+			for(var i = 0; i < WDAssetLoader.resources.length; i++){
+				var resource = WDAssetLoader.resources[i];
 				if(resource.assetName===resourceName) {
 					assetImg = resource.res;
 					//needs to break here
 				}
-			});
+
+			}
+			
 
 			return assetImg;
 		}
