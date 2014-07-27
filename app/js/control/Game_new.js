@@ -12,6 +12,8 @@ define(['jquery',
 		'debug/Debugger',
 		'util/AssetLoader'],function($,Location,CanvasManager,GameTile,ScoreTracker,Debugger,AssetLoader) {
 
+
+			//debugger;
 		
 		var settings = {
 							columns : 9,						

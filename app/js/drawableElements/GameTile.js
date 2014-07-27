@@ -2,6 +2,9 @@ define(['control/Location'],function(WDLocation){
 
 		
 	var WDGameTile = {
+		STATE : {
+			INACTIVE : 0
+		},
 		xPos : 0,
 		yPos : 0,
 		xMap : 0,
@@ -204,7 +207,7 @@ define(['control/Location'],function(WDLocation){
 	};
 		//static properties
 		WDGameTile.currencyValues = [-1,1,5,10,25];
-		
+		//debugger;
 		return WDGameTile;
 
 
