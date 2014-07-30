@@ -1,6 +1,16 @@
-define(['util/AssetLoader'],function(AssetLoader){
+/**
+* CanvasManager
+* @class CanvasManager
+* @constructor
+* @module View
+* @requires
+* 
+*/
+define([
+	'util/AssetLoader'
+	],function(AssetLoader){
 
-
+		
 	var WDCanvasManager = {};
 
 
@@ -68,7 +78,8 @@ define(['util/AssetLoader'],function(AssetLoader){
 	}
 
 	WDCanvasManager.DrawCanvasBackground = function(_canvasBufferContext){
-			if(!_game.settings.showTestGrid){
+		
+			if(!_wd.getSettings().showTestGrid){
 				var my_gradient = _canvasBufferContext.createLinearGradient(0,0,0,_canvasBufferContext.canvas.height-50);
 				my_gradient.addColorStop(0,'rgb(68,134,146)');
 				my_gradient.addColorStop(.75,'rgb(34,128,69)');
