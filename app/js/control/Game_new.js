@@ -10,7 +10,8 @@ define(['jquery',
 		'drawableElements/GameTile',
 		'drawableElements/ScoreTracker',
 		'debug/Debugger',
-		'util/AssetLoader'],function($,Location,CanvasManager,GameTile,ScoreTracker,Debugger,AssetLoader) {
+		'util/AssetLoader',
+		'util/Helpers'],function($,Location,CanvasManager,GameTile,ScoreTracker,Debugger,AssetLoader,Helpers) {
 
 
 			//debugger;
@@ -71,8 +72,8 @@ define(['jquery',
 			}
 			,
 			CreateTileMap = function(){
-				debugger;
-				gameBoard = Array.matrix(settings.columns,settings.gameRows,{ val : 0, active : GameTile.STATE.INACTIVE });
+				//debugger;
+				gameBoard = Helpers.matrix(settings.columns,settings.gameRows,{ val : 0, active : GameTile.STATE.INACTIVE });
 			},
 			DrawGameTiles = function(){
 				
@@ -148,7 +149,7 @@ define(['jquery',
 				if(settings.showTestGrid){
 					GenerateTestGrid();
 				} else {
-					canvasmanager.DrawCanvasBackground(_canvasBufferContext);
+					CanvasManager.DrawCanvasBackground(_canvasBufferContext);
 				}
 
 				//starting piece
