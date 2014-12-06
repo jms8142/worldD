@@ -1,6 +1,6 @@
 /**
 * Main game controller class
-* Dependencies: 
+* Dependencies: WDGameTile
 * jQuery ($.extend(),$.bind()), BaseExtensions
 * 
 */
@@ -70,7 +70,6 @@ define(['jquery',
 			}
 			,
 			CreateTileMap = function(){
-				debugger;
 				gameBoard = Helpers.matrix(settings.columns,settings.gameRows,{ val : 0, active : GameTile.STATE.INACTIVE });
 			},
 			DrawGameTiles = function(){
@@ -167,10 +166,11 @@ define(['jquery',
 			}
 			,CreateActionPiece = function(x,y,val) {
 				
-				if(settings.constantPiece)
+				if(settings.constantPiece) {
 					val = settings.constantPiece;
-				debugger;
-				actionTile = new GameTile({ xMap : x, yMap : y},settings)
+				}
+				
+				actionTile = GameTile.initialize({ xMap : x, yMap : y},settings);
 
 				
 				if(val === undefined) 

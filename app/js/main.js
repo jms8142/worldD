@@ -1,7 +1,7 @@
 requirejs.config({
     baseUrl: 'js',
     paths: {
-        jquery: '/lib/jquery/dist/jquery.min'
+        jquery: '/vendor/jquery/dist/jquery.min'
     }
 });
 

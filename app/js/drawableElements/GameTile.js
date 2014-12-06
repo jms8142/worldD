@@ -48,8 +48,7 @@ define(['control/Location'],function(WDLocation){
 			this.currencyValue = (opts.curVal===undefined) ? WD.GameTile.currencyValues[this._val] : opts.curVal;
 
 			this.activePic = WD.AssetLoader.getResource('objects');
-			debugger;
-			//this.STATE = 
+			
 		},
 		getQuad : function(){
 			return this.quad;
@@ -208,9 +207,9 @@ define(['control/Location'],function(WDLocation){
 		}
 	};
 		//static properties
-		WDGameTile.currencyValues = [-1,1,5,10,25];
+		//WDGameTile.currencyValues = [-1,1,5,10,25];
 		//debugger;
-		return WDGameTile.initialize;
+		return WDGameTile;
 
 
 });
