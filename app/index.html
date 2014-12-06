@@ -19,7 +19,7 @@
 <script src="js/control/Location.js"></script>
 <script src="js/drawableElements/GameTile.js"></script>
 <script src="js/control/Game_new.js"></script>-->
-<script type="text/javascript" data-main="js/main" src="/lib/requirejs/require.js"><jsp:text/></script>
+<script type="text/javascript" data-main="js/main" src="vendor/requirejs/require.js"><jsp:text/></script>
 </head>
 
 <body>
@@ -53,7 +53,7 @@ $(function(){
 </html>
 
 <!--
-GameTile needs to have a constructor
+rethink the circular referece in Location
 need to share gamesettings with gametile elegantly (see Location)
 finish converting code to module pattern - some surgery there
 generate docs

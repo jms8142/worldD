@@ -1,11 +1,11 @@
 requirejs.config({
     baseUrl: 'js',
     paths: {
-        jquery: '/lib/jquery/jquery.min'
+        jquery: '/vendor/jquery/dist/jquery.min'
     }
 });
 
-require(["control/Game_new"], function(WDGame) {
+require(["control/Game"], function(Game) {
 		 	
     	var opts = {
 			startingPiece : null, //[0=1,1=5,2=10,3=25]
@@ -20,6 +20,6 @@ require(["control/Game_new"], function(WDGame) {
 
 		
 	
-		WDGame.start(opts);
-		
+		window._wd = Game;
+		_wd.start(opts);
 });
