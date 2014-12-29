@@ -5,19 +5,19 @@ requirejs.config({
     }
 });
 
-require(["control/Game"], function(Game) {
-		 	
+require(["control/Game_new"], function(Game) {
+		 
     	var opts = {
 			startingPiece : null, //[0=1,1=5,2=10,3=25]
 			startingPiecePosition : { x : 4,y : 0 },
 			constantPiece : null,
 			debugWindow : true,
-			/*debugShow : WDGame.debugDrawing,*/
+			//debugShow : WDGame.debugDrawing,
 			showTransition : false,
 			showTestGrid : false/*,
 			gameBoard : sandbox*/
 		}
-
+		
 		
 	
 		window._wd = Game;

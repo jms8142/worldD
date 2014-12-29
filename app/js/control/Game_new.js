@@ -11,9 +11,9 @@ define(['jquery',
 		'drawableElements/ScoreTracker',
 		'debug/Debugger',
 		'util/AssetLoader',
-		'util/Helpers'],function($,Location,CanvasManager,GameTile,ScoreTracker,Debugger,AssetLoader,Helpers) {
+		'util/Helpers'],function($,WDLocation,CanvasManager,GameTile,ScoreTracker,Debugger,AssetLoader,Helpers) {
 
-
+			//console.info('gamenew')
 			//debugger;
 		
 		var settings = {
@@ -51,9 +51,9 @@ define(['jquery',
 
 
 		/* START MAIN */
-		,main = (function(wdapp,opts){
+		,main = (function(ScoreTracker){
 
-	
+			debugger;
 	
 			//private methods
 			var loadTitleScreen = function(){
@@ -67,12 +67,12 @@ define(['jquery',
 				_canvasContext.drawImage(_canvasBuffer, 0, 0);
 			}
 			,ClearCanvas = function(){
+				debugger;
 				_canvasContext.clearRect(0,0,_canvas.width,_canvas.height-scoretracker.getHeight()); //minus scoreboard
 				_canvasBufferContext.clearRect(0,0,_canvasBuffer.width,_canvasBuffer.height-scoretracker.getHeight());
 			}
 			,
 			CreateTileMap = function(){
-				//debugger;
 				gameBoard = Helpers.matrix(settings.columns,settings.gameRows,{ val : 0, active : GameTile.STATE.INACTIVE });
 			},
 			DrawGameTiles = function(){
@@ -158,7 +158,7 @@ define(['jquery',
 				
 				scoretracker.drawScoreBoard(_canvasBufferContext);
 				
-
+				debugger;
 				Draw();
 			
 				if(settings.debugWindow)
@@ -172,11 +172,11 @@ define(['jquery',
 				if(settings.constantPiece)
 					val = settings.constantPiece;
 
-				actionTile = new GameTile({ xMap : x, yMap : y},settings)
-
 				
-				if(val === undefined) 
-					var singlePieceVal = (Math.floor(Math.random()*(actionTile.getCurrencyValues().length-1))) + 1;
+				actionTile = new GameTile({ xMap : x, yMap : y},settings)
+				
+				if(val === null) 
+					var singlePieceVal = (Math.floor(Math.random()*(actionTile.currencyValues.length-1))) + 1;
 				else
 					var singlePieceVal = val;
 
@@ -198,7 +198,8 @@ define(['jquery',
 						totalAcross += _gameTile.val;
 
 						if(_gameTile.val===0) { //lookup
-							tileAbove = location.TransformLocation({ x : col, y : row },location.MoveDirection.UP,settings)
+							
+							tileAbove = WDLocation.TransformLocation({ x : col, y : row },WDLocation.MoveDirection.UP,settings)
 							
 							if(gameBoard[tileAbove.x][tileAbove.y].val>0){ //this is a floating block
 								//console.info('x: ' + tileAbove.x + ' y: ' + tileAbove.y);
@@ -229,7 +230,7 @@ define(['jquery',
 			,UpdateView = function(){
 				
 				if(!settings.testing) {
-					if(settings.debugFlags & wdapp.DEBUG.DRAWING)
+					if(settings.debugFlags & _wd.DEBUG.DRAWING)
 							console.info('[DRAWING] Updating Canvas');
 
 					ClearCanvas();
@@ -415,7 +416,7 @@ define(['jquery',
 				mouseClickHandler : mouseClickHandler
 			}
 	
-		}());
+		}(ScoreTracker));
 /* END MAIN */
 
 //console.dir(main);
@@ -447,7 +448,7 @@ define(['jquery',
 
 					
 					$(document).on("assetLoader_DONE",main.loadTitleScreen);
-					
+					//debugger;
 					AssetLoader.loadAssets();
 
 					//additional game events
@@ -461,6 +462,23 @@ define(['jquery',
 			},
 			getSettings : function(){
 				return settings;
+			},
+			defaultSettings : { 
+						columns : 9,						
+						tileWidth : 50,
+						tileHeight : 50,
+						populatedRows : 2,
+						gameRows: 10,
+						actionTileFill: 'rgb(251,182,182)',
+						actionTileStroke: 'rgb(255,0,0)'
+					},
+
+			DEBUG : {
+				BEHAVIOR : 0x1,
+				MOVEMENT : 0x2,
+				SCORE : 0x4,
+				TRANSITION : 0x8,
+				DRAWING : 0x10
 			}
         }
     }
