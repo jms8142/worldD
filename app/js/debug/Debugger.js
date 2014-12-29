@@ -51,7 +51,7 @@ Debugger.PrintGameBoardtoConsole = function(rows,cols,_gameBoard, clr){
 	}
 }
 
-
+return Debugger;
 
 
 }); //require.js

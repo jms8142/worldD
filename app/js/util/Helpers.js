@@ -8,7 +8,8 @@
 */
 define(function() {
 
-	var utils = {
+
+	return {
 		/**
 		* Converts array into gameboard matrix
 		*
@@ -18,6 +19,7 @@ define(function() {
 		* @param {Object} config.name The name on the config object
 		*/
 		matrix:  function(m,n,init){
+
 			var i, a, j, mat = []; 
 			for(i = 0; i < m; i += 1){
 				a = [];
@@ -29,8 +31,4 @@ define(function() {
 			return mat;
 		}
 	}
-	
-	return utils;
-
-
 });
