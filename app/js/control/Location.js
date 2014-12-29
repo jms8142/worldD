@@ -4,9 +4,11 @@
 * jQuery ($.extend(),$.bind()), BaseExtensions
 * 
 */
-define(['require','control/Game'],function(require,WDGame) {
+define(['view/CanvasManager',
+		'drawableElements/GameTile',
+		'drawableElements/ScoreTracker',
+		'debug/Debugger',],function(can,tile,score,debug) {
 
-		debugger;
 
 	var Location = {
 
@@ -49,8 +51,9 @@ define(['require','control/Game'],function(require,WDGame) {
 	FindPhysicalLocation : function(coords) {
 			var xMap = coords.x;
 			var yMap = coords.y;
-			xMap = coords.x * WDGame.defaultSettings.tileWidth;
-			yMap = coords.y * WDGame.defaultSettings.tileHeight;
+			
+			xMap = coords.x * _wd.getSettings()['tileWidth'];
+			yMap = coords.y * _wd.getSettings()['tileHeight'];
 			return { x : xMap, y : yMap };
 	},
 

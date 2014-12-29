@@ -5,14 +5,17 @@
 * 
 */
 define(['jquery',
-		'control/Location',
+		'util/AssetLoader',
 		'view/CanvasManager',
-		'drawableElements/GameTile',
+		'util/Helpers',
+		'drawableElements/GameTile'/*,
+		'control/Location',
 		'drawableElements/ScoreTracker',
 		'debug/Debugger',
-		'util/AssetLoader',
-		'util/Helpers'],function($,Location,CanvasManager,GameTile,ScoreTracker,Debugger,AssetLoader,Helpers) {
+		
+		*/],function($,AssetLoader,CanvasManager,Helpers,GameTile,ScoreTracker,Debugger) {
 
+			//debugger;
 		
 		var settings = {
 							columns : 9,						
@@ -424,11 +427,13 @@ define(['jquery',
 
 
         
-        return {
+        WDGame = {
             start : function (opts){
 				$.extend(settings,opts);
 
 				_canvas = document.getElementById('wdCanvas');
+				
+				window._wd = this || _wd;
 
 				if (_canvas && _canvas.getContext) {
 					_canvasContext = _canvas.getContext('2d');
@@ -445,7 +450,7 @@ define(['jquery',
 
 					
 					$(document).on("assetLoader_DONE",main.loadTitleScreen);
-					
+					//debugger;
 					AssetLoader.loadAssets();
 
 					//additional game events
@@ -461,8 +466,9 @@ define(['jquery',
 				return settings;
 			}
         }
-    }
-);
+    return WDGame;
+
+ });
 
 
 /*

@@ -45,7 +45,8 @@ define(['control/Location'],function(WDLocation){
 			this.xPos = (opts.xPos===undefined) ? WDLocation.FindPhysicalLocation({x : this.xMap, y : this.yMap}).x : opts.xPos;
 			this.yPos = (opts.yPos===undefined) ? WDLocation.FindPhysicalLocation({x : this.xMap, y : this.yMap}).y : opts.yPos;
 			this._val = opts.val;
-			this.currencyValue = (opts.curVal===undefined) ? WD.GameTile.currencyValues[this._val] : opts.curVal;
+			debugger;
+			this.currencyValue = (opts.curVal===undefined) ? this.currencyValues[this._val] : opts.curVal;
 
 			this.activePic = WD.AssetLoader.getResource('objects');
 			
@@ -207,7 +208,7 @@ define(['control/Location'],function(WDLocation){
 		}
 	};
 		//static properties
-		//WDGameTile.currencyValues = [-1,1,5,10,25];
+		WDGameTile.currencyValues = [-1,1,5,10,25];
 		//debugger;
 		return WDGameTile;
 

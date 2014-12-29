@@ -19,7 +19,8 @@ require(["control/Game"], function(Game) {
 		}
 
 		
-	
-		window._wd = Game;
-		_wd.start(opts);
+		//debugger;
+		//window._wd = Game;
+		//_wd.start(opts);
+		Game.start(opts);
 });

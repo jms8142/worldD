@@ -1,22 +1,20 @@
 define(function(){
 
 
-		var WDAssetLoader = {};
+		var WDAssetLoader = {
 
-		WDAssetLoader.ImageAssets = [{ name : 'objects', src : 'assets/objects.png', type : 'image/png' },
+			ImageAssets : [{ name : 'objects', src : 'assets/objects.png', type : 'image/png' },
 							  { name : 'text', src : 'assets/text.png', type : 'image/png' },
-							  { name : 'background', src : 'assets/background.png', type : 'image/png' }];
+							  { name : 'background', src : 'assets/background.png', type : 'image/png' }],
 
-		//audio loading is a little different from Image() so for now we'll seperate them and load after the images
-		WDAssetLoader.AudioAssets =  [{ name : 'dollarSound', src : 'assets/dollar.oggvorbis.ogg', type : 'audio/ogg'},
-										{ name : 'matchSound', src : 'assets/match.oggvorbis.ogg', type : 'audio/ogg'}];
+			//audio loading is a little different from Image() so for now we'll seperate them and load after the images
+			AudioAssets :  [{ name : 'dollarSound', src : 'assets/dollar.oggvorbis.ogg', type : 'audio/ogg'},
+										{ name : 'matchSound', src : 'assets/match.oggvorbis.ogg', type : 'audio/ogg'}],
 
-
-
-		WDAssetLoader.resources = []; //better as hashmap
+			resources : [], //better as hashmap
 
 
-		WDAssetLoader.loadAssets = function(){
+			loadAssets : function(){
 			//console.info('loadAssets');
 			
 			//for(var i = 0; i < WDAssetLoader.ImageAssets.length; i++){
@@ -41,51 +39,52 @@ define(function(){
 				});
 				//}
 			//}
-		}
+			},
 
-		WDAssetLoader.loadAudioAssets = function(){
+			loadAudioAssets : function(){
 
-			for(var i = 0; i < WDAssetLoader.AudioAssets.length; i++){
-				var audio = new Audio(),
-				asset = WDAssetLoader.AudioAssets[i];
+				for(var i = 0; i < WDAssetLoader.AudioAssets.length; i++){
+					var audio = new Audio(),
+					asset = WDAssetLoader.AudioAssets[i];
 
-					if(!!audio.canPlayType(asset.type)) {
-						audio.setAttribute('src',asset.src);
-						audio.load();
-						WDAssetLoader.resources.push({ assetName : asset.name, res : audio });
-					}
+						if(!!audio.canPlayType(asset.type)) {
+							audio.setAttribute('src',asset.src);
+							audio.load();
+							WDAssetLoader.resources.push({ assetName : asset.name, res : audio });
+						}
 
-			}
-
-			$(document).trigger('assetLoader_DONE');
-		}
-
-
-		WDAssetLoader.checkProgress = function(){
-			if(WDAssetLoader.resources.length === WDAssetLoader.ImageAssets.length){
-				//chain to load audio assets
-				//debugger;
-				WDAssetLoader.loadAudioAssets();
-			}
-		}
-
-		WDAssetLoader.getResource = function(resourceName){
-			var assetImg;
-			//debugger;
-			for(var i = 0; i < WDAssetLoader.resources.length; i++){
-				var resource = WDAssetLoader.resources[i];
-				if(resource.assetName===resourceName) {
-					assetImg = resource.res;
-					//needs to break here
 				}
 
-			}
-			
+				$(document).trigger('assetLoader_DONE');
+			},
 
-			return assetImg;
+
+			checkProgress : function(){
+				if(WDAssetLoader.resources.length === WDAssetLoader.ImageAssets.length){
+					//chain to load audio assets
+					//debugger;
+					WDAssetLoader.loadAudioAssets();
+				}
+			},
+
+			getResource : function(resourceName){
+				var assetImg;
+				//debugger;
+				for(var i = 0; i < WDAssetLoader.resources.length; i++){
+					var resource = WDAssetLoader.resources[i];
+					if(resource.assetName===resourceName) {
+						assetImg = resource.res;
+						//needs to break here
+					}
+
+				}
+				
+
+				return assetImg;
+			}
 		}
 
-
+		
 		return WDAssetLoader;
 
 });
