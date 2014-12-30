@@ -4,27 +4,22 @@
 * 
 */
 
-define(function() {
+define(['util/AssetLoader'],function(AssetLoader) {
 
+debugger;
 
-
-
-var ScoreTracker = (function(wdapp){
-	var assetLoader = wdapp.util.AssetLoader,
-	backgroundColor = 'rgb(77,77,77)',
-	height = 100,
-	textColor = '#FFF',
-	textSpaceWidth = 90,
-	activeSquare = 'rgb(33,128,53)',
-	inActiveSquare = 'rgb(106,91,91)',
-	font = '16px Arial Black',
-	textPosition = { 'x' : 0, 'y' : 0},
-	dollarSign = new Image(),
-	canvasEl = null,
-	construct;
-
-
-	updateScore = function(score,_canvasContext){
+var ScoreTracker = {
+	backgroundColor : 'rgb(77,77,77)',
+	height : 100,
+	textColor : '#FFF',
+	textSpaceWidth : 90,
+	activeSquare : 'rgb(33,128,53)',
+	inActiveSquare : 'rgb(106,91,91)',
+	font : '16px Arial Black',
+	textPosition : { 'x' : 0, 'y' : 0},
+	dollarSign : new Image(),
+	canvasEl : null,
+	updateScore : function(score,_canvasContext){
 		var scoreTop = canvasEl.height-height;
 		
 		//clear first
@@ -47,9 +42,9 @@ var ScoreTracker = (function(wdapp){
 		if(score>0) {
 			WD.AssetLoader.getResource('dollarSound').play();
 		}
-	}
+	},
 
-	setToGradient = function(_canvasContext){
+	setToGradient : function(_canvasContext){
 		//console.info(td_scoretracker.HEIGHT);
 		//draw background
 		var my_gradient = _canvasContext.createLinearGradient(0,canvasEl.height-height,0, canvasEl.height);
@@ -57,9 +52,9 @@ var ScoreTracker = (function(wdapp){
 		my_gradient.addColorStop(.5,"rgb(88,88,88)");
 		my_gradient.addColorStop(1,"rgb(58,58,58)");
 		_canvasContext.fillStyle = my_gradient;//this.backgroundColor;
-	}
+	},
 
-	drawOutlines = function(_canvasContext){
+	drawOutlines : function(_canvasContext){
 		_canvasContext.lineWidth = 1;
 
 		_canvasContext.strokeStyle = "#292929";
@@ -73,9 +68,9 @@ var ScoreTracker = (function(wdapp){
 		_canvasContext.moveTo(0,503);
 		_canvasContext.lineTo(_canvasContext.canvas.width,503);
 		_canvasContext.stroke();
-	}
+	},
 
-	drawMoneySquares = function(num,_canvasContext,score){
+	drawMoneySquares : function(num,_canvasContext,score){
 		
 		score = (score!==undefined) ? Math.round(score) : score = 0;
 		
@@ -100,12 +95,12 @@ var ScoreTracker = (function(wdapp){
 		}
 
 
-	}
-
-	
-	return {
-		drawScoreBoard : function(_canvasContext){
-		
+	},
+	getHeight : function(){
+		return this.height;
+	},
+	drawScoreBoard : function(_canvasContext){
+			debugger;
 			dollarSign = assetLoader.getResource('objects');
 			canvasEl = document.getElementById('wdCanvas');
 				
@@ -115,13 +110,9 @@ var ScoreTracker = (function(wdapp){
 
 			updateScore(0,_canvasContext);
 
-		},
-		getHeight : function(){
-			return height;
-		}
 	}
+}
 
-});
 
 	return ScoreTracker;
 

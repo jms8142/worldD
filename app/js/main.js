@@ -18,9 +18,6 @@ require(["control/Game_new"], function(Game) {
 			gameBoard : sandbox*/
 		}
 		
-		
-		//debugger;
-		//window._wd = Game;
-		//_wd.start(opts);
-		Game.start(opts);
+		window._wd = Game;
+		_wd.start(opts);
 });

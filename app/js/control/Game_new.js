@@ -11,7 +11,7 @@ define(['jquery',
 		'drawableElements/ScoreTracker',
 		'debug/Debugger',
 		'util/AssetLoader',
-		'util/Helpers'],function($,WDLocation,CanvasManager,GameTile,ScoreTracker,Debugger,AssetLoader,Helpers) {
+		'util/Helpers'],function($,WDLocation,canvasmanager,GameTile,ScoreTracker,Debugger,AssetLoader,Helpers) {
 
 			//console.info('gamenew')
 			//debugger;
@@ -46,30 +46,30 @@ define(['jquery',
 		,keysLocked
 		,paused
 		,timerID
-
-
-
-
 		/* START MAIN */
-		,main = (function(ScoreTracker){
-
-			debugger;
+		,main = (function(){
+			var _cx;
+			
+			//debugger;
 	
 			//private methods
 			var loadTitleScreen = function(){
 				if(settings.skipTitle) {
 					startGame();
 				} else {
-					currentScreen = CanvasManager.Screen(CanvasManager.SCREENS.TITLE, canvasData,Draw);
+					//debugger;
+					currentScreen = _cx.CanvasManager.Screen(_cx.CanvasManager.SCREENS.TITLE, canvasData,Draw);
 				}
+			},
+			setContext = function(context){
+				_cx = context;
 			}
 			,Draw = function(){
 				_canvasContext.drawImage(_canvasBuffer, 0, 0);
 			}
 			,ClearCanvas = function(){
-				debugger;
-				_canvasContext.clearRect(0,0,_canvas.width,_canvas.height-scoretracker.getHeight()); //minus scoreboard
-				_canvasBufferContext.clearRect(0,0,_canvasBuffer.width,_canvasBuffer.height-scoretracker.getHeight());
+				_canvasContext.clearRect(0,0,_canvas.width,_canvas.height-_cx.ScoreTracker.getHeight()); //minus scoreboard
+				_canvasBufferContext.clearRect(0,0,_canvasBuffer.width,_canvasBuffer.height-_cx.ScoreTracker.getHeight());
 			}
 			,
 			CreateTileMap = function(){
@@ -77,7 +77,7 @@ define(['jquery',
 			},
 			DrawGameTiles = function(){
 				
-				if(settings.debugFlags & wdapp.DEBUG.DRAWING)
+				if(settings.debugFlags & _wd.DEBUG.DRAWING)
 						console.info('[DRAWING] Drawing Game Tiles');
 				
 				var coordX = 0;
@@ -123,7 +123,7 @@ define(['jquery',
 		  		  x-=_canvas.offsetLeft;
 		  		  y-=_canvas.offsetTop;
 
-		  		  if(CanvasManager.MouseReact(x,y,currentScreen,canvasData)){
+		  		  if(_cx.CanvasManager.MouseReact(x,y,currentScreen,canvasData)){
 		      			document.body.style.cursor = "pointer";
 		      			inLink=true;
 		  			} else {
@@ -149,20 +149,19 @@ define(['jquery',
 				if(settings.showTestGrid){
 					GenerateTestGrid();
 				} else {
-					CanvasManager.DrawCanvasBackground(_canvasBufferContext);
+					_cx.CanvasManager.DrawCanvasBackground(_canvasBufferContext);
 				}
 
 				//starting piece
 				CreateActionPiece(settings.startingPiecePosition.x,settings.startingPiecePosition.y,settings.startingPiece);
 				DrawGameTiles();
 				
-				scoretracker.drawScoreBoard(_canvasBufferContext);
+				_cx.ScoreTracker.drawScoreBoard(_canvasBufferContext);
 				
-				debugger;
 				Draw();
 			
 				if(settings.debugWindow)
-					debug.PrintGameBoard(gameBoard,debug.printDebugWindow);
+					Debugger.PrintGameBoard(gameBoard,Debugger.printDebugWindow);
 				
 				$(document).bind("keydown",KeyGrab);
 
@@ -243,8 +242,10 @@ define(['jquery',
 					DrawGameTiles();
 					Draw();	
 
+					/*
 					if(settings.debugWindow)
-						debug.PrintGameBoard(gameBoard,debug.printDebugWindow);
+						Debugger.PrintGameBoard(gameBoard,Debugger.printDebugWindow);
+					*/
 				}
 			}
 			// Debugging and Testing Functsions 
@@ -413,10 +414,11 @@ define(['jquery',
 				endGame : endGame,
 				loadTitleScreen : loadTitleScreen,
 				mouseMoveHandler : mouseMoveHandler,
-				mouseClickHandler : mouseClickHandler
+				mouseClickHandler : mouseClickHandler,
+				setContext : setContext
 			}
 	
-		}(ScoreTracker));
+		}());
 /* END MAIN */
 
 //console.dir(main);
@@ -424,9 +426,7 @@ define(['jquery',
 
 
 //console.dir(AssetLoader);
-
-
-        //return an object to define the "my/shirt" module.
+//
         return {
             start : function (opts){
 				$.extend(settings,opts);
@@ -445,8 +445,11 @@ define(['jquery',
 						_canvasBuffer : _canvasBuffer,
 						_canvasBufferContext : _canvasBufferContext
 					}
+					//debugger;
 
-					
+					main.setContext({ ScoreTracker : ScoreTracker,
+										 CanvasManager: canvasmanager
+										})
 					$(document).on("assetLoader_DONE",main.loadTitleScreen);
 					//debugger;
 					AssetLoader.loadAssets();

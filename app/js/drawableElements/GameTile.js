@@ -1,34 +1,31 @@
-define(['control/Location'],function(WDLocation){
+define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader){
 
-		
-	var WDGameTile = {
-		STATE : {
-			INACTIVE : 0
-		},
-		xPos : 0,
-		yPos : 0,
-		xMap : 0,
-		yMap : 0,
-		_height : 50,
-		_width : 50,
-		_val : 0,
-		_text : '',
-		currencyValue : 0,
-		quad : false,
-		strokeWidth : 1,
-		colorMap : ['','rgb(183,129,26)','rgb(136,181,180)','rgb(136,181,180)','rgb(136,181,180)'],
-		bgroundOffset : [{},
+		//debugger;
+	var WDGameTile = (function(){
+		var xPos = 0,
+		yPos = 0,
+		xMap = 0,
+		yMap = 0,
+		_height = 50,
+		_width = 50,
+		_val = 0,
+		_text = '',
+		currencyValue = 0,
+		quad = false,
+		strokeWidth = 1,
+		colorMap = ['','rgb(183,129,26)','rgb(136,181,180)','rgb(136,181,180)','rgb(136,181,180)'],
+		bgroundOffset = [{},
 							{ xActive : 0, yActive : 0, xinActive : 0, yinActive : 46},  //one cent
 							{ xActive : 46, yActive : 0, xinActive : 46, yinActive : 46},  //five cents
 							{ xActive : 92, yActive : 0, xinActive : 92, yinActive : 46},  //ten cents
 							{ xActive : 138, yActive : 0, xinActive : 138, yinActive : 46}  //two five cents
 							],
-		tileStroke : 'rgb(43,136,148',
-		tileFill : 'rgb(201,227,230)',
-		textAdjust : [0,4,4,8,8],
-		defaultCoinColor : 'rgb(136,181,180)',
-		_location : null,
-		direction : 0, //The direction this tile will animate
+		tileStroke = 'rgb(43,136,148',
+		tileFill = 'rgb(201,227,230)',
+		textAdjust = [0,4,4,8,8],
+		defaultCoinColor = 'rgb(136,181,180)',
+		_location = null,
+		direction = 0, //The direction this tile will animate
 		/**
 		* @param Object coords
 		* @return void
@@ -39,37 +36,39 @@ define(['control/Location'],function(WDLocation){
 		* yMap Float 'y' coordinate in relation to the tile map - zero based
 		* val int currency value represented in index this.currencyValues[]
 		**/
-		initialize : function(opts){
+		initialize = function(opts){
+			//debugger;
+			this.currencyValues = [-1,1,5,10,25];
 			this.xMap = opts.xMap;
 			this.yMap = opts.yMap;
 			this.xPos = (opts.xPos===undefined) ? WDLocation.FindPhysicalLocation({x : this.xMap, y : this.yMap}).x : opts.xPos;
 			this.yPos = (opts.yPos===undefined) ? WDLocation.FindPhysicalLocation({x : this.xMap, y : this.yMap}).y : opts.yPos;
 			this._val = opts.val;
-			debugger;
+			
 			this.currencyValue = (opts.curVal===undefined) ? this.currencyValues[this._val] : opts.curVal;
 
-			this.activePic = WD.AssetLoader.getResource('objects');
+			this.activePic = WDAssetLoader.getResource('objects');
 			
 		},
-		getQuad : function(){
+		getQuad = function(){
 			return this.quad;
 		},
-		setHeight : function(_height){
+		setHeight = function(_height){
 			this._height = _height;
 		},
-		getHeight : function(){
+		getHeight = function(){
 			return this._height;
 		},
-		setWidth : function(_width){
+		setWidth = function(_width){
 			this._width = _width;
 		},
-		getWidth : function(){
+		getWidth = function(){
 			return this._width;
 		},
-		setDirection : function(dir){
+		setDirection = function(dir){
 			this.direction = dir;
 		},
-		getDirection : function(){
+		getDirection = function(){
 			return this.direction;
 		},
 		/**		
@@ -77,63 +76,63 @@ define(['control/Location'],function(WDLocation){
 		* @return void
 		* @description tile currency value as represented as the index of Game.defaultSettings.currencyValues[]
 		**/
-		setValue : function(val){	
+		setValue = function(val){	
 			this._val = val;
-			this.setCurVal(WD.GameTile.currencyValues[this._val]);
+			this.setCurVal(this.currencyValues[this._val]);
 			if(this._val===4){ this.quad = true; }//a coin that can react when in a 2x2 configuration (basically quarters)
 		},
-		getValue : function(){
+		getValue = function(){
 			return this._val;
 		},
-		setCurVal : function(currencyVal){
+		setCurVal = function(currencyVal){
 			this.currencyValue = currencyVal;
 			this.setText(this.currencyValue);
 			//console.info('setting setCurVal:' + currencyVal)
 		},
-		getCurVal : function(){
+		getCurVal = function(){
 			return this.currencyValue;
 		},
-		setText : function(text){
+		setText = function(text){
 			//console.info('[[setting text to ' + text);
 			this._text = text;
 		},
-		getMapLocation : function(){
+		getMapLocation = function(){
 			return { x : this.xMap, y : this.yMap };
 		},
-		setMapLocation : function(coords){
+		setMapLocation = function(coords){
 			this.xMap = coords.x;
 			this.yMap = coords.y;		
 
 			//update physical location
 			this.setCanvasLocation(this.xMap * this._width, this.yMap * this._height)
 		},
-		setCanvasLocation : function(x,y){
+		setCanvasLocation = function(x,y){
 			this.xPos = x;
 			this.yPos = y;
 		},
-		getCanvasLocation : function(){
+		getCanvasLocation = function(){
 			return { x : this.xPos, y : this.yPos };
 		},
-		getPosition : function() {
+		getPosition = function() {
 			return { x : this.xPos, y : this.yPos, width : this._width, height : this._height };
 		},
-		setStroke : function(color){
+		setStroke = function(color){
 			this.tileStroke = color;
 		},
-		setFill : function(color){
+		setFill = function(color){
 			this.tileFill = color;
 		},
-		setInActive : function(){
+		setInActive = function(){
 			window._game.gameBoard[this.getMapLocation().x][this.getMapLocation().y].active = false;
 		},
-		removeFromBoard : function() {
+		removeFromBoard = function() {
 			window._game.gameBoard[this.getMapLocation().x][this.getMapLocation().y] = { val : 0, active : false };
 		},
-		addToBoard : function(newlocation) {
+		addToBoard = function(newlocation) {
 			window._game.gameBoard[newlocation.x][newlocation.y] = { val : this.getValue(), active : true };
 			this.setMapLocation(newlocation);
 		},
-		move : function(direction){
+		move = function(direction){
 			
 			var newLocation = (direction === WDLocation.MoveDirection.EXPRESS) ? WDLocation.nextBottom(this) : WDLocation.TransformLocation(this.getMapLocation(),direction);
 
@@ -155,7 +154,7 @@ define(['control/Location'],function(WDLocation){
 			this.checkRestingPlace();
 
 		},
-		checkRestingPlace : function(){
+		checkRestingPlace = function(){
 			
 			//console.info(WDLocation.LookAhead(this.getMapLocation()));
 			if(WDLocation.LookAhead(this.getMapLocation())){
@@ -171,7 +170,7 @@ define(['control/Location'],function(WDLocation){
 				} 
 			}
 		},
-		render : function(_canvasContext,activeState){
+		render = function(_canvasContext,activeState){
 			if(showSkin){ 
 				if(activeState) {
 					_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xActive,this.bgroundOffset[this._val].yActive,46,46,this.xPos+2,this.yPos+2,46,46);
@@ -203,13 +202,35 @@ define(['control/Location'],function(WDLocation){
 			}
 			
 		},
-		toString : function(){
+		toString = function(){
 			return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap + ' |direction: ' + WDLocation.MoveDescription[this.getDirection()];
+		};
+
+		initialize.prototype = {
+			getValue : function(){
+				return getValue();
+			},
+			setValue : function(val){
+				setValue.call(this,val);
+			},
+			setCurVal : function(currencyVal) {
+				setCurVal.call(this,currencyVal);
+			},
+			setText : function(text) {
+				setText.call(this,text);
+			},
+			currencyValues :  [-1,1,5,10,25]
 		}
-	};
+
+		return initialize;
+	}());
 		//static properties
-		WDGameTile.currencyValues = [-1,1,5,10,25];
-		//debugger;
+		WDGameTile.STATE = {
+			INACTIVE : 0
+		};
+		
+
+
 		return WDGameTile;
 
 

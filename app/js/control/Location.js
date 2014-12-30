@@ -4,15 +4,13 @@
 * jQuery ($.extend(),$.bind()), BaseExtensions
 * 
 */
-define(['view/CanvasManager',
-		'drawableElements/GameTile',
-		'drawableElements/ScoreTracker',
-		'debug/Debugger',],function(can,tile,score,debug) {
+define(function() {
 
+	
 
 	var Location = {
 
-
+		MoveDirection : { LEFT : 0, DOWN : 1, RIGHT : 2, EXPRESS : 3},
 	/**		
 	* @param object	coords tilemap coordinates
 	* @param enum MoveDirection enum represention direction to transform to
@@ -51,9 +49,9 @@ define(['view/CanvasManager',
 	FindPhysicalLocation : function(coords) {
 			var xMap = coords.x;
 			var yMap = coords.y;
-			
-			xMap = coords.x * _wd.getSettings()['tileWidth'];
-			yMap = coords.y * _wd.getSettings()['tileHeight'];
+
+			xMap = coords.x * _wd.defaultSettings.tileWidth;
+			yMap = coords.y * _wd.defaultSettings.tileHeight;
 			return { x : xMap, y : yMap };
 	},
 
@@ -63,9 +61,9 @@ define(['view/CanvasManager',
 	* @desc - returns true if the coordinated passed exists in the game field
 	**/
 	LegalRealm : function(coords){
-			return (coords.x < WDGame.defaultSettings.columns &&
+			return (coords.x < _wd.defaultSettings.columns &&
 					coords.x >= 0 &&
-					coords.y < WDGame.defaultSettings.gameRows &&
+					coords.y < _wd.defaultSettings.gameRows &&
 					coords.y >= 0);
 	},
 
@@ -110,6 +108,8 @@ define(['view/CanvasManager',
 
 };
 		
+	
+
 		return Location;
 
 });
