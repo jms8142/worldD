@@ -46,23 +46,18 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 			this._val = opts.val;
 			this.move = move;
 			this.getMapLocation = getMapLocation;
-			
+			this.bgroundOffset = bgroundOffset;
+
 			this.currencyValue = (opts.curVal===undefined) ? this.currencyValues[this._val] : opts.curVal;
 
 			this.activePic = WDAssetLoader.getResource('objects');
-			
+
 		},
 		getQuad = function(){
 			return this.quad;
 		},
-		setHeight = function(_height){
-			this._height = _height;
-		},
 		getHeight = function(){
 			return this._height;
-		},
-		setWidth = function(_width){
-			this._width = _width;
 		},
 		getWidth = function(){
 			return this._width;
@@ -73,12 +68,12 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 		getDirection = function(){
 			return this.direction;
 		},
-		/**		
+		/**
 		* @param int val
 		* @return void
 		* @description tile currency value as represented as the index of Game.defaultSettings.currencyValues[]
 		**/
-		setValue = function(val){	
+		setValue = function(val){
 			this._val = val;
 			this.setCurVal(this.currencyValues[this._val]);
 			if(this._val===4){ this.quad = true; }//a coin that can react when in a 2x2 configuration (basically quarters)
@@ -103,7 +98,7 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 		},
 		setMapLocation = function(coords){
 			this.xMap = coords.x;
-			this.yMap = coords.y;		
+			this.yMap = coords.y;
 
 			//update physical location
 			this.setCanvasLocation(this.xMap * this._width, this.yMap * this._height)
@@ -117,12 +112,6 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 		},
 		getPosition = function() {
 			return { x : this.xPos, y : this.yPos, width : this._width, height : this._height };
-		},
-		setStroke = function(color){
-			this.tileStroke = color;
-		},
-		setFill = function(color){
-			this.tileFill = color;
 		},
 		setInActive = function(){
 			window._wd.getGameBoard()[getMapLocation().x][getMapLocation().y].active = false;
@@ -145,7 +134,7 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 				this.removeFromBoard();
 				this.addToBoard(newLocation);
 				window._game.Update();
-				
+
 				if(window._game.debugFlags & WD.Game.debugMovement)
 					console.info('[MOVEMENT] Action Tile:' + this.toString());
 
@@ -159,7 +148,7 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 
 		},
 		checkRestingPlace = function(){
-			
+
 			//console.info(WDLocation.LookAhead(this.getMapLocation()));
 			if(WDLocation.LookAhead(this.getMapLocation())){
 				if(window._game.Reactive(this)){ //A reaction has been detected - start cleaning up tiles
@@ -171,48 +160,28 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 					this.setInActive();
 					window._game.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
 					window._game.Update();
-				} 
-			}
-		},
-		render = function(_canvasContext,activeState){
-			if(showSkin){ 
-				if(activeState) {
-					_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xActive,this.bgroundOffset[this._val].yActive,46,46,this.xPos+2,this.yPos+2,46,46);
-				} else {
-					//console.info(this._val);
-					_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xinActive,this.bgroundOffset[this._val].yinActive,46,46,this.xPos+2,this.yPos+2,46,46);
 				}
-			} else {
-				//fill
-				_canvasContext.fillStyle = this.tileFill;
-				_canvasContext.fillRect(this.xPos,this.yPos,this._width,this._height);
-
-				_canvasContext.strokeStyle = this.tileStroke;
-				_canvasContext.lineWidth = this.strokeWidth;
-				_canvasContext.strokeRect(this.xPos,this.yPos,this._width,this._height);
-
-				/* Print Text */			
-				if((this.colorMap[this._val] !== undefined))
-					_canvasContext.fillStyle = this.colorMap[this._val];
-				else
-					_canvasContext.fillStyle = this.defaultCoinColor;
-
-				_canvasContext.font = "bold 14px sans-serif";
-				_canvasContext.textBaseline = 'middle';
-				var textX = this.xPos + ((this._width / 2)-this.textAdjust[this._val]);
-				var textY = this.yPos + (this._height / 2)
-
-				_canvasContext.fillText(this._text, textX, textY);
 			}
-			
 		},
 		toString = function(){
 			return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap + ' |direction: ' + WDLocation.MoveDescription[this.getDirection()];
 		};
 
 		initialize.prototype = {
+			setHeight : function(_height){
+				this._height = _height;
+			},
+			setWidth : function(_width){
+				this._width = _width;
+			},
+			setStroke : function(color){
+				this.tileStroke = color;
+			},
+			setFill : function(color){
+				this.tileFill = color;
+			},
 			getValue : function(){
-				return getValue();
+				return getValue.call(this);
 			},
 			setValue : function(val){
 				setValue.call(this,val);
@@ -226,6 +195,37 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 			removeFromBoard : function(){
 				return removeFromBoard();
 			},
+			render : function(_canvasContext,activeState){
+				if(showSkin){
+						if(activeState) {
+							_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xActive,this.bgroundOffset[this._val].yActive,46,46,this.xPos+2,this.yPos+2,46,46);
+						} else {
+							_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xinActive,this.bgroundOffset[this._val].yinActive,46,46,this.xPos+2,this.yPos+2,46,46);
+						}
+				} else {
+					//fill
+					_canvasContext.fillStyle = this.tileFill;
+					_canvasContext.fillRect(this.xPos,this.yPos,this._width,this._height);
+
+					_canvasContext.strokeStyle = this.tileStroke;
+					_canvasContext.lineWidth = this.strokeWidth;
+					_canvasContext.strokeRect(this.xPos,this.yPos,this._width,this._height);
+
+					/* Print Text */
+					if((this.colorMap[this._val] !== undefined))
+						_canvasContext.fillStyle = this.colorMap[this._val];
+					else
+						_canvasContext.fillStyle = this.defaultCoinColor;
+
+					_canvasContext.font = "bold 14px sans-serif";
+					_canvasContext.textBaseline = 'middle';
+					var textX = this.xPos + ((this._width / 2)-this.textAdjust[this._val]);
+					var textY = this.yPos + (this._height / 2)
+
+					_canvasContext.fillText(this._text, textX, textY);
+				}
+
+			},
 			currencyValues :  [-1,1,5,10,25]
 		}
 
@@ -235,7 +235,7 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 		WDGameTile.STATE = {
 			INACTIVE : 0
 		};
-		
+
 
 
 		return WDGameTile;

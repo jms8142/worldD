@@ -1,8 +1,8 @@
 /**
 * Main game controller class
-* Dependencies: 
+* Dependencies:
 * jQuery ($.extend(),$.bind()), BaseExtensions
-* 
+*
 */
 define(['jquery',
 		'control/Location',
@@ -15,9 +15,9 @@ define(['jquery',
 
 			//console.info('gamenew')
 			//debugger;
-		
+
 		var settings = {
-							columns : 9,						
+							columns : 9,
 							tileWidth : 50,
 							tileHeight : 50,
 							populatedRows : 2,
@@ -49,9 +49,9 @@ define(['jquery',
 		/* START MAIN */
 		,main = (function(){
 			var _cx;
-			
+
 			//debugger;
-	
+
 			//private methods
 			var loadTitleScreen = function(){
 				if(settings.skipTitle) {
@@ -76,10 +76,10 @@ define(['jquery',
 				gameBoard = Helpers.matrix(settings.columns,settings.gameRows,{ val : 0, active : GameTile.STATE.INACTIVE });
 			},
 			DrawGameTiles = function(){
-				
+
 				if(settings.debugFlags & _wd.DEBUG.DRAWING)
 						console.info('[DRAWING] Drawing Game Tiles');
-				
+
 				var coordX = 0;
 				var coordY = 0;
 
@@ -87,6 +87,7 @@ define(['jquery',
 					for(var row = 0; row < settings.gameRows;row++){
 						if(gameBoard[col][row].val > 0){
 							var _gameTile = new GameTile({ xMap : col, yMap : row },settings);
+
 							_gameTile.setHeight(settings.tileHeight);
 							_gameTile.setWidth(settings.tileWidth);
 							_gameTile.setValue(gameBoard[col][row].val);
@@ -95,7 +96,7 @@ define(['jquery',
 								_gameTile.setStroke(settings.actionTileStroke);
 								_gameTile.setFill(settings.actionTileFill);
 							}
-							
+
 							_gameTile.render(_canvasBufferContext,gameBoard[col][row].active);
 						}
 
@@ -119,7 +120,7 @@ define(['jquery',
 				  // Get the mouse position relative to the canvas element.
 		    		x = ev.clientX;
 		    		y = ev.clientY;
-		  		  
+
 		  		  x-=_canvas.offsetLeft;
 		  		  y-=_canvas.offsetTop;
 
@@ -155,31 +156,31 @@ define(['jquery',
 				//starting piece
 				CreateActionPiece(settings.startingPiecePosition.x,settings.startingPiecePosition.y,settings.startingPiece);
 				DrawGameTiles();
-				debugger;
-				_cx.ScoreTracker.drawScoreBoard(_canvasBufferContext);
 				
+				_cx.ScoreTracker.drawScoreBoard(_canvasBufferContext);
+
 				Draw();
 			/*
 				if(settings.debugWindow)
 					Debugger.PrintGameBoard(gameBoard,Debugger.printDebugWindow);
 				*/
-				
+
 				$(document).bind("keydown",KeyGrab);
 
 			}
 			,CreateActionPiece = function(x,y,val) {
-				debugger;
+
 				if(settings.constantPiece)
 					val = settings.constantPiece;
 
-				
+
 				actionTile = new GameTile({ xMap : x, yMap : y},settings)
-				
-				if(val === null) 
+
+				if(val === null)
 					var singlePieceVal = (Math.floor(Math.random()*(actionTile.currencyValues.length-1))) + 1;
 				else
 					var singlePieceVal = val;
-
+					//debugger;
 				actionTile.setValue(singlePieceVal);
 				gameBoard[x][y] = { val : actionTile.getValue(), active : GameTile.STATE.ACTIVE };
 
@@ -198,9 +199,9 @@ define(['jquery',
 						totalAcross += _gameTile.val;
 
 						if(_gameTile.val===0) { //lookup
-							
+
 							tileAbove = WDLocation.TransformLocation({ x : col, y : row },WDLocation.MoveDirection.UP,settings)
-							
+
 							if(gameBoard[tileAbove.x][tileAbove.y].val>0){ //this is a floating block
 								//console.info('x: ' + tileAbove.x + ' y: ' + tileAbove.y);
 								//console.info(this.gameBoard[tileAbove.x][tileAbove.y].active);
@@ -212,11 +213,11 @@ define(['jquery',
 									gameBoard[col][row].active = GameTile.STATE.INACTIVE;
 									gameBoard[tileAbove.x][tileAbove.y] = { val : 0, active : GameTile.STATE.INACTIVE }
 								}
-								
+
 							}
 						}
 					}
-					
+
 					if(totalAcross===0)
 						break;
 
@@ -226,9 +227,9 @@ define(['jquery',
 			/**
 			* @return void
 			* @description - Completely refreshes and updates the canvas to the current state of the game.  To simply add to the canvas, use Draw()
-			**/ 
+			**/
 			,UpdateView = function(){
-				
+
 				if(!settings.testing) {
 					if(settings.debugFlags & _wd.DEBUG.DRAWING)
 							console.info('[DRAWING] Updating Canvas');
@@ -239,9 +240,9 @@ define(['jquery',
 
 					if(settings.showTestGrid)
 						GenerateTestGrid();
-					
+
 					DrawGameTiles();
-					Draw();	
+					Draw();
 
 					/*
 					if(settings.debugWindow)
@@ -249,7 +250,7 @@ define(['jquery',
 					*/
 				}
 			}
-			// Debugging and Testing Functsions 
+			// Debugging and Testing Functsions
 			,GenerateTestGrid = function(){
 				var x = 0
 				,y = 0
@@ -278,10 +279,10 @@ define(['jquery',
 			,KeyGrab = function(event){
 				//console.info(actionTile);
 				if(!keysLocked && [32,83,40,65,37,68,39].indexOf(event.keyCode) != -1 && !paused){
-					
+
 					clearInterval(timerID);
 					var keyID = event.keyCode;
-					
+
 
 					switch (keyID) {
 						case 32 : //Space
@@ -292,7 +293,7 @@ define(['jquery',
 						break;
 						case 40: //down arrow
 							actionTile.move(WDLocation.MoveDirection.DOWN);
-						break; 
+						break;
 						case 65: //A
 							actionTile.move(WDLocation.MoveDirection.LEFT);
 						break;
@@ -319,9 +320,9 @@ define(['jquery',
 					} else {
 						UpdateView();
 					}
-					
+
 				}
-				
+
 				//console.info(event);
 			}
 			,AutoMove = function(){
@@ -332,27 +333,27 @@ define(['jquery',
 			/* Searches surrounding tiles and returns true if a transition needs to happen
 			* @param object GameTile The action tile in question
 			* @return bool
-			*/ 
+			*/
 			,Reactive = function(_gameTile){
-				
+
 				var searchVectors = Array(WD.Location.MoveDirection.LEFT,WD.Location.MoveDirection.DOWN,WD.Location.MoveDirection.RIGHT);
-				
+
 				this.actionBehavior = new WD.Behavior(_gameTile);
-				
+
 				for(var i = 0; i < searchVectors.length; i++){
 
 					//Skip looking LEFT if tile is on left most column
-					if((_gameTile.getMapLocation().x == 0) && 
+					if((_gameTile.getMapLocation().x == 0) &&
 						searchVectors[i] == WD.Location.MoveDirection.LEFT)
 						i++;
 
 					//Skip looking DOWN if tile is on bottom row
-					if((WD.Game.defaultSettings.gameRows-1 == _gameTile.getMapLocation().y) && 
+					if((WD.Game.defaultSettings.gameRows-1 == _gameTile.getMapLocation().y) &&
 						searchVectors[i] == WD.Location.MoveDirection.DOWN)
 						i++;
-					
+
 					//Skip looking RIGHT if tile is on right most column
-					if((_gameTile.getMapLocation().x == settings.columns - 1) && 
+					if((_gameTile.getMapLocation().x == settings.columns - 1) &&
 						searchVectors[i] == WD.Location.MoveDirection.RIGHT)
 						break;
 
@@ -368,16 +369,16 @@ define(['jquery',
 											yMap : nextLocation.y,
 											val : nextLocationVal
 										};
-										
-					//start a lookahead for reactive tiles					
+
+					//start a lookahead for reactive tiles
 					while(WD.Location.LegalRealm(nextLocation) &&  //next tile is in legal space
 							nextLocationVal > 0 &&  //next tile isn't air
 							this.actionBehavior.hasReaction(new WD.GameTile(nextTileParams)) && //next tile has reaction
 							this.actionBehavior.getAnimationStart() != true) //that next tile didn't start an instant reaction
 						{
-						
+
 						nextLocation = WD.Location.TransformLocation(nextLocation,searchVectors[i]);
-						
+
 						if(WD.Location.LegalRealm(nextLocation)) {
 							nextLocationVal = this.gameBoard[nextLocation.x][nextLocation.y].val;
 							nextLocationCurrencyVal = WD.GameTile.currencyValues[nextLocationVal];
@@ -390,7 +391,7 @@ define(['jquery',
 											curVal : nextLocationCurrencyVal
 										};
 						}
-						
+
 					}
 				}
 
@@ -419,7 +420,7 @@ define(['jquery',
 				mouseClickHandler : mouseClickHandler,
 				setContext : setContext
 			}
-	
+
 		}());
 /* END MAIN */
 
@@ -468,8 +469,8 @@ define(['jquery',
 			getSettings : function(){
 				return settings;
 			},
-			defaultSettings : { 
-						columns : 9,						
+			defaultSettings : {
+						columns : 9,
 						tileWidth : 50,
 						tileHeight : 50,
 						populatedRows : 2,
@@ -500,8 +501,8 @@ WD.namespace('WD.control.main');
 
 WD.control.main = (function(wdapp,opts){
 
-	
-	
+
+
 	//private methods
 	,loadTitleScreen = function(){
 		if(settings.skipTitle) {
@@ -522,10 +523,10 @@ WD.control.main = (function(wdapp,opts){
 		gameBoard = Array.matrix(settings.columns,settings.gameRows,{ val : 0, active : GameTile.STATE.INACTIVE });
 	},
 	DrawGameTiles = function(){
-		
+
 		if(settings.debugFlags & wdapp.DEBUG.DRAWING)
 				console.info('[DRAWING] Drawing Game Tiles');
-		
+
 		var coordX = 0;
 		var coordY = 0;
 
@@ -541,7 +542,7 @@ WD.control.main = (function(wdapp,opts){
 						_gameTile.setStroke(settings.actionTileStroke);
 						_gameTile.setFill(settings.actionTileFill);
 					}
-					
+
 					_gameTile.render(_canvasBufferContext,gameBoard[col][row].active);
 				}
 
@@ -565,7 +566,7 @@ WD.control.main = (function(wdapp,opts){
 		  // Get the mouse position relative to the canvas element.
     		x = ev.clientX;
     		y = ev.clientY;
-  		  
+
   		  x-=_canvas.offsetLeft;
   		  y-=_canvas.offsetTop;
 
@@ -601,27 +602,27 @@ WD.control.main = (function(wdapp,opts){
 		//starting piece
 		CreateActionPiece(settings.startingPiecePosition.x,settings.startingPiecePosition.y,settings.startingPiece);
 		DrawGameTiles();
-		
+
 		scoretracker.drawScoreBoard(_canvasBufferContext);
-		
+
 
 		Draw();
-	
+
 		if(settings.debugWindow)
 			debug.PrintGameBoard(gameBoard,debug.printDebugWindow);
-		
+
 		$(document).bind("keydown",KeyGrab);
 
 	}
 	,CreateActionPiece = function(x,y,val) {
-		
+
 		if(settings.constantPiece)
 			val = settings.constantPiece;
 
 		actionTile = new GameTile({ xMap : x, yMap : y},settings)
 
-		
-		if(val === undefined) 
+
+		if(val === undefined)
 			var singlePieceVal = (Math.floor(Math.random()*(actionTile.getCurrencyValues().length-1))) + 1;
 		else
 			var singlePieceVal = val;
@@ -645,7 +646,7 @@ WD.control.main = (function(wdapp,opts){
 
 				if(_gameTile.val===0) { //lookup
 					tileAbove = location.TransformLocation({ x : col, y : row },location.MoveDirection.UP,settings)
-					
+
 					if(gameBoard[tileAbove.x][tileAbove.y].val>0){ //this is a floating block
 						//console.info('x: ' + tileAbove.x + ' y: ' + tileAbove.y);
 						//console.info(this.gameBoard[tileAbove.x][tileAbove.y].active);
@@ -657,11 +658,11 @@ WD.control.main = (function(wdapp,opts){
 							gameBoard[col][row].active = GameTile.STATE.INACTIVE;
 							gameBoard[tileAbove.x][tileAbove.y] = { val : 0, active : GameTile.STATE.INACTIVE }
 						}
-						
+
 					}
 				}
 			}
-			
+
 			if(totalAcross===0)
 				break;
 
@@ -673,7 +674,7 @@ WD.control.main = (function(wdapp,opts){
 	* @description - Completely refreshes and updates the canvas to the current state of the game.  To simply add to the canvas, use Draw()
 	**/ /*
 	UpdateView = function(){
-		
+
 		if(!settings.testing) {
 			if(settings.debugFlags & wdapp.DEBUG.DRAWING)
 					console.info('[DRAWING] Updating Canvas');
@@ -684,15 +685,15 @@ WD.control.main = (function(wdapp,opts){
 
 			if(settings.showTestGrid)
 				GenerateTestGrid();
-			
+
 			DrawGameTiles();
-			Draw();	
+			Draw();
 
 			if(settings.debugWindow)
 				debug.PrintGameBoard(gameBoard,debug.printDebugWindow);
 		}
 	}
-	// Debugging and Testing Functsions 
+	// Debugging and Testing Functsions
 	,GenerateTestGrid = function(){
 		var x = 0
 		,y = 0
@@ -721,10 +722,10 @@ WD.control.main = (function(wdapp,opts){
 	,KeyGrab = function(event){
 		//console.info(actionTile);
 		if(!keysLocked && [32,83,40,65,37,68,39].indexOf(event.keyCode) != -1 && !paused){
-			
+
 			clearInterval(timerID);
 			var keyID = event.keyCode;
-			
+
 			switch (keyID) {
 				case 32 : //Space
 					actionTile.move(location.MoveDirection.EXPRESS);
@@ -734,7 +735,7 @@ WD.control.main = (function(wdapp,opts){
 				break;
 				case 40: //down arrow
 					actionTile.move(location.MoveDirection.DOWN);
-				break; 
+				break;
 				case 65: //A
 					actionTile.move(location.MoveDirection.LEFT);
 				break;
@@ -761,9 +762,9 @@ WD.control.main = (function(wdapp,opts){
 			} else {
 				UpdateView();
 			}
-			
+
 		}
-		
+
 		//console.info(event);
 	}
 	,AutoMove = function(){
@@ -776,25 +777,25 @@ WD.control.main = (function(wdapp,opts){
 	* @return bool
 	*/ /*
 	,Reactive = function(_gameTile){
-		
+
 		var searchVectors = Array(WD.Location.MoveDirection.LEFT,WD.Location.MoveDirection.DOWN,WD.Location.MoveDirection.RIGHT);
-		
+
 		this.actionBehavior = new WD.Behavior(_gameTile);
-		
+
 		for(var i = 0; i < searchVectors.length; i++){
 
 			//Skip looking LEFT if tile is on left most column
-			if((_gameTile.getMapLocation().x == 0) && 
+			if((_gameTile.getMapLocation().x == 0) &&
 				searchVectors[i] == WD.Location.MoveDirection.LEFT)
 				i++;
 
 			//Skip looking DOWN if tile is on bottom row
-			if((WD.Game.defaultSettings.gameRows-1 == _gameTile.getMapLocation().y) && 
+			if((WD.Game.defaultSettings.gameRows-1 == _gameTile.getMapLocation().y) &&
 				searchVectors[i] == WD.Location.MoveDirection.DOWN)
 				i++;
-			
+
 			//Skip looking RIGHT if tile is on right most column
-			if((_gameTile.getMapLocation().x == settings.columns - 1) && 
+			if((_gameTile.getMapLocation().x == settings.columns - 1) &&
 				searchVectors[i] == WD.Location.MoveDirection.RIGHT)
 				break;
 
@@ -810,16 +811,16 @@ WD.control.main = (function(wdapp,opts){
 									yMap : nextLocation.y,
 									val : nextLocationVal
 								};
-								
-			//start a lookahead for reactive tiles					
+
+			//start a lookahead for reactive tiles
 			while(WD.Location.LegalRealm(nextLocation) &&  //next tile is in legal space
 					nextLocationVal > 0 &&  //next tile isn't air
 					this.actionBehavior.hasReaction(new WD.GameTile(nextTileParams)) && //next tile has reaction
 					this.actionBehavior.getAnimationStart() != true) //that next tile didn't start an instant reaction
 				{
-				
+
 				nextLocation = WD.Location.TransformLocation(nextLocation,searchVectors[i]);
-				
+
 				if(WD.Location.LegalRealm(nextLocation)) {
 					nextLocationVal = this.gameBoard[nextLocation.x][nextLocation.y].val;
 					nextLocationCurrencyVal = WD.GameTile.currencyValues[nextLocationVal];
@@ -832,7 +833,7 @@ WD.control.main = (function(wdapp,opts){
 									curVal : nextLocationCurrencyVal
 								};
 				}
-				
+
 			}
 		}
 
@@ -843,7 +844,7 @@ WD.control.main = (function(wdapp,opts){
 		return this.actionBehavior.getAnimationStart();
 	}
 
-	
+
 	wdapp.DEBUG = {
 		BEHAVIOR : 0x1,
 		MOVEMENT : 0x2,
@@ -851,8 +852,8 @@ WD.control.main = (function(wdapp,opts){
 		TRANSITION : 0x8,
 		DRAWING : 0x10
 	}
-	
-	
+
+
 
 
 }(WD));*/
