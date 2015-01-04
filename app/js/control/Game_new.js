@@ -156,7 +156,7 @@ define(['jquery',
 				//starting piece
 				CreateActionPiece(settings.startingPiecePosition.x,settings.startingPiecePosition.y,settings.startingPiece);
 				DrawGameTiles();
-				
+
 				_cx.ScoreTracker.drawScoreBoard(_canvasBufferContext);
 
 				Draw();
@@ -166,6 +166,8 @@ define(['jquery',
 				*/
 
 				$(document).bind("keydown",KeyGrab);
+
+				timerID = setInterval(AutoMove.bind(this),1000);
 
 			}
 			,CreateActionPiece = function(x,y,val) {
@@ -309,7 +311,7 @@ define(['jquery',
 					}
 
 					//start moving again
-					//timerID = setInterval(AutoMove,1000);
+					timerID = setInterval(AutoMove,1000);
 				} else if(event.keyCode === 80) {
 					(paused) ? timerID = setInterval(AutoMove,1000) : clearInterval(timerID);
 					paused = !paused;
@@ -327,7 +329,7 @@ define(['jquery',
 			}
 			,AutoMove = function(){
 				if(typeof(actionTile)==='object'){
-					actionTile.move(WD.Location.MoveDirection.DOWN);
+					actionTile.move(WDLocation.MoveDirection.DOWN);
 				}
 			}
 			/* Searches surrounding tiles and returns true if a transition needs to happen
@@ -336,7 +338,7 @@ define(['jquery',
 			*/
 			,Reactive = function(_gameTile){
 
-				var searchVectors = Array(WD.Location.MoveDirection.LEFT,WD.Location.MoveDirection.DOWN,WD.Location.MoveDirection.RIGHT);
+				var searchVectors = Array(WDLocation.MoveDirection.LEFT,WDLocation.MoveDirection.DOWN,WDLocation.MoveDirection.RIGHT);
 
 				this.actionBehavior = new WD.Behavior(_gameTile);
 
@@ -418,7 +420,9 @@ define(['jquery',
 				loadTitleScreen : loadTitleScreen,
 				mouseMoveHandler : mouseMoveHandler,
 				mouseClickHandler : mouseClickHandler,
-				setContext : setContext
+				setContext : setContext,
+				UpdateView : UpdateView,
+				Reactive : Reactive
 			}
 
 		}());
@@ -480,6 +484,12 @@ define(['jquery',
 					},
 			getGameBoard : function() {
 				return gameBoard;
+			},
+			UpdateView : function(){
+				return main.UpdateView();
+			},
+			Reactive : function(_gameTile){
+				return main.Reactive(_gameTile);
 			},
 			DEBUG : {
 				BEHAVIOR : 0x1,

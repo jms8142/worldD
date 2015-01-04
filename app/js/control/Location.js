@@ -84,8 +84,7 @@ define(function() {
 	**/
 	LookAhead : function(coords){
 		var LookAheadLocation = Location.TransformLocation(coords,Location.MoveDirection.DOWN);
-			
-		return !Location.LegalRealm(LookAheadLocation) ||  window._game.gameBoard[LookAheadLocation.x][LookAheadLocation.y].val > 0;
+		return !Location.LegalRealm(LookAheadLocation) ||  window._wd.getGameBoard()[LookAheadLocation.x][LookAheadLocation.y].val > 0;
 
 	},
 	/**		
