@@ -155,7 +155,7 @@ define(['jquery',
 				//starting piece
 				CreateActionPiece(settings.startingPiecePosition.x,settings.startingPiecePosition.y,settings.startingPiece);
 				DrawGameTiles();
-				
+				debugger;
 				_cx.ScoreTracker.drawScoreBoard(_canvasBufferContext);
 				
 				Draw();
