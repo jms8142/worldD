@@ -68,9 +68,9 @@ define(function() {
 	},
 
 	ValidateMove : function(coords){
-
+		
 		if(!(Location.LegalRealm(coords)) ||
-			window._game.gameBoard[coords.x][coords.y].val > 0
+			window._wd.getGameBoard()[coords.x][coords.y].val > 0
 			) {
 			return false;
 		}
@@ -97,7 +97,7 @@ define(function() {
 		var nextspace = _gametile.getMapLocation(), lastSpace;
 
 		while(nextspace = Location.TransformLocation(nextspace,Location.MoveDirection.DOWN)) {
-				if(window._game.gameBoard[nextspace.x][nextspace.y].val === 0)
+				if(window._wd.getGameBoard()[nextspace.x][nextspace.y].val === 0)
 					lastSpace = nextspace;
 				
 		}

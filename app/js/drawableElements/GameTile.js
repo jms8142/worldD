@@ -44,6 +44,8 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 			this.xPos = (opts.xPos===undefined) ? WDLocation.FindPhysicalLocation({x : this.xMap, y : this.yMap}).x : opts.xPos;
 			this.yPos = (opts.yPos===undefined) ? WDLocation.FindPhysicalLocation({x : this.xMap, y : this.yMap}).y : opts.yPos;
 			this._val = opts.val;
+			this.move = move;
+			this.getMapLocation = getMapLocation;
 			
 			this.currencyValue = (opts.curVal===undefined) ? this.currencyValues[this._val] : opts.curVal;
 
@@ -123,17 +125,19 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 			this.tileFill = color;
 		},
 		setInActive = function(){
-			window._game.gameBoard[this.getMapLocation().x][this.getMapLocation().y].active = false;
+			window._wd.getGameBoard()[getMapLocation().x][getMapLocation().y].active = false;
 		},
 		removeFromBoard = function() {
-			window._game.gameBoard[this.getMapLocation().x][this.getMapLocation().y] = { val : 0, active : false };
+			debugger;
+			window._wd.getGameBoard()[getMapLocation().x][getMapLocation().y] = { val : 0, active : false };
 		},
 		addToBoard = function(newlocation) {
-			window._game.gameBoard[newlocation.x][newlocation.y] = { val : this.getValue(), active : true };
+			window._wd.getGameBoard()[newlocation.x][newlocation.y] = { val : this.getValue(), active : true };
+			debugger;
 			this.setMapLocation(newlocation);
 		},
 		move = function(direction){
-			
+			//debugger;
 			var newLocation = (direction === WDLocation.MoveDirection.EXPRESS) ? WDLocation.nextBottom(this) : WDLocation.TransformLocation(this.getMapLocation(),direction);
 
 			if(WDLocation.ValidateMove(newLocation)){
@@ -147,7 +151,7 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 
 			}
 
-			window._game.lastgameBoard.push(jQuery.extend(true, {}, window._game.gameBoard));
+			window._game.lastgameBoard.push(jQuery.extend(true, {}, window._wd.getGameBoard()));
 			window.debugger.updateSnapshotText(window._game.lastgameBoard.length);
 
 			//if tile has reached another tile (or bottom) - freeze and create a new one
@@ -218,6 +222,9 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 			},
 			setText : function(text) {
 				setText.call(this,text);
+			},
+			removeFromBoard : function(){
+				return removeFromBoard();
 			},
 			currencyValues :  [-1,1,5,10,25]
 		}

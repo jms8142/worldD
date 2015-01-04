@@ -159,15 +159,16 @@ define(['jquery',
 				_cx.ScoreTracker.drawScoreBoard(_canvasBufferContext);
 				
 				Draw();
-			
+			/*
 				if(settings.debugWindow)
 					Debugger.PrintGameBoard(gameBoard,Debugger.printDebugWindow);
+				*/
 				
 				$(document).bind("keydown",KeyGrab);
 
 			}
 			,CreateActionPiece = function(x,y,val) {
-				
+				debugger;
 				if(settings.constantPiece)
 					val = settings.constantPiece;
 
@@ -281,27 +282,28 @@ define(['jquery',
 					clearInterval(timerID);
 					var keyID = event.keyCode;
 					
+
 					switch (keyID) {
 						case 32 : //Space
-							actionTile.move(location.MoveDirection.EXPRESS);
+							actionTile.move(WDLocation.MoveDirection.EXPRESS);
 						break;
 						case 83 : //S
-							actionTile.move(location.MoveDirection.DOWN);
+							actionTile.move(WDLocation.MoveDirection.DOWN);
 						break;
 						case 40: //down arrow
-							actionTile.move(location.MoveDirection.DOWN);
+							actionTile.move(WDLocation.MoveDirection.DOWN);
 						break; 
 						case 65: //A
-							actionTile.move(location.MoveDirection.LEFT);
+							actionTile.move(WDLocation.MoveDirection.LEFT);
 						break;
 						case 37: //left arrow
-							actionTile.move(location.MoveDirection.LEFT);
+							actionTile.move(WDLocation.MoveDirection.LEFT);
 						break;
 						case 68: //D
-							actionTile.move(location.MoveDirection.RIGHT);
+							actionTile.move(WDLocation.MoveDirection.RIGHT);
 						break;
 						case 39: //right arrow
-							actionTile.move(location.MoveDirection.RIGHT);
+							actionTile.move(WDLocation.MoveDirection.RIGHT);
 						break;
 					}
 
@@ -448,7 +450,7 @@ define(['jquery',
 					//debugger;
 
 					main.setContext({ ScoreTracker : ScoreTracker,
-										 CanvasManager: canvasmanager
+										 CanvasManager: canvasmanager,
 										})
 					$(document).on("assetLoader_DONE",main.loadTitleScreen);
 					//debugger;
@@ -475,7 +477,9 @@ define(['jquery',
 						actionTileFill: 'rgb(251,182,182)',
 						actionTileStroke: 'rgb(255,0,0)'
 					},
-
+			getGameBoard : function() {
+				return gameBoard;
+			},
 			DEBUG : {
 				BEHAVIOR : 0x1,
 				MOVEMENT : 0x2,
