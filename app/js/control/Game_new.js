@@ -6,12 +6,13 @@
 */
 define(['jquery',
 		'control/Location',
+		'control/Behavior',
 		'view/CanvasManager',
 		'drawableElements/GameTile',
 		'drawableElements/ScoreTracker',
 		'debug/Debugger',
 		'util/AssetLoader',
-		'util/Helpers'],function($,WDLocation,canvasmanager,GameTile,ScoreTracker,Debugger,AssetLoader,Helpers) {
+		'util/Helpers'],function($,WDLocation,WDBehavior, canvasmanager,GameTile,ScoreTracker,Debugger,AssetLoader,Helpers) {
 
 			//console.info('gamenew')
 			//debugger;
@@ -167,7 +168,7 @@ define(['jquery',
 
 				$(document).bind("keydown",KeyGrab);
 
-				timerID = setInterval(AutoMove.bind(this),1000);
+				timerID = setInterval(AutoMove.bind(this),250);
 
 			}
 			,CreateActionPiece = function(x,y,val) {
@@ -340,31 +341,31 @@ define(['jquery',
 
 				var searchVectors = Array(WDLocation.MoveDirection.LEFT,WDLocation.MoveDirection.DOWN,WDLocation.MoveDirection.RIGHT);
 
-				this.actionBehavior = new WD.Behavior(_gameTile);
+				this.actionBehavior = new WDBehavior(_gameTile);
 
 				for(var i = 0; i < searchVectors.length; i++){
 
 					//Skip looking LEFT if tile is on left most column
 					if((_gameTile.getMapLocation().x == 0) &&
-						searchVectors[i] == WD.Location.MoveDirection.LEFT)
+						searchVectors[i] == WDLocation.MoveDirection.LEFT)
 						i++;
 
 					//Skip looking DOWN if tile is on bottom row
-					if((WD.Game.defaultSettings.gameRows-1 == _gameTile.getMapLocation().y) &&
-						searchVectors[i] == WD.Location.MoveDirection.DOWN)
+					if((settings.gameRows-1 == _gameTile.getMapLocation().y) &&
+						searchVectors[i] == WDLocation.MoveDirection.DOWN)
 						i++;
 
 					//Skip looking RIGHT if tile is on right most column
 					if((_gameTile.getMapLocation().x == settings.columns - 1) &&
-						searchVectors[i] == WD.Location.MoveDirection.RIGHT)
+						searchVectors[i] == WDLocation.MoveDirection.RIGHT)
 						break;
 
-					if(this.debugFlags & WD.Game.debugBehavior)
-						console.info('[BEHAVIOR] Checking:' + WD.Location.MoveDescription[searchVectors[i]]);
+					//if(this.debugFlags & WD.Game.debugBehavior)
+						//console.info('[BEHAVIOR] Checking:' + WDLocation.MoveDescription[searchVectors[i]]);
 
-					var nextLocation = WD.Location.TransformLocation(_gameTile.getMapLocation(),searchVectors[i]);
-					var nextLocationVal = this.gameBoard[nextLocation.x][nextLocation.y].val;
-					var nextLocationPosition = WD.Location.FindPhysicalLocation(nextLocation);
+					var nextLocation = WDLocation.TransformLocation(_gameTile.getMapLocation(),searchVectors[i]);
+					var nextLocationVal = gameBoard[nextLocation.x][nextLocation.y].val;
+					var nextLocationPosition = WDLocation.FindPhysicalLocation(nextLocation);
 					var nextTileParams = { xPos : nextLocationPosition.x,
 											yPos : nextLocationPosition.y,
 											xMap : nextLocation.x,
@@ -373,18 +374,18 @@ define(['jquery',
 										};
 
 					//start a lookahead for reactive tiles
-					while(WD.Location.LegalRealm(nextLocation) &&  //next tile is in legal space
+					while(WDLocation.LegalRealm(nextLocation) &&  //next tile is in legal space
 							nextLocationVal > 0 &&  //next tile isn't air
 							this.actionBehavior.hasReaction(new WD.GameTile(nextTileParams)) && //next tile has reaction
 							this.actionBehavior.getAnimationStart() != true) //that next tile didn't start an instant reaction
 						{
 
-						nextLocation = WD.Location.TransformLocation(nextLocation,searchVectors[i]);
+						nextLocation = WDLocation.TransformLocation(nextLocation,searchVectors[i]);
 
-						if(WD.Location.LegalRealm(nextLocation)) {
-							nextLocationVal = this.gameBoard[nextLocation.x][nextLocation.y].val;
+						if(WDLocation.LegalRealm(nextLocation)) {
+							nextLocationVal = gameBoard[nextLocation.x][nextLocation.y].val;
 							nextLocationCurrencyVal = WD.GameTile.currencyValues[nextLocationVal];
-							nextLocationPosition = WD.Location.FindPhysicalLocation(nextLocation);
+							nextLocationPosition = WDLocation.FindPhysicalLocation(nextLocation);
 
 							nextTileParams = { x : nextLocationPosition.x,
 											y : nextLocationPosition.y,
@@ -396,7 +397,7 @@ define(['jquery',
 
 					}
 				}
-
+			
 				if(_gameTile.getQuad()){ //check if this is in a box configuration (e.g. 4 quarters)
 					this.actionBehavior.runBoxCheck(_gameTile);
 				}

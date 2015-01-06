@@ -53,9 +53,6 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 			this.activePic = WDAssetLoader.getResource('objects');
 
 		},
-		getQuad = function(){
-			return this.quad;
-		},
 		getHeight = function(){
 			return this._height;
 		},
@@ -96,14 +93,14 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 		getPosition = function() {
 			return { x : this.xPos, y : this.yPos, width : this._width, height : this._height };
 		},
-		setInActive = function(){
-			window._wd.getGameBoard()[getMapLocation().x][getMapLocation().y].active = false;
-		},
 		toString = function(){
 			return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap + ' |direction: ' + WDLocation.MoveDescription[this.getDirection()];
 		};
 
 		initialize.prototype = {
+			setInActive : function(){
+				window._wd.getGameBoard()[this.getMapLocation().x][this.getMapLocation().y].active = false;
+			},
 			setHeight : function(_height){
 				this._height = _height;
 			},
@@ -137,6 +134,9 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 			},
 			setText : function(text) {
 				setText.call(this,text);
+			},
+			getQuad : function(){
+				return this.quad;
 			},
 			removeFromBoard : function() {
 				window._wd.getGameBoard()[this.getMapLocation().x][this.getMapLocation().y] = { val : 0, active : false };
@@ -180,14 +180,14 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 			checkRestingPlace : function(){
 				//console.info(WDLocation.LookAhead(this.getMapLocation()));
 				if(WDLocation.LookAhead(this.getMapLocation())){
-				
+
 					if(window._wd.Reactive(this)){ //A reaction has been detected - start cleaning up tiles
 						window._wd.StartBoardTransition();
 						WD.AssetLoader.getResource('matchSound').play();
 					} else if(this.getMapLocation().y === 0) { //at the top
 						Event.fire(document,'WD:gameover');
 					} else {
-						this.setInActive();
+						setInActive();
 						window._wd.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
 						window._wd.Update();
 					}

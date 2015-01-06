@@ -1,17 +1,16 @@
 /**
 * Location class
-* Dependencies: 
-* jQuery ($.extend(),$.bind()), BaseExtensions
-* 
+* Dependencies:
+*
 */
 define(function() {
 
-	
+
 
 	var Location = {
 
 		MoveDirection : { LEFT : 0, DOWN : 1, RIGHT : 2, EXPRESS : 3},
-	/**		
+	/**
 	* @param object	coords tilemap coordinates
 	* @param enum MoveDirection enum represention direction to transform to
 	* @desc - returns coordinates of a new location based on direction passed
@@ -41,7 +40,7 @@ define(function() {
 				return false;
 	},
 
-	/**		
+	/**
 	* @param object	coords tilemap coordinates
 	* @desc - returns physical coordinates of object in field
 	* @return object coords of transformed location
@@ -55,9 +54,9 @@ define(function() {
 			return { x : xMap, y : yMap };
 	},
 
-	/**		
+	/**
 	* @param object	coords tilemap coordinates
-	* @return bool 
+	* @return bool
 	* @desc - returns true if the coordinated passed exists in the game field
 	**/
 	LegalRealm : function(coords){
@@ -68,7 +67,7 @@ define(function() {
 	},
 
 	ValidateMove : function(coords){
-		
+
 		if(!(Location.LegalRealm(coords)) ||
 			window._wd.getGameBoard()[coords.x][coords.y].val > 0
 			) {
@@ -77,9 +76,9 @@ define(function() {
 
 		return true;
 	},
-	/**		
+	/**
 	* @param object	coords tilemap coordinates
-	* @return bool 
+	* @return bool
 	* @desc - returns true if the next space down is another tile or the floor
 	**/
 	LookAhead : function(coords){
@@ -87,9 +86,9 @@ define(function() {
 		return !Location.LegalRealm(LookAheadLocation) ||  window._wd.getGameBoard()[LookAheadLocation.x][LookAheadLocation.y].val > 0;
 
 	},
-	/**		
+	/**
 	* @param object	gametile
-	* @return object coords 
+	* @return object coords
 	* @desc - returns coordinates of the furthest open space directly below the coordinates of the gametile given
 	**/
 	nextBottom : function(_gametile){
@@ -98,7 +97,7 @@ define(function() {
 		while(nextspace = Location.TransformLocation(nextspace,Location.MoveDirection.DOWN)) {
 				if(window._wd.getGameBoard()[nextspace.x][nextspace.y].val === 0)
 					lastSpace = nextspace;
-				
+
 		}
 
 		return lastSpace;
@@ -106,8 +105,8 @@ define(function() {
 	}
 
 };
-		
-	
+
+
 
 		return Location;
 

@@ -1,10 +1,8 @@
-define(['lib/prototype'],function(){
+define(['control/Location',
+			'drawableElements/GameTile'],function(WDLocation,WDGameTile){
 
-window.WD || ( window.WD = {} ) //application namespace
 
-
-WD.Behavior = Class.create({
-
+var Behavior = {
 	name : null,
 	value : null,
 	reactors : [],
@@ -16,7 +14,7 @@ WD.Behavior = Class.create({
 		,maxSize : 8
 	},
 	upgradedValue : 0,
-	patternMatrix : 
+	patternMatrix :
 		[
 			{
 				pattern : /^1{5}$/,
@@ -72,7 +70,7 @@ WD.Behavior = Class.create({
 	initialize : function(_gameTile) {
 
 		//console.info('Behavior created');
-		
+
 		if(window.navigator.userAgent.indexOf('AppleWebKit') === -1) //Chrome doesn't have clear()
 			//console.clear();
 
@@ -81,7 +79,9 @@ WD.Behavior = Class.create({
 
 		this.chain = new Array();
 		this.nextReactor = new Array();
-		this.chain[0] = _gameTile;		
+		this.chain[0] = _gameTile;
+
+		return this;
 	},
 	addReactors : function(reactors){
 		this.reactors = reactors;
@@ -112,7 +112,7 @@ WD.Behavior = Class.create({
 	getChildren : function(){
 		return this.nextReactor;
 	},
-	/**		
+	/**
 	* True if gameTile value is in the reactorDefinition of the current 'starter' tile, which is index 0 in this.chain
 	* @param object GameTile The game tile we're comparing against
 	* @return bool
@@ -127,10 +127,10 @@ WD.Behavior = Class.create({
 				return true;
 			}
 		}
-		
+
 		return false;
 	},
-	/**		
+	/**
 	* @param GameTile
 	* @return void
 	* @desc  - Adds gameTile object the chain array
@@ -146,13 +146,12 @@ WD.Behavior = Class.create({
 	},
 	/**
 	* @param GameTile
-	* @return bool 
+	* @return bool
 	* @desc - tests whether or not this gametile is in a group of 4 reactive tiles (like 4 quarters) - for now this is hardcoded to react against $.25 values
 	*/
 	runBoxCheck : function(_gameTile){
 
 		var searching = true,
-		location = new WD.Location,
 		thisVal = _gameTile.getValue(),
 		reaction,
 		tempChain = new Array(),
@@ -176,15 +175,16 @@ WD.Behavior = Class.create({
 				}
 
 				//legal realm
-				if(WD.Location.LegalRealm(tileView)){
-					if(thisVal === window._game.gameBoard[tileView.x][tileView.y].val){
-						tempChain[y+1] = new WD.GameTile({xMap : tileView.x, yMap : tileView.y, val : thisVal});
+				if(WDLocation.LegalRealm(tileView)){
+					
+					if(thisVal === window._wd.getGameBoard()[tileView.x][tileView.y].val){
+						tempChain[y+1] = new WDGameTile({xMap : tileView.x, yMap : tileView.y, val : thisVal});
 						reaction++
 					}
 				} else {
 					break;
 				}
-				
+
 
 			}
 
@@ -193,8 +193,8 @@ WD.Behavior = Class.create({
 				this.startAnimation = true;
 				this.chain = tempChain.slice(0,tempChain.length);
 				break;
-			}		
-			
+			}
+
 		}
 
 	},
@@ -210,13 +210,13 @@ WD.Behavior = Class.create({
 				_string += this.chain[i].getCurVal();
 			}
 
-			
+
 			if(_game.debugFlags & WD.Game.debugBehavior)
 			console.info("[BEHAVIOR] Starting Pattern Search:" + _string);
 
 			for(i = 0;i < this.patternMatrix.length; i++){
 				//console.info('trying' + this.patternMatrix[i].pattern);
-				var patt= this.patternMatrix[i].pattern; 
+				var patt= this.patternMatrix[i].pattern;
 				if(patt.test(_string)){
 					if(_game.debugFlags & WD.Game.debugBehavior)
 						console.info("[BEHAVIOR] Tested positive pattern:" + patt);
@@ -230,7 +230,11 @@ WD.Behavior = Class.create({
 		}
 	}
 
-	
-});
+
+}
+
+	return function(){
+			return Behavior.initialize();
+	};
 
 });
