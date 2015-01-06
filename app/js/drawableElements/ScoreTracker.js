@@ -1,7 +1,7 @@
 /**
 * Score Management Class
-* Dependencies: 
-* 
+* Dependencies:
+*
 */
 
 define(['util/AssetLoader'],function(AssetLoader) {
@@ -19,11 +19,11 @@ var ScoreTracker = {
 	canvasEl : null,
 	updateScore : function(score,_canvasContext){
 		var scoreTop = canvasEl.height-this.height;
-		
+
 		//clear first
 		this.setToGradient(_canvasContext);
 		_canvasContext.fillRect(0,canvasEl.height-this.height,canvasEl.width,this.height);
-		
+
 		var score = score.toFixed(2);
 		_canvasContext.fillStyle = '#e14824';
 		_canvasContext.font = this.font;
@@ -69,26 +69,26 @@ var ScoreTracker = {
 	},
 
 	drawMoneySquares : function(num,_canvasContext,score){
-		
+
 		score = (score!==undefined) ? Math.round(score) : score = 0;
-		
+
 		var totalWidth = canvasEl.width - this.textSpaceWidth,
 		boxWidth = 40,
 		boxHeight = 40,
 		startX = 7,
 		gutter = 4,
 		yPos =  canvasEl.height - this.height + 10;
+		
+		for(var x=0;x<num;x++){
 
-		for(var x=0;x<num;x++){	
-			
 
 			if(x < score) {
-				_canvasContext.drawImage(dollarSign,50,140,boxWidth,boxHeight,startX,yPos,boxWidth,boxHeight);	
+				_canvasContext.drawImage(dollarSign,50,140,boxWidth,boxHeight,startX,yPos,boxWidth,boxHeight);
 			} else {
-				_canvasContext.drawImage(dollarSign,4,140,boxWidth,boxHeight,startX,yPos,boxWidth,boxHeight);		
+				_canvasContext.drawImage(dollarSign,4,140,boxWidth,boxHeight,startX,yPos,boxWidth,boxHeight);
 			}
-					
-			
+
+
 			startX += boxWidth + gutter;
 		}
 
@@ -100,7 +100,7 @@ var ScoreTracker = {
 	drawScoreBoard : function(_canvasContext){
 			dollarSign = AssetLoader.getResource('objects');
 			canvasEl = document.getElementById('wdCanvas');
-				
+
 			//draw score text
 			this.textPosition.x = 10;
 			this.textPosition.y = canvasEl.height - this.height  + 80;

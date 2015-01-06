@@ -155,7 +155,7 @@ define(['jquery',
 				}
 
 				//starting piece
-				CreateActionPiece(settings.startingPiecePosition.x,settings.startingPiecePosition.y,settings.startingPiece);
+				createActionPiece(settings.startingPiecePosition.x,settings.startingPiecePosition.y,settings.startingPiece);
 				DrawGameTiles();
 
 				_cx.ScoreTracker.drawScoreBoard(_canvasBufferContext);
@@ -171,7 +171,8 @@ define(['jquery',
 				timerID = setInterval(AutoMove.bind(this),250);
 
 			}
-			,CreateActionPiece = function(x,y,val) {
+			,createActionPiece = function(x,y,val) {
+
 
 				if(settings.constantPiece)
 					val = settings.constantPiece;
@@ -340,7 +341,7 @@ define(['jquery',
 			,Reactive = function(_gameTile){
 
 				var searchVectors = Array(WDLocation.MoveDirection.LEFT,WDLocation.MoveDirection.DOWN,WDLocation.MoveDirection.RIGHT);
-
+				
 				this.actionBehavior = new WDBehavior(_gameTile);
 
 				for(var i = 0; i < searchVectors.length; i++){
@@ -376,7 +377,7 @@ define(['jquery',
 					//start a lookahead for reactive tiles
 					while(WDLocation.LegalRealm(nextLocation) &&  //next tile is in legal space
 							nextLocationVal > 0 &&  //next tile isn't air
-							this.actionBehavior.hasReaction(new WD.GameTile(nextTileParams)) && //next tile has reaction
+							this.actionBehavior.hasReaction(new GameTile(nextTileParams)) && //next tile has reaction
 							this.actionBehavior.getAnimationStart() != true) //that next tile didn't start an instant reaction
 						{
 
@@ -397,7 +398,7 @@ define(['jquery',
 
 					}
 				}
-			
+
 				if(_gameTile.getQuad()){ //check if this is in a box configuration (e.g. 4 quarters)
 					this.actionBehavior.runBoxCheck(_gameTile);
 				}
@@ -423,7 +424,8 @@ define(['jquery',
 				mouseClickHandler : mouseClickHandler,
 				setContext : setContext,
 				UpdateView : UpdateView,
-				Reactive : Reactive
+				Reactive : Reactive,
+				createActionPiece: createActionPiece
 			}
 
 		}());
@@ -491,6 +493,12 @@ define(['jquery',
 			},
 			Reactive : function(_gameTile){
 				return main.Reactive(_gameTile);
+			},
+			createActionPiece : function(x,y,val){
+				x = (x === undefined) ? settings.startingPiecePosition.x : x;
+				y = (y === undefined) ? settings.startingPiecePosition.y : y;
+
+				return main.createActionPiece(x,y,val);
 			},
 			DEBUG : {
 				BEHAVIOR : 0x1,

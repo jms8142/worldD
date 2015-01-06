@@ -79,6 +79,7 @@ var Behavior = {
 
 		this.chain = new Array();
 		this.nextReactor = new Array();
+		//debugger;
 		this.chain[0] = _gameTile;
 
 		return this;
@@ -118,9 +119,9 @@ var Behavior = {
 	* @return bool
 	**/
 	hasReaction : function(_gameTile) {
-		if(_game.debugFlags & WD.Game.debugBehavior)
-				console.info('[BEHAVIOR] Testing against:' + _gameTile.toString());
-
+		/*if(_game.debugFlags & WD.Game.debugBehavior)
+				console.info('[BEHAVIOR] Testing against:' + _gameTile.toString());*/
+				debugger;
 		for(var i = 0; i < this.reactorDefinition[this.chain[0].getCurVal()].length; i++){
 			if(_gameTile.getCurVal() === this.reactorDefinition[this.chain[0].getCurVal()][i]) {
 				this.addCombo(_gameTile);
@@ -176,7 +177,7 @@ var Behavior = {
 
 				//legal realm
 				if(WDLocation.LegalRealm(tileView)){
-					
+
 					if(thisVal === window._wd.getGameBoard()[tileView.x][tileView.y].val){
 						tempChain[y+1] = new WDGameTile({xMap : tileView.x, yMap : tileView.y, val : thisVal});
 						reaction++
@@ -233,8 +234,8 @@ var Behavior = {
 
 }
 
-	return function(){
-			return Behavior.initialize();
+	return function(_gameTile){
+			return Behavior.initialize(_gameTile);
 	};
 
 });

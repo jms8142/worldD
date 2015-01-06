@@ -49,55 +49,57 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 			this.bgroundOffset = bgroundOffset;
 
 			this.currencyValue = (opts.curVal===undefined) ? this.currencyValues[this._val] : opts.curVal;
-
+			//debugger;
 			this.activePic = WDAssetLoader.getResource('objects');
 
-		},
-		getHeight = function(){
-			return this._height;
-		},
-		getWidth = function(){
-			return this._width;
-		},
-		setDirection = function(dir){
-			this.direction = dir;
-		},
-		getDirection = function(){
-			return this.direction;
-		},
-		/**
-		* @param int val
-		* @return void
-		* @description tile currency value as represented as the index of Game.defaultSettings.currencyValues[]
-		**/
-		setValue = function(val){
-			this._val = val;
-			this.setCurVal(this.currencyValues[this._val]);
-			if(this._val===4){ this.quad = true; }//a coin that can react when in a 2x2 configuration (basically quarters)
-		},
-		getValue = function(){
-			return this._val;
-		},
-		setCurVal = function(currencyVal){
-			this.currencyValue = currencyVal;
-			this.setText(this.currencyValue);
-			//console.info('setting setCurVal:' + currencyVal)
-		},
-		getCurVal = function(){
-			return this.currencyValue;
-		},
-		setText = function(text){
-			//console.info('[[setting text to ' + text);
-			this._text = text;
-		},
-		getPosition = function() {
-			return { x : this.xPos, y : this.yPos, width : this._width, height : this._height };
-		},
-		toString = function(){
-			return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap + ' |direction: ' + WDLocation.MoveDescription[this.getDirection()];
 		};
 
 		initialize.prototype = {
+			getHeight : function(){
+				return this._height;
+			},
+			getWidth : function(){
+				return this._width;
+			},
+			setDirection : function(dir){
+				this.direction = dir;
+			},
+			getDirection : function(){
+				return this.direction;
+			},
+			/**
+			* @param int val
+			* @return void
+			* @description tile currency value as represented as the index of Game.defaultSettings.currencyValues[]
+			**/
+			setValue : function(val){
+				this._val = val;
+
+				this.setCurVal(this.currencyValues[this._val]);
+				if(this._val===4){ this.quad = true; }//a coin that can react when in a 2x2 configuration (basically quarters)
+			},
+			getValue : function(){
+					return this._val;
+			},
+			getCurVal : function(){
+				debugger;
+				return this.currencyValue;
+			},
+			setCurVal : function(currencyVal){
+					this.currencyValue = currencyVal;
+					this.setText(this.currencyValue);
+					console.info('setting setCurVal:' + currencyVal)
+			},
+			setText : function(text){
+					//console.info('[[setting text to ' + text);
+					this._text = text;
+			},
+			getPosition : function() {
+					return { x : this.xPos, y : this.yPos, width : this._width, height : this._height };
+			},
+			toString : function(){
+					return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap + ' |direction: ' + WDLocation.MoveDescription[this.getDirection()];
+			},
 			setInActive : function(){
 				window._wd.getGameBoard()[this.getMapLocation().x][this.getMapLocation().y].active = false;
 			},
@@ -122,18 +124,6 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 
 				//update physical location
 				this.setCanvasLocation(this.xMap * this._width, this.yMap * this._height)
-			},
-			getValue : function(){
-				return getValue.call(this);
-			},
-			setValue : function(val){
-				setValue.call(this,val);
-			},
-			setCurVal : function(currencyVal) {
-				setCurVal.call(this,currencyVal);
-			},
-			setText : function(text) {
-				setText.call(this,text);
 			},
 			getQuad : function(){
 				return this.quad;
@@ -187,9 +177,10 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 					} else if(this.getMapLocation().y === 0) { //at the top
 						Event.fire(document,'WD:gameover');
 					} else {
-						setInActive();
-						window._wd.CreateActionPiece(startingPiecePositionX,startingPiecePositionY);
-						window._wd.Update();
+						this.setInActive();
+
+						window._wd.createActionPiece(this.startingPiecePositionX,this.startingPiecePositionY);
+						window._wd.UpdateView();
 					}
 				}
 			},

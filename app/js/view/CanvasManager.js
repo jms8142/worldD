@@ -4,13 +4,13 @@
 * @constructor
 * @module View
 * @requires
-* 
+*
 */
 define([
 	'util/AssetLoader'
 	],function(AssetLoader){
 
-		
+
 	var WDCanvasManager = {};
 
 
@@ -78,20 +78,20 @@ define([
 	}
 
 	WDCanvasManager.DrawCanvasBackground = function(_canvasBufferContext){
-		
+
 			if(!_wd.getSettings().showTestGrid){
 				var my_gradient = _canvasBufferContext.createLinearGradient(0,0,0,_canvasBufferContext.canvas.height-50);
 				my_gradient.addColorStop(0,'rgb(68,134,146)');
 				my_gradient.addColorStop(.75,'rgb(34,128,69)');
 				my_gradient.addColorStop(1,'rgb(92,100,38)');
-				
+
 				_canvasBufferContext.fillStyle = my_gradient;//this.backgroundColor;
-				_canvasBufferContext.fillRect(0,0,_canvasBufferContext.canvas.width,_canvasBufferContext.canvas.height-50);
+				_canvasBufferContext.fillRect(0,0,_canvasBufferContext.canvas.width,_canvasBufferContext.canvas.height-100);
 			}
 	}
 
 	WDCanvasManager.MouseReact = function(x,y,screen,game){
-		if (WDCanvasManager.SCREENS.TITLE || WDCanvasManager.SCREENS.GAMEOVER) {			
+		if (WDCanvasManager.SCREENS.TITLE || WDCanvasManager.SCREENS.GAMEOVER) {
 				var linkX = (game._canvasBufferContext.canvas.width / 2) - (WDCanvasManager.linkWidth / 2);
 				var linkY = (game._canvasBufferContext.canvas.height / 2) + (WDCanvasManager.linkHeight / 2)
 			  	return (x>=linkX && x <= (linkX + WDCanvasManager.linkWidth) && y<=linkY && y<= linkY && y > (linkY - WDCanvasManager.linkHeight));

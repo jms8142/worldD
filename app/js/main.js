@@ -6,7 +6,7 @@ requirejs.config({
 });
 
 require(["control/Game_new"], function(Game) {
-		 
+
     	var opts = {
 			startingPiece : null, //[0=1,1=5,2=10,3=25]
 			startingPiecePosition : { x : 4,y : 0 },
@@ -14,10 +14,11 @@ require(["control/Game_new"], function(Game) {
 			debugWindow : true,
 			//debugShow : WDGame.debugDrawing,
 			showTransition : false,
-			showTestGrid : false/*,
+			showTestGrid : false,
+      skipTitle: true/*,
 			gameBoard : sandbox*/
 		}
-		
+
 		window._wd = Game;
 		_wd.start(opts);
 });
