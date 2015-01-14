@@ -4,7 +4,7 @@
 * @constructor
 * @module Utilities
 * @requires
-* 
+*
 */
 define(function() {
 
@@ -20,7 +20,7 @@ define(function() {
 		*/
 		matrix:  function(m,n,init){
 
-			var i, a, j, mat = []; 
+			var i, a, j, mat = [];
 			for(i = 0; i < m; i += 1){
 				a = [];
 				for(j = 0; j < n; j +=1){
@@ -28,6 +28,7 @@ define(function() {
 				}
 				mat[i] = a;
 			}
+			
 			return mat;
 		}
 	}

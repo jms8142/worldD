@@ -1,18 +1,18 @@
 /**
 * @todo - add functions to literal initialization
-* 
+*
 */
 
 define(function(){
 
 
 var Debugger = {
-	initialize : function(){	
+	initialize : function(){
 		var _this = this;
 		jQuery('.step').live('click',function(e){
 			var ind = jQuery(this).attr('id') - 1;
 			WD.Debugger.PrintGameBoardtoConsole(WD.Game.defaultSettings.gameRows,WD.Game.defaultSettings.columns,window._game.lastgameBoard[ind]);
-		});	
+		});
 	},
 	updateSnapshotText : function(step){
 		jQuery('.utilinfo').append('<a class="step" href="#" id=' + step + '>' + step + '</a>');
@@ -23,16 +23,18 @@ var Debugger = {
 
 Debugger.PrintGameBoardtoDebugWindow = function(_gameboard){
 		var HTMLout = '';
-		for(var row = 0; row < WD.Game.defaultSettings.gameRows; row++){
+
+		for(var row = 0; row < _wd.defaultSettings.gameRows; row++){
 			HTMLout += '<tr>';
-			for(var col = 0;col < WD.Game.defaultSettings.columns; col++){
-				var displayVal = (_gameboard[col][row].val === 0) ? '-' : WD.GameTile.currencyValues[_gameboard[col][row].val];
+			for(var col = 0;col < _wd.defaultSettings.columns; col++){
+
+				var displayVal = _gameboard[col][row].hasOwnProperty('currencyValue') ?  _gameboard[col][row]._val : '-';
 				HTMLout += '<td>' + displayVal + '</td>';
 			}
 			HTMLout += '</tr>\n';
 			//console.info(row);
 			jQuery('.debugWindow').html("<table class='gameMap'>" + HTMLout + "</table>");
-		}	
+		}
 
 }
 

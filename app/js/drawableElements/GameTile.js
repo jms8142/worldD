@@ -49,6 +49,7 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 			this.bgroundOffset = bgroundOffset;
 
 			this.currencyValue = (opts.curVal===undefined) ? this.currencyValues[this._val] : opts.curVal;
+			//console.info('initialize() this.currencyValue ' + this.currencyValue)
 			//debugger;
 			this.activePic = WDAssetLoader.getResource('objects');
 
@@ -73,6 +74,7 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 			* @description tile currency value as represented as the index of Game.defaultSettings.currencyValues[]
 			**/
 			setValue : function(val){
+				//console.info('setting value to ', val);
 				this._val = val;
 
 				this.setCurVal(this.currencyValues[this._val]);
@@ -82,13 +84,14 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 					return this._val;
 			},
 			getCurVal : function(){
-				debugger;
+			//	debugger;
 				return this.currencyValue;
 			},
 			setCurVal : function(currencyVal){
 					this.currencyValue = currencyVal;
 					this.setText(this.currencyValue);
-					console.info('setting setCurVal:' + currencyVal)
+					//console.info('setting setCurVal:' + currencyVal)
+					//console.info('this.currencyValue ' + this.currencyValue)
 			},
 			setText : function(text){
 					//console.info('[[setting text to ' + text);
@@ -98,7 +101,8 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 					return { x : this.xPos, y : this.yPos, width : this._width, height : this._height };
 			},
 			toString : function(){
-					return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap + ' |direction: ' + WDLocation.MoveDescription[this.getDirection()];
+					return '[curVal: ' + this.currencyValue + '] x:' + this.xPos + ' y:' + this.yPos + ' xMap: ' + this.xMap + ' yMap: ' + this.yMap;
+					/* + ' |direction: ' + WDLocation.MoveDescription[this.getDirection()]; */
 			},
 			setInActive : function(){
 				window._wd.getGameBoard()[this.getMapLocation().x][this.getMapLocation().y].active = false;
@@ -132,7 +136,7 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 				window._wd.getGameBoard()[this.getMapLocation().x][this.getMapLocation().y] = { val : 0, active : false };
 			},
 			addToBoard : function(newlocation) {
-				window._wd.getGameBoard()[newlocation.x][newlocation.y] = { val : this.getValue(), active : true };
+				window._wd.getGameBoard()[newlocation.x][newlocation.y] = this;
 				this.setMapLocation(newlocation);
 			},
 			setCanvasLocation : function(x,y){
@@ -143,13 +147,13 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 				return { x : this.xPos, y : this.yPos };
 			},
 			move : function(direction){
-
+				//debugger;
 				var newLocation = (direction === WDLocation.MoveDirection.EXPRESS) ? WDLocation.nextBottom(this) : WDLocation.TransformLocation(this.getMapLocation(),direction);
 
 				if(WDLocation.ValidateMove(newLocation)){
 
 					this.removeFromBoard();
-
+					//debugger;
 					this.addToBoard(newLocation);
 					//debugger;
 					window._wd.UpdateView();
@@ -189,6 +193,7 @@ define(['control/Location','util/AssetLoader'],function(WDLocation,WDAssetLoader
 						if(activeState) {
 							_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xActive,this.bgroundOffset[this._val].yActive,46,46,this.xPos+2,this.yPos+2,46,46);
 						} else {
+							//debugger;
 							_canvasContext.drawImage(this.activePic,this.bgroundOffset[this._val].xinActive,this.bgroundOffset[this._val].yinActive,46,46,this.xPos+2,this.yPos+2,46,46);
 						}
 				} else {
