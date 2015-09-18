@@ -20,7 +20,7 @@ module.exports = function (grunt) {
        			}
        		}
        	}
-       	
+
        	//open the browser
        	,open: {
        		all: {
@@ -58,7 +58,7 @@ module.exports = function (grunt) {
        		}
        	}
 
-       
+
     });
 
 
@@ -72,7 +72,7 @@ module.exports = function (grunt) {
     	'watch'
     ]);
 
-  
+
   //});
 
 };
