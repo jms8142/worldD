@@ -1,0 +1,68 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body {
+	font: 100%/1.4 Verdana, Arial, Helvetica, sans-serif;
+	background: #000000;
+	margin: 0;
+	padding: 0;
+	color: #FFF;
+}
+
+/* ~~ Element/tag selectors ~~ */
+ul, ol, dl, h1, h2, h3, h4, h5, h6, p  { 
+	padding: 0;
+	margin: 0;
+}
+
+canvas {
+	background:#000;
+	border:4px #eaeaea solid;
+	border-radius: 15px;
+}
+
+/* Debug Window */
+
+.debugWindow {
+	float:left;
+	background:#136eaa;
+}
+
+.debugWindow table {
+	margin:0 12px;
+}
+
+.debugWindow .gameMap {
+	font-size:.75em;
+}
+
+.debugWindow .gameMap td {
+	width:18px;
+	text-align:center;
+}
+.instructions {
+	width:100%;
+	font-size:.75em;
+	display:block;
+	padding-left:4px;
+	font-style: italic;
+}
+#utilinfo {
+	float:left;
+	padding:4px;
+	width:666px;
+	background:#4d4d4d;
+	display:none;
+}
+
+#utilinfo a {
+	color:#0000FF;
+	font-size:.75em;
+	text-decoration: none;
+	margin:0 4px;
+	float:left;
+}
+
+#utilinfo a:hover {
+	text-decoration:underline;
+}
